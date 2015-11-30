@@ -17,6 +17,7 @@ var girl = child.extend('female');
 var boy = child.extend('male');
 
 module.exports = {
+	child: child,
 	girl: girl,
 	boy: boy,
 	man: man,

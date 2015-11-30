@@ -8,17 +8,17 @@ var world = new World();
 
 var wolf = new Thing({
 	type: types.animal,
-	name: 'wolf'
+	name: 'a wolf'
 })
 
 var girl = new Thing({
 	type: types.girl,
-	name: 'little girl sally'
+	name: 'Sally'
 })
 
 var hunter = new Thing({
 	type: types.man,
-	name: 'hunter'
+	name: 'the hunter'
 })
 
 var wolfId = world.addThing(wolf);
@@ -28,7 +28,7 @@ var hunterId = world.addThing(hunter);
 
 var wolfGirl = world.addRule({
 	cause: {
-		type:  [wolfId, c.relations.encounter, types.girl], 
+		type:  [wolfId, c.relations.encounter, types.child], 
 		value: [wolfId, 'finds', c.events.target]
 	},
 	consequent: {
@@ -36,11 +36,15 @@ var wolfGirl = world.addRule({
 		value: [c.events.source, 'eats', c.events.target]
 	},
 	isDirectional: false,
-	consequentThing: new Thing({ 
+	consequentThing: { 
 		type: types.tragedy, 
-		name: 'wolf eats the girl',
-		lifeTime: 1
-	})
+		name: 'a wolf eating ',
+		lifeTime: 1,
+		initialize: function(storyEvent, world){
+			var target = world.getPiece(storyEvent[2]);
+			this.name += target.name;
+		}
+	}
 })
 
 var hunterGirl = world.addRule({
@@ -52,11 +56,11 @@ var hunterGirl = world.addRule({
 		type: [hunterId, c.relations.stay], 
 		value: [hunterId, 'accompanies', girlId]
 	},
-	consequentThing: new Thing({ 
+	consequentThing: { 
 		type: types.group, 
 		name: 'hunter and the girl',
 		lifeTime: Math.floor(Math.random() * 4),
-	})
+	}
 })
 
 var wolfruns = world.addRule({
@@ -68,28 +72,28 @@ var wolfruns = world.addRule({
 		type: [wolfId, c.relations.out], 
 		value: [wolfId, 'runs']
 	},
-	consequentThing: new Thing({ 
+	consequentThing: { 
 		type: types.situation, 
 		name: 'the wolf running away',
 		lifeTime: 1
-	})
+	}
 })
 
 var hunterSad = world.addRule({
 	cause: {
-		type: [hunter, c.relations.encounter, types.tragedy],
-		value: [hunter, 'sees', c.events.target]
+		type: [hunterId, c.relations.encounter, types.tragedy],
+		value: [hunterId, 'sees', c.events.target]
 	},
 	consequent: {
-		type: [hunter, c.relations.stay],
-		value: [hunter, 'cries']
+		type: [hunterId, c.relations.stay],
+		value: [hunterId, 'cries']
 	},
 })
 
 
 var story1 = [
 [wolfId, c.relations.encounter, girlId],
-// [hunter, c.relations.encounter, wolfGirl]
+[hunterId, c.relations.encounter, {where: ['parentId', wolfGirl]}]
 ]
 
 var story2 = [

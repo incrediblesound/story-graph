@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var Type = require('./type.js');
-var Thing = require('./things.js');
+var Thing = require('./thing.js');
 var c = require('./constants.js');
 var Rule = require('./rule.js');
 
@@ -68,7 +68,9 @@ World.prototype.processEvent = function(rule, storyEvent){
 	var cause = this.processElementValue(rule.cause.value, storyEvent);
 	var consequent = this.processElementValue(rule.consequent.value, storyEvent);
 	if(!!rule.consequentThing){
-		this.addThing(rule.consequentThing);
+		var consequentThing = new Thing(rule.consequentThing, storyEvent, this);
+		consequentThing.parentId = rule.id;
+		this.addThing(consequentThing);
 	}
 	return cause + consequent;
 }
@@ -79,9 +81,9 @@ World.prototype.processElementValue = function(element, originalElement){
 	var object = this.getActor(element[2], originalElement);
 
 	if(object === undefined){
-		return 'The '+subject.name+' '+verb+'. ';
+		return subject.name+' '+verb+'. ';
 	} else {
-		return 'The '+subject.name+' '+verb+' the '+object.name+'. ';
+		return subject.name+' '+verb+' '+object.name+'. ';
 	}
 }
 
