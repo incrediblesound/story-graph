@@ -2,6 +2,10 @@ var Type = require('./type.js');
 
 var animal = new Type('animal');
 var person = new Type('person');
+var situation = new Type('situation');
+
+var group = situation.extend('group_people');
+var tragedy = situation.extend('sad');
 
 var adult = person.extend('adult');
 var child = person.extend('child');
@@ -17,5 +21,8 @@ module.exports = {
 	boy: boy,
 	man: man,
 	woman: woman,
-	animal: animal
+	animal: animal,
+	tragedy: tragedy,
+	situation: situation,
+	group: group
 }
