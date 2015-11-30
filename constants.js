@@ -6,5 +6,9 @@ module.exports = {
 		appear: 'APPEAR',
 		vanish: 'VANISH',
 		encounter: 'ENCOUNTER'
-	}
+	},
+	events: {
+		target: 'TARGET',
+		source: 'SOURCE'
+	},
 }

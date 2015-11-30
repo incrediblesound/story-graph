@@ -1,29 +1,32 @@
 var World = require('./world.js');
 var c = require('./constants.js');
+var types = require('./types.js');
+var _ = require('lodash');
 
 var world = new World();
 
-var wolf = world.addThing('wolf');
-var girl = world.addThing('girl');
-var hunter = world.addThing('hunter');
+var wolf = world.addThing(types.animal, 'wolf');
+var girl = world.addThing(types.girl, 'sally');
+var hunter = world.addThing(types.man, 'hunter');
 
 
 var wolfGirl = world.addRule({
 	cause: {
-		type:  [wolf, c.relations.encounter, girl], 
-		value: [wolf, 'finds', girl]
+		type:  [wolf, c.relations.encounter, types.girl], 
+		value: [wolf, 'finds', c.events.target]
 	},
 	consequent: {
-		type:  [girl, c.relations.vanish],
-		value: [wolf, 'eats', girl]
+		type:  [c.events.target, c.relations.vanish],
+		value: [c.events.source, 'eats', c.events.target]
 	},
+	isDirectional: false,
 	name: 'wolf eating the girl'
 })
 
 var hunterGirl = world.addRule({
 	cause: {
-		type: [hunter, c.relations.encounter, girl], 
-		value: [hunter, 'finds', girl]
+		type: [hunter, c.relations.encounter, types.girl], 
+		value: [hunter, 'finds', c.events.target]
 	},
 	consequent: {
 		type: [hunter, c.relations.stay], 
@@ -59,7 +62,7 @@ var hunterFail = world.addRule({
 
 var story1 = [
 [wolf, c.relations.encounter, girl],
-[hunter, c.relations.encounter, wolfGirl]
+// [hunter, c.relations.encounter, wolfGirl]
 ]
 
 var story2 = [
@@ -67,7 +70,10 @@ var story2 = [
 [wolf, c.relations.encounter, hunterGirl]
 ]
 
+var x = [1,2,3,4]
+var y = [3,4]
+
 var story = world.runStory(story1);
 console.log(story)
-story = world.runStory(story2);
-console.log(story);
+// story = world.runStory(story2);
+// console.log(story);
