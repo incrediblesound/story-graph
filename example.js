@@ -49,7 +49,7 @@ var wolfGirl = world.addRule({
 
 var hunterGirl = world.addRule({
 	cause: {
-		type: [hunterId, c.relations.encounter, types.girl], 
+		type: [hunterId, c.relations.encounter, types.child], 
 		value: [hunterId, 'finds', c.events.target]
 	},
 	consequent: {
@@ -58,8 +58,12 @@ var hunterGirl = world.addRule({
 	},
 	consequentThing: { 
 		type: types.group, 
-		name: 'hunter and the girl',
+		name: 'the hunter and ',
 		lifeTime: Math.floor(Math.random() * 4),
+		initialize: function(storyEvent, world){
+			var target = world.getPiece(storyEvent[2]);
+			this.name += target.name;
+		}
 	}
 })
 
@@ -98,7 +102,7 @@ var story1 = [
 
 var story2 = [
 [hunterId, c.relations.encounter, girlId],
-[wolfId, c.relations.encounter, {where: ['name', 'hunter and the girl']}]
+[wolfId, c.relations.encounter, {where: ['parentId', hunterGirl]}]
 ]
 
 var story = world.runStory(story1);
