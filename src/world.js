@@ -43,12 +43,22 @@ World.prototype.addRule = function(data){
 }
 
 World.prototype.addThing = function(thing){
-	var id = this.size;
-	thing.id = id;
-	thing.setEntryTime(this.timeIndex);
-	this.world.push(thing);
-	this.size++;
-	return id;
+	if(Array.isArray(thing)){
+		_.each(thing, function(item){
+			add.apply(this, [item]);
+		}, this)
+	} else {
+		add.apply(this, [thing])
+	}
+
+	function add(thing, self){
+		var id = this.size;
+		thing.id = id;
+		thing.setEntryTime(this.timeIndex);
+		this.world.push(thing);
+		this.size++;
+		return id;
+	}
 }
 
 /*
@@ -64,6 +74,40 @@ World.prototype.runStory = function(story){
 	return output;
 }
 
+World.prototype.makeStory = function(time){
+	var output = ''
+	while(time > this.timeIndex){
+		var nextEvent = [], counter = 0;
+		while(nextEvent[0] === undefined){
+			counter++;
+			if(counter > 100) {throw new Error('Couldn\'t find match')}
+			nextEvent = this.randomMatch();
+		}
+		var rule = nextEvent[0];
+		var one = nextEvent[1];
+		var two = nextEvent[2];
+		output += this.processEvent(rule, [one.id, rule.cause.type[1], two.id]);
+		this.advance();
+	}
+	return output;
+}
+
+World.prototype.randomMatch = function(){
+	var pair = this.twoThings();
+	var one = pair[0], two = pair[1];
+	var rule = this.findMatch(one, two);
+	return [rule, one, two]
+}
+
+World.prototype.twoThings = function(){
+	var thingOne = this.world[Math.floor(Math.random()*this.size)];
+	var thingTwo = this.world[Math.floor(Math.random()*this.size)];
+	while(thingTwo.id === thingOne.id){
+		thingTwo = this.world[Math.floor(Math.random()*this.size)];
+	}
+	return [thingOne, thingTwo];
+}
+
 World.prototype.processEvent = function(rule, storyEvent){
 	var cause = this.processElementValue(rule.cause.value, storyEvent);
 	var consequent = this.processElementValue(rule.consequent.value, storyEvent);
@@ -76,26 +120,27 @@ World.prototype.processEvent = function(rule, storyEvent){
 }
 
 World.prototype.processElementValue = function(element, originalElement){
-	var subject = this.getActor(element[0], originalElement);
-	var verb = element[1];
-	var object = this.getActor(element[2], originalElement);
-
-	if(object === undefined){
-		return subject.name+' '+verb+'. ';
-	} else {
-		return subject.name+' '+verb+' '+object.name+'. ';
-	}
+	var result = [];
+	_.each(element, function(el){
+		result.push(this.getActor(el, originalElement));
+	}, this)
+	body = result.join(' ');
+	body += '. ';
+	return body;
 }
 
 World.prototype.getActor = function(value, storyElement){
 	if(typeof value === 'number'){
-		return this.getById(value);
+		return this.getById(value).name;
 	}
-	else if(value === c.events.source){
-		return this.getPiece(storyElement[0])
+	else if(value === c.source){
+		return this.getPiece(storyElement[0]).name
 	}
-	else if(value === c.events.target){
-		return this.getPiece(storyElement[2])
+	else if(value === c.target){
+		return this.getPiece(storyElement[2]).name
+	}
+	else {
+		return value;
 	}
 }
 
@@ -125,26 +170,39 @@ World.prototype.getPiece = function(piece){
 	}
 }
 
-World.prototype.checkMatch = function(current, source, target, action){
+World.prototype.findMatch = function(one, two){
+	var rules = [];
+	for(var i = 0; i < this.numRules; i++){
+		var isMatch = this.checkMatch(this.rules[i], one, two);
+		if(isMatch){
+			rules.push(this.rules[i]);
+		}
+	}
+	return rules[Math.floor(Math.random()*rules.length)];
+}
+
+World.prototype.checkMatch = function(rule, source, target, action){
 	var match;
-	var ruleSource = current.getSource();
-	var ruleTarget = current.getTarget();
+	var ruleSource = rule.getSource();
+	var ruleTarget = rule.getTarget();
 
 	var sourceMatch = ruleSource instanceof Type ? contains(source.getTypes(),ruleSource.get()) : ruleSource === source.id; 
 	var targetMatch = ruleTarget instanceof Type ? contains(target.getTypes(),ruleTarget.get()) : ruleTarget === target.id;
-	if(!current.isDirectional){
+	if(!rule.isDirectional){
 
 		var flippedSourceMatch = ruleSource instanceof Type ? contains(target.getTypes(),ruleSource.get()) : ruleSource === target.id;
 		var flippedTargetMatch = ruleTarget instanceof Type ? contains(source.getTypes(),ruleTarget.get()) : ruleTarget === source.id;
 		
 		match = (sourceMatch && targetMatch) || (flippedTargetMatch && flippedSourceMatch);
 	
+	} else { match = (sourceMatch && targetMatch); }
+
+	if(action !== undefined){
+		return match && (rule.getActionType() === action);
 	} else {
-	
-		match = (sourceMatch && targetMatch);
+		return match;
 	}
 
-	return match && (current.getActionType() === action);
 }
 
 World.prototype.getById = function(id){

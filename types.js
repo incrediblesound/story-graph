@@ -1,4 +1,4 @@
-var Type = require('./type.js');
+var Type = require('./src/type.js');
 
 var animal = new Type('animal');
 var person = new Type('person');
