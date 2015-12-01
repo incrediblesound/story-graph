@@ -52,10 +52,36 @@ var explode = world.addRule({
     value: ['they explode']
   },
   isDirectional: false,
+  // this rule will create an explosion type thing
   consequentThing: {
     type: explosion,
     name: 'an explosion',
     lifeTime: 1
   }
 })
+
+// this rule will run any time observer encounters an explosion type thing
+var laugh = world.addRule({
+	cause: {
+		type: [ observerId, c.relations.encounter, explosion ],
+		value: [ observerId, 'sees', c.events.target ]
+	},
+	consequent: {
+		type: [observerId, c.relations.stay],
+		value: [ observerId, 'laughs at', c.events.target ]
+	},
+	isDirectional: true
+})
+
 ```
+For now you have to manually enter events into the world, like this:
+```javascript
+var story = [
+[bobId, c.relations.encounter, timId],
+[observerId, c.relations.encounter, {where: ['parentId', explode]}] // indicates child thing of explode rule
+]
+
+console.log(world.runStory(story));
+// outputs "Bob interacts with Tim. they explode. Gasp sees the explosion. Gasp laughs at the explosion."
+```
+But the goal is to have the graph generate them randomly.
