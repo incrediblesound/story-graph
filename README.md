@@ -5,7 +5,7 @@ StoryGraph is a graph designed to generate and narrate the causal interactions b
 
 You start with some types:
 ```javascript
-var Type = require('./src/type.js);
+var Type = require('./src/type.js');
 
 var charge = new Type('charged');
 var positive = charge.extend('positive');
