@@ -1,7 +1,7 @@
 # story-graph
 The Graph that Generates Stories
 
-StoryGraph is a graph designed to generate and narrate the causal interactions between things in a world.
+StoryGraph is a graph designed to generate and narrate the causal interactions between things in a world. The features are currently being designed and implemented, but the goal is to be able to populate the graph with entities and then to be able to define highly expressive rules about the interactions between entities and different classes of entities. Generalized interaction rules can create entities in the graph with attributes specific to the entities that triggered the rule, and entities can have lifetimes and behaviors that trigger events over time.
 
 You start with some types:
 ```javascript
