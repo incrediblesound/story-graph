@@ -1,7 +1,9 @@
 # story-graph
 The Graph that Generates Stories
 
-StoryGraph is a graph designed to generate and narrate the causal interactions between things in a world. The features are currently being designed and implemented, but the goal is to be able to populate the graph with entities and then to be able to define highly expressive rules about the interactions between entities and different classes of entities. Generalized interaction rules can create entities in the graph with attributes specific to the entities that triggered the rule, and entities can have lifetimes and behaviors that trigger events over time.
+StoryGraph is a graph designed to generate and narrate the causal interactions between things in a world. The graph can be populated with entities and expressive rules about the interactions between specific entities or different classes of entities. General rules can create new entities in the graph populated with the specific entities that triggered the rule and attributes defined by those entities. Entities have lifetimes and (coming soon) behaviors that trigger events over time.
+
+Story graph is inspired by [progamming interactive worlds with linear logic](http://www.cs.cmu.edu/~cmartens/thesis/) by [Chris Martens](http://www.cs.cmu.edu/~cmartens/index.html) although it doesn't realize any of the specific principles she develops in that thesis.
 
 You start with some types:
 ```javascript
@@ -74,14 +76,9 @@ var laugh = world.addRule({
 })
 
 ```
-For now you have to manually enter events into the world, like this:
+Then you can make the graph generate random interactions for n number of ticks:
 ```javascript
-var story = [
-[bobId, c.relations.encounter, timId],
-[observerId, c.relations.encounter, {where: ['parentId', explode]}] // indicates child thing of explode rule
-]
 
-console.log(world.runStory(story));
-// outputs "Bob interacts with Tim. they explode. Gasp sees the explosion. Gasp laughs at the explosion."
+console.log(world.makeStory(2));
+// outputs something like: "Bob interacts with Tim. they explode. Gasp sees the explosion. Gasp laughs at the explosion."
 ```
-But the goal is to have the graph generate them randomly.
