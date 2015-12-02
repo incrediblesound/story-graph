@@ -8,6 +8,7 @@ var person = new Type('person');
 var gathering = new Type('gathering');
 var relationship = new Type('relationship');
 var discussion = gathering.extend('discussion');
+var argument = discussion.extend('argument');
 var niceChat = discussion.extend('intelligent');
 var boy = person.extend('boy');
 var girl = person.extend('girl');
@@ -69,13 +70,12 @@ world.addRule({
   },
   isDirectional: false,
   consequentThing: {
-    type: discussion,
+    type: argument,
     name: 'arguing with',
-    lifeTime: 1,
+    members: [c.source, c.target],
+    lifeTime: 2,
     initialize: function(storyEvent, world){
-    	var source = world.getPiece(storyEvent[0]);
-    	var target = world.getPiece(storyEvent[2]);
-    	this.name = source.name+' '+this.name+' '+target.name
+    	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
     }
   }
 })
@@ -93,11 +93,10 @@ world.addRule({
   consequentThing: {
     type: discussion,
     name: 'chatting with',
+    members: [c.source, c.target],
     lifeTime: 1,
     initialize: function(storyEvent, world){
-    	var source = world.getPiece(storyEvent[0]);
-    	var target = world.getPiece(storyEvent[2]);
-    	this.name = source.name+' '+this.name+' '+target.name
+    	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
     }
   }
 })
@@ -109,17 +108,16 @@ world.addRule({
   },
   consequent: {
     type: [],
-    value: [c.source, 'and', c.target, 'enjoy spending time together.']
+    value: [c.source, 'and', c.target, 'enjoy spending time together']
   },
   isDirectional: false,
   consequentThing: {
     type: romantic(relationship),
+    members: [c.source, c.target],
     name: 'is together with',
     lifeTime: Math.floor(Math.random()*4),
     initialize: function(storyEvent, world){
-    	var source = world.getPiece(storyEvent[0]);
-    	var target = world.getPiece(storyEvent[2]);
-    	this.name = source.name+' '+this.name+' '+target.name
+    	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
     }
   }
 })
@@ -137,13 +135,24 @@ world.addRule({
   consequentThing: {
     type: niceChat,
     name: 'having a nice chat with',
+    members: [c.source, c.target],
     lifeTime: 1,
     initialize: function(storyEvent, world){
-    	var source = world.getPiece(storyEvent[0]);
-    	var target = world.getPiece(storyEvent[2]);
-    	this.name = source.name+' '+this.name+' '+target.name
+    	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
     }
   }
+})
+
+world.addRule({
+  cause:{
+    type: [nice(smart(person)), c.encounter, argument],
+    value: [c.source, 'finds', c.target]
+  },
+  consequent: {
+    type: [c.target, c.vanish],
+    value: [c.source, 'helps everyone calm down']
+  },
+  isDirectional: true,
 })
 
 world.addRule({

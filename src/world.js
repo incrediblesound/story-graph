@@ -92,6 +92,15 @@ World.prototype.makeStory = function(time){
 	return output;
 }
 
+World.prototype.getByRole = function(role, storyEvent){
+	if(role === c.source){
+		return this.getById(storyEvent[0]);
+	}
+	else if(role === c.target){
+		return this.getById(storyEvent[2]);
+	}
+}
+
 World.prototype.randomMatch = function(){
 	var pair = this.twoThings();
 	var one = pair[0], two = pair[1];
