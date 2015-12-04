@@ -14,11 +14,15 @@ var World = function(){
 	this.timeIndex = 0;
 }
 
+/*
+ * Methods for processing passing time
+ */
+
 World.prototype.advance = function(){
 	this.timeIndex++;
 	_.each(this.world, function(thing, idx){
 		if((this.timeIndex - thing.entryTime) >= thing.lifeTime){
-			this.removeThing(idx);
+			this.removeThing(thing.id);
 		} 
 		else if(thing.callback !== null){
 			this.processTimeTrigger(thing.callback(this.timeIndex));
@@ -30,9 +34,21 @@ World.prototype.processTimeTrigger = function(timeEvent){
 	//do smth
 }
 
-World.prototype.removeThing = function(idx){
-	this.world = this.world.slice(0, idx).concat(this.world.slice(idx+1, this.size));
+World.prototype.removeThing = function(id){
+	var index = null;
+	for(var i = 0; i < this.world.length; i++){
+		if(this.world[i].id === id){
+			index = i;
+			break;
+		}
+	}
+	this.world = this.world.slice(0, index).concat(this.world.slice(index+1, this.size));
+	this.size--;
 }
+
+/*
+ * Methods for adding things into the world
+ */
 
 World.prototype.addRule = function(data){
 	var id = this.numRules;
@@ -62,7 +78,7 @@ World.prototype.addThing = function(thing){
 }
 
 /*
- * Main run story function
+ * Main run story functions
  */
 World.prototype.runStory = function(story){
 	var output = '';
@@ -101,38 +117,80 @@ World.prototype.getByRole = function(role, storyEvent){
 	}
 }
 
-World.prototype.randomMatch = function(){
-	var pair = this.twoThings();
-	var one = pair[0], two = pair[1];
-	var rule = this.findMatch(one, two);
-	return [rule, one, two]
-}
-
-World.prototype.twoThings = function(){
-	var thingOne = this.world[Math.floor(Math.random()*this.size)];
-	var thingTwo = this.world[Math.floor(Math.random()*this.size)];
-	while(thingTwo.id === thingOne.id){
-		thingTwo = this.world[Math.floor(Math.random()*this.size)];
-	}
-	return [thingOne, thingTwo];
-}
 
 World.prototype.processEvent = function(rule, storyEvent){
-	var cause = this.processElementValue(rule.cause.value, storyEvent);
-	var consequent = this.processElementValue(rule.consequent.value, storyEvent);
+	var causeType = this.populateRuleType(rule.cause.value, storyEvent);
+	var consequentType = this.populateRuleType(rule.consequent.value, storyEvent);
+	var tertiaryType = this.populateRuleType(rule.consequent.type, storyEvent);
+
+	var cause = this.processElementValue(causeType);
+	var consequent = this.processElementValue(consequentType);
+	var tertiary = tertiaryType !== undefined ? this.applyConsequent(tertiaryType) : '';
+
 	if(!!rule.consequentThing){
 		var consequentThing = new Thing(rule.consequentThing, storyEvent, this);
 		consequentThing.parentId = rule.id;
 		this.addThing(consequentThing);
 	}
-	var result = cause + consequent;
-	return cause + consequent;
+	var result = cause + consequent + tertiary;
+	return result;
 }
 
-World.prototype.processElementValue = function(element, originalElement){
-	var result = [];
+World.prototype.applyConsequent = function(typeExpression){
+	if(!typeExpression.length || typeExpression[0] === undefined) return;
+
+	if(!Array.isArray(typeExpression[0])){
+		typeExpression = [typeExpression];
+	}
+	var result = '';
+	_.each(typeExpression, function(expr){
+		switch(expr[1]){
+			case c.vanish:
+				var thing = expr[0];
+				this.removeThing(thing);
+				break;
+			default:
+				var source = this.getPiece(expr[0]);
+				var target = this.getPiece(expr[2]);
+				var rule = this.matchRuleFor(source, target, expr[1]);
+				if(rule !== undefined){
+					result += this.processEvent(rule, expr);
+				}
+		}
+	}, this)
+	return result;
+}
+
+World.prototype.populateRuleType = function(event, sourceEvent){
+	if(event === undefined || !event.length) return;
+
+	event[0] = swap(event[0], sourceEvent);
+	event[2] = swap(event[2], sourceEvent);
+	return event;
+
+	function swap(val, source){
+		if(val === c.source){
+			return source[0];
+		} 
+		else if(val === c.target){
+			return source[2];
+		} else {
+			return val;
+		}
+	}
+}
+
+World.prototype.processPopulatedValue = function(element, source, target){
+	var result = [], actor;
 	_.each(element, function(el){
-		result.push(this.getActor(el, originalElement));
+		if(el === c.source){
+			actor = source.name;
+		} else if(el === c.target){
+			actor = target.name;
+		} else {
+			actor = el;
+		}
+		result.push(actor);
 	}, this)
 	body = result.join(' ');
 	body += '. ';
@@ -142,18 +200,24 @@ World.prototype.processElementValue = function(element, originalElement){
 	return body;
 }
 
-World.prototype.getActor = function(value, storyElement){
-	if(typeof value === 'number'){
-		return this.getById(value).name;
-	}
-	else if(value === c.source){
-		return this.getPiece(storyElement[0]).name
-	}
-	else if(value === c.target){
-		return this.getPiece(storyElement[2]).name
-	}
-	else {
-		return value;
+World.prototype.processElementValue = function(element, originalElement){
+	var result = [];
+	_.each(element, function(el){
+		var actor = this.getPiece(el);
+		if(actor !== undefined){
+			actor = actor.name !== undefined ? actor.name : actor;
+		}
+		result.push(actor);
+	}, this)
+	body = result.join(' ');
+	if(!body.length){
+		return '';
+	} else {
+		body += '. ';
+		var head = body[0].toUpperCase();
+		var tail = body.substring(1, body.length);
+		body = head+tail;
+		return body;
 	}
 }
 
@@ -170,9 +234,13 @@ World.prototype.findRule = function(piece){
 }
 
 World.prototype.getPiece = function(piece){
+	if(piece === undefined) return;
+
 	if(typeof piece === 'number'){
 		return this.getById(piece);
-	} else {
+	} else if(typeof piece === 'string'){
+		return piece;
+	} else if(piece.where !== undefined){
 		var property = piece.where[0];
 		var value = piece.where[1];
 		for(var i = 0; i < this.size; i++){
@@ -183,10 +251,26 @@ World.prototype.getPiece = function(piece){
 	}
 }
 
-World.prototype.findMatch = function(one, two){
+World.prototype.randomMatch = function(){
+	var pair = this.twoThings();
+	var one = pair[0], two = pair[1];
+	var rule = this.matchRuleFor(one, two, c.encounter);
+	return [rule, one, two]
+}
+
+World.prototype.twoThings = function(){
+	var thingOne = this.world[Math.floor(Math.random()*this.size)];
+	var thingTwo = this.world[Math.floor(Math.random()*this.size)];
+	while(thingTwo.id === thingOne.id){
+		thingTwo = this.world[Math.floor(Math.random()*this.size)];
+	}
+	return [thingOne, thingTwo];
+}
+
+World.prototype.matchRuleFor = function(one, two, action){
 	var rules = [];
 	for(var i = 0; i < this.numRules; i++){
-		var isMatch = this.checkMatch(this.rules[i], one, two);
+		var isMatch = this.checkMatch(this.rules[i], one, two, action);
 		if(isMatch){
 			rules.push(this.rules[i]);
 		}
@@ -200,8 +284,9 @@ World.prototype.checkMatch = function(rule, source, target, action){
 	var ruleTarget = rule.getTarget();
 
 	var sourceMatch = ruleSource instanceof Type ? contains(source.getTypes(),ruleSource.get()) : ruleSource === source.id; 
-	var targetMatch = ruleTarget instanceof Type ? contains(target.getTypes(),ruleTarget.get()) : ruleTarget === target.id;
-	if(!rule.isDirectional){
+	var targetMatch = (target === undefined) || (ruleTarget instanceof Type ? contains(target.getTypes(),ruleTarget.get()) : ruleTarget === target.id);
+
+	if(!rule.isDirectional && target !== undefined){
 
 		var flippedSourceMatch = ruleSource instanceof Type ? contains(target.getTypes(),ruleSource.get()) : ruleSource === target.id;
 		var flippedTargetMatch = ruleTarget instanceof Type ? contains(source.getTypes(),ruleTarget.get()) : ruleTarget === source.id;
@@ -209,11 +294,16 @@ World.prototype.checkMatch = function(rule, source, target, action){
 		match = (sourceMatch && targetMatch) || (flippedTargetMatch && flippedSourceMatch);
 	
 	} else { match = (sourceMatch && targetMatch); }
-	var sourceInTarget = !!target.members && _.where(target.members, {id: source.id}).length;
-	var targetInSource = !!source.members && _.where(source.members, {id: target.id}).length;
+
+	var sourceInTarget = !(target === undefined) && !!target.members && _.where(target.members, {id: source.id}).length;
+	var targetInSource = !(target === undefined) && !!source.members && _.where(source.members, {id: target.id}).length;
+
 	if(action !== undefined){
+
 		return match && (rule.getActionType() === action) && !(sourceInTarget || targetInSource);
+
 	} else {
+
 		return match && !(sourceInTarget || targetInSource);
 	}
 

@@ -196,10 +196,20 @@ world.addRule({
     value: [c.source, 'observes', c.target]
   },
   consequent: {
-    type: [],
+    type: [c.source, c.in, c.target],
     value: [c.source, 'observes the patterns of', c.target]
   },
   isDirectional: true
+})
+
+world.addRule({
+  cause: {
+    type: [entity, c.in, complex(connection)],
+    value: [c.source, 'dwells in the stillness of life']
+  },
+  consequent: {
+    type: [c.source, c.stay]
+  }
 })
 
 world.addRule({
@@ -208,7 +218,7 @@ world.addRule({
     value: [c.source, 'glances', c.target]
   },
   consequent: {
-    type: [],
+    type: [c.source, c.vanish],
     value: [c.source, 'flickers away']
   },
   isDirectional: true,
@@ -227,4 +237,4 @@ world.addRule({
 // })
 
 
-console.log(world.makeStory(3));
+console.log(world.makeStory(9));
