@@ -125,6 +125,7 @@ World.prototype.processEvent = function(rule, storyEvent){
 		consequentThing.parentId = rule.id;
 		this.addThing(consequentThing);
 	}
+	var result = cause + consequent;
 	return cause + consequent;
 }
 
@@ -135,6 +136,9 @@ World.prototype.processElementValue = function(element, originalElement){
 	}, this)
 	body = result.join(' ');
 	body += '. ';
+	var head = body[0].toUpperCase();
+	var tail = body.substring(1, body.length);
+	body = head+tail;
 	return body;
 }
 
@@ -205,11 +209,12 @@ World.prototype.checkMatch = function(rule, source, target, action){
 		match = (sourceMatch && targetMatch) || (flippedTargetMatch && flippedSourceMatch);
 	
 	} else { match = (sourceMatch && targetMatch); }
-
+	var sourceInTarget = !!target.members && _.where(target.members, {id: source.id}).length;
+	var targetInSource = !!source.members && _.where(source.members, {id: target.id}).length;
 	if(action !== undefined){
-		return match && (rule.getActionType() === action);
+		return match && (rule.getActionType() === action) && !(sourceInTarget || targetInSource);
 	} else {
-		return match;
+		return match && !(sourceInTarget || targetInSource);
 	}
 
 }
