@@ -84,3 +84,8 @@ Then you can make the graph generate random interactions for n number of ticks:
 console.log(world.makeStory(2));
 // outputs something like: "Bob interacts with Tim. they explode. Gasp sees the explosion. Gasp laughs at the explosion."
 ```
+##TODO and possibilities for expansion
+1) the graph should check for rules that match consequent types    
+2) should things exist in and move between linked locations?    
+3) should things have state?    
+4) should the user be able to set specific events to happen at certain time-steps?    
