@@ -5,6 +5,8 @@ StoryGraph is a graph designed to generate and narrate the causal interactions b
 
 Story graph is inspired by [progamming interactive worlds with linear logic](http://www.cs.cmu.edu/~cmartens/thesis/) by [Chris Martens](http://www.cs.cmu.edu/~cmartens/index.html) although it doesn't realize any of the specific principles she develops in that thesis.
 
+There is a more or less fleshed out example in ./example.js that produces sometimes surreal interactions in a snowy forest.
+
 You start with some types:
 ```javascript
 var Type = require('./src/type.js');
