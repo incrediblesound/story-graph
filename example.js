@@ -4,14 +4,14 @@ var c = require('./src/constants.js');
 var _ = require('lodash');
 var Type = require('./src/type.js');
 
-var person = new Type('person');
-var gathering = new Type('gathering');
-var relationship = new Type('relationship');
-var discussion = gathering.extend('discussion');
-var argument = discussion.extend('argument');
-var niceChat = discussion.extend('intelligent');
-var boy = person.extend('boy');
-var girl = person.extend('girl');
+var entity = new Type('entity');
+
+var life = entity.extend('life');
+var animal = life.extend('animal');
+var plant = life.extend('plant');
+
+var spirit = entity.extend('spirit');
+var connection = new Type('connection');
 
 var extendType = function(typeName){
 	return function(type){
@@ -19,59 +19,84 @@ var extendType = function(typeName){
 	}
 }
 
-var romantic = extendType('romantic');
+var bumbling = extendType('bumbling');
+var bright = extendType('bright');
+var cold = extendType('cold');
+var hot = extendType('hot');
+var dark = extendType('dark');
 var smart = extendType('smart');
-var funny = extendType('funny');
-var handsome = extendType('handsome');
-var creative = extendType('creative');
+var jolting = extendType('jolting');
+var curving = extendType('curving');
+var outpouring = extendType('outpouring');
 var beautiful = extendType('beautiful');
-var technical = extendType('technical');
-var nice = extendType('nice');
-var rude = extendType('rude');
-var odd = extendType('odd');
+var complex = extendType('complex');
+var simple = extendType('simple');
+var quiet = extendType('quiet');
+var loud = extendType('loud');
+var inflowing = extendType('inflowing');
 
 var world = new World();
 
-var bob = new Thing({
-  type: handsome(smart(technical(rude(boy)))),
-  name: 'Bob'
+var whisper = new Thing({
+  type: bumbling(quiet(dark(spirit))),
+  name: 'whisper'
 })
 
-var tim = new Thing({
-  type: handsome(funny(nice(boy))),
-  name: 'Tim'
+var reeds = new Thing({
+  type: outpouring(beautiful(simple(plant))),
+  name: 'cat tails'
 })
 
-var dan = new Thing({
-	type: smart(funny(creative(odd(boy)))),
-	name: 'Dan'
+var river = new Thing({
+	type: curving(complex(outpouring(spirit))),
+	name: 'river'
 })
 
-var lisa = new Thing({
-	type: smart(creative(odd(girl))),
-	name: 'Lisa'
+var shadow = new Thing({
+	type: dark(inflowing(quiet(spirit))),
+	name: 'shadow'
 })
 
-var alice = new Thing({
-	type: smart(beautiful(rude(girl))),
-	name: 'Alice'
+var duck = new Thing({
+	type: bumbling(outpouring(curving(animal))),
+	name: 'duck'
 })
 
-world.addThing([bob, tim, dan, lisa, alice]);
+var bluejay = new Thing({
+  type: bumbling(loud(jolting(animal))),
+  name: 'bluejay'
+})
+
+var sunlight = new Thing({
+  type: outpouring(bright(simple(hot(spirit)))),
+  name: 'sunlight'
+})
+
+var snow = new Thing({
+  type: bright(beautiful(complex(inflowing(cold(spirit))))),
+  name: 'snow'
+})
+
+var ice = new Thing({
+  type: bright(beautiful(simple(inflowing(cold(spirit))))),
+  name: 'ice'
+})
+
+world.addThing([whisper, reeds, river, shadow, duck, snow, sunlight, bluejay, ice]);
 
 world.addRule({
   cause:{
-    type: [creative(person), c.encounter, smart(person)],
-    value: [c.source, 'meets', c.target]
+    type: [inflowing(spirit), c.encounter, outpouring(spirit)],
+    value: [c.source, 'joins with', c.target]
   },
   consequent: {
     type: [],
-    value: [c.source, 'argues with', c.target]
+    value: [c.source, 'does a whirling dance with', c.target]
   },
   isDirectional: false,
   consequentThing: {
-    type: argument,
-    name: 'arguing with',
+    type: complex(connection),
+    name: 'dancing with',
     members: [c.source, c.target],
     lifeTime: 2,
     initialize: function(storyEvent, world){
@@ -82,90 +107,124 @@ world.addRule({
 
 world.addRule({
   cause:{
-    type: [handsome(rude(boy)), c.encounter, smart(beautiful(girl))],
-    value: [c.source, 'meets', c.target]
+    type: [dark(entity), c.encounter, bright(entity)],
+    value: [c.source, 'passes through', c.target]
   },
   consequent: {
     type: [],
-    value: [c.source, 'makes silly comments about', c.target, 'but she has a smart response']
+    value: [c.source, 'is illuminated by', c.target]
   },
-  isDirectional: true,
-  consequentThing: {
-    type: discussion,
-    name: 'chatting with',
-    members: [c.source, c.target],
-    lifeTime: 1,
-    initialize: function(storyEvent, world){
-    	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
-    }
-  }
+  isDirectional: true
+  // consequentThing: {
+  //   type: discussion,
+  //   name: 'chatting with',
+  //   members: [c.source, c.target],
+  //   lifeTime: 1,
+  //   initialize: function(storyEvent, world){
+  //   	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
+  //   }
+  // }
 })
 
 world.addRule({
   cause:{
-    type: [funny(smart(boy)), c.encounter, smart(creative(girl))],
-    value: [c.source, 'meets', c.target]
+    type: [ loud(entity), c.encounter, loud(entity)],
+    value: []
   },
   consequent: {
     type: [],
-    value: [c.source, 'and', c.target, 'enjoy spending time together']
+    value: [c.source, 'and', c.target, 'call out to each other']
   },
   isDirectional: false,
   consequentThing: {
-    type: romantic(relationship),
+    type: complex(connection),
+    name: 'calling out to',
     members: [c.source, c.target],
-    name: 'is together with',
-    lifeTime: Math.floor(Math.random()*4),
+    lifeTime: 2,
     initialize: function(storyEvent, world){
-    	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
+      this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
     }
   }
 })
 
 world.addRule({
   cause:{
-    type: [smart(person), c.encounter, smart(person)],
-    value: [c.source, 'meets', c.target]
+    type: [ life, c.encounter, quiet(spirit)],
+    value: [c.source, 'approaches', c.target]
   },
   consequent: {
     type: [],
-    value: [c.source, 'has a nice discussion with', c.target]
+    value: [c.source, 'and', c.target, 'pass eachother quietly']
   },
-  isDirectional: false,
-  consequentThing: {
-    type: niceChat,
-    name: 'having a nice chat with',
+  isDirectional: true,
+    consequentThing: {
+    type: complex(connection),
+    name: 'conversing silently with',
     members: [c.source, c.target],
-    lifeTime: 1,
+    lifeTime: 2,
     initialize: function(storyEvent, world){
-    	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
+      this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
     }
   }
 })
 
 world.addRule({
   cause:{
-    type: [nice(smart(person)), c.encounter, argument],
-    value: [c.source, 'finds', c.target]
+    type: [ simple(hot(entity)), c.encounter, simple(cold(entity))],
+    value: [c.source, 'radiates upon', c.target]
   },
   consequent: {
-    type: [c.target, c.vanish],
-    value: [c.source, 'helps everyone calm down']
+    type: [],
+    value: [c.target, 'begins to crack and melt']
   },
   isDirectional: true,
+    consequentThing: {
+    type: loud(complex(entity)),
+    name: 'cracking and melting',
+    members: [c.source, c.target],
+    lifeTime: 2,
+    initialize: function(storyEvent, world){
+      this.name = this.members[1].name+' '+this.name;
+    }
+  }
+})
+
+
+world.addRule({
+  cause:{
+    type: [entity, c.encounter, complex(connection)],
+    value: [c.source, 'observes', c.target]
+  },
+  consequent: {
+    type: [],
+    value: [c.source, 'observes the patterns of', c.target]
+  },
+  isDirectional: true
 })
 
 world.addRule({
   cause:{
-    type: [rude(person), c.encounter, niceChat],
-    value: [c.source, 'meets', c.target]
+    type: [jolting(entity), c.encounter, outpouring(entity)],
+    value: [c.source, 'glances', c.target]
   },
   consequent: {
     type: [],
-    value: [c.source, 'interrupts the conversation']
+    value: [c.source, 'flickers away']
   },
   isDirectional: true,
 })
 
+// world.addRule({
+//   cause:{
+//     type: [rude(person), c.encounter, niceChat],
+//     value: [c.source, 'meets', c.target]
+//   },
+//   consequent: {
+//     type: [],
+//     value: [c.source, 'interrupts the conversation']
+//   },
+//   isDirectional: true,
+// })
 
-console.log(world.makeStory(4));
+
+console.log(world.makeStory(3));
