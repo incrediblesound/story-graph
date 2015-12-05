@@ -36,7 +36,7 @@ Another strategy you might want to use is to make every type extend from one bas
 
 ##Things
 
-Making things is really straightforward. They take a type, which defines what rules they match, and a name which is used to create the narrative output. Here are some examples:
+Making things is really straightforward. They take a type, which defines what rules they match, and a name which is used to create the narrative output. Things can also be given a lifetime; after the graph goes through a number of time steps equal to the lifetime of a thing, the thing will be removed from the graph. Lifetimes are more useful for consequent things discussed below. Here are some basic examples:
 ```javascript
 var bob = new Thing({
   type: smart(man),
@@ -60,86 +60,72 @@ world.addThing([tim, larry, david, moe]);
 
 ##Rules
 
+Rules are added via the addRule method on the world, and have the following structure:
+
+```javascript
+world.addRule({
+  cause: { type: [A, B, C], value: [A, B, C]},
+  consequent: { type: [A, B, C], value: [A, B, C] },
+  isDirectional: boolean,
+  consequentThing: {
+    type: type,
+    name: "name"
+  }
+})
+```
+**Cause**    
+Cause is a description of the event that triggers the rule. The cause type has the following structure
+```javascript
+[ (id || type), action, (id || type) ]
+```
+where id is the id of a thing in the world, action is one of the actions described in ./src/constants.js, and type is an instance of Type. The cause value is an array that can be any mix of strings and references to the source and target things that triggered the rule. Here is an example cause:
+```javascript
+var c = require('src/constants.js');
+{
+cause: {
+  type: [ dancer, c.encounter, dancer ],
+  value: [ c.source, 'dances with', c.target]
+}
 ...
-
-```javascript
-
-
-var charge = new Type('charged');
-var positive = charge.extend('positive');
-var negative = charge.extend('negative');
-
-var explosion = new Type('explosion');
+}
 ```
-Then add some things to the world:
+**consequent**  
+The type property of consequent is different from the type property of cause: it is the type of event that is triggered by the rule as a consequence of the rule being matched, kind of like a chain reaction. If you want a rule that results in a thing being removed from the world you can use constants.vanish, but all other action type will simply trigger a search for a matching rule. The value of the consequent is any mix of strings and references to the things that triggered the rule.
 ```javascript
-var World = require('./src/world');
-
-var world = new World();
-
-var bob = new Thing({
-  type: positive,
-  name: 'Bob'
-})
-
-var tim = new Thing({
-  type: negative,
-  name: 'Tim'
-})
-
-var observer = new Thing({
-  type: charge,
-  name: 'Gasp'
-})
-
-var bobId = world.addThing(bob);
-var timId = world.addThing(tim);
-var observerId = world.addThing(observer);
+consequent : {
+  type: [ c.source, c.vanish ],
+  value: [ c.source, 'disappears into thin air' ]
+}
 ```
-Then add rules about how things interact:
-```javascript
-var c = require('./src/constants.js');
+**directionality**  
+The isDirectional property must be set to tell the graph how to match rules. If this property is set to false then the order of the things will be ignored when finding a match. When the soure and target are qualitatively different things and the action is truly directional you should set this property to true.
 
-var explode = world.addRule({
-  cause:{
-    type: [ negative, c.relations.encounter, positive ],
-    value: [ c.events.source, 'interacts with', c.events.target ]
+**consequent thing**  
+We've already seen how a rule can trigger another event, but a rule can also create a new thing in the world. If you want a rule to produce a thing write the things definition in the consequentThing property of the rule. Consequent things have a couple special properties: first they have members. Because the consequent thing is a product of some other set of specific things triggering a rule it makes sense that those things might be involved or compose in some way the consequent thing. Moreover, the name of the consequent thing might involve the names of the things that triggered the rule, so there is an intialize function that takes the world instance as a parameter and can be used to dynamically set thing properties with properties of the members. Here is a full rule example:
+```javascript
+world.addRule({
+  cause: {
+    type: [smart(person), c.encounter, smart(person)],
+    value: [c.source, 'meets', c.target]
   },
   consequent: {
-    type: [[c.events.source, c.relations.vanish],[c.events.target, c.relations.vanish]],
-    value: ['they explode']
+    type: [],
+    value: [c.source, 'and', c.target, 'start chatting']
   },
   isDirectional: false,
-  // this rule will create an explosion type thing
   consequentThing: {
-    type: explosion,
-    name: 'an explosion',
-    lifeTime: 1
+    type: casual(discussion(gathering)),
+    name: 'having a discussion with',
+    members: [c.source, c.target],
+    lifeTime: Math.floor(Math.random()*3),
+    initialize: function(world){
+      this.name = this.members[0]+ ' '+ this.name+ ' '+this.members[1]; 
+    }
   }
 })
 
-// this rule will run any time observer encounters an explosion type thing
-var laugh = world.addRule({
-	cause: {
-		type: [ observerId, c.relations.encounter, explosion ],
-		value: [ observerId, 'sees', c.events.target ]
-	},
-	consequent: {
-		type: [observerId, c.relations.stay],
-		value: [ observerId, 'laughs at', c.events.target ]
-	},
-	isDirectional: true
-})
-
-```
-Then you can make the graph generate random interactions for n number of ticks:
-```javascript
-
-console.log(world.makeStory(2));
-// outputs something like: "Bob interacts with Tim. they explode. Gasp sees the explosion. Gasp laughs at the explosion."
 ```
 ##TODO and possibilities for expansion
-1) the graph should check for rules that match consequent types    
 2) should things exist in and move between linked locations?    
 3) should things have state?    
 4) should the user be able to set specific events to happen at certain time-steps?    
