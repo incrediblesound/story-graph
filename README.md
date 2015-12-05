@@ -5,7 +5,14 @@ StoryGraph is a graph designed to generate and narrate the causal interactions b
 
 Story graph is inspired by [progamming interactive worlds with linear logic](http://www.cs.cmu.edu/~cmartens/thesis/) by [Chris Martens](http://www.cs.cmu.edu/~cmartens/index.html) although it doesn't realize any of the specific principles she develops in that thesis.
 
-There is a more or less fleshed out example in ./example.js that produces sometimes surreal interactions in a snowy forest.
+There is a more or less fleshed out example in ./example.js that produces sometimes surreal interactions in a snowy forest. To run that example, clone the repo and run the example directly with node.js:
+```shell
+$ node example.js
+```
+You will see output something like this:
+```
+The river joins with the shadow for a moment. The river does a whirling dance with the shadow. A bluejay discovers the river dancing with the shadow. A bluejay observes the patterns of the river dancing with the shadow. A bluejay dwells in the stillness of life. A duck approaches the whisper. A duck and the whisper pass eachother quietly.
+```
 
 ##Types
 
@@ -125,6 +132,10 @@ world.addRule({
 })
 
 ```
+If this rule was matched with two things "Bob" and "Tom" it would produce the following output:
+
+"Bob meets Tom. Bob and Tom start chatting."
+
 ##TODO and possibilities for expansion
 2) should things exist in and move between linked locations?    
 3) should things have state?    
