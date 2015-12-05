@@ -136,6 +136,14 @@ If this rule was matched with two things "Bob" and "Tom" it would produce the fo
 
 "Bob meets Tom. Bob and Tom start chatting."
 
+##Generate Stories
+
+To generate a narrative based on a random series of interactions use the makeStory method on the world object. This method takes a number which determines how many time ticks the graph will run for.
+```javascript
+var story = world.makeStory(4);
+console.log(story); // "Bob meets Tom..."
+```
+
 ##TODO and possibilities for expansion
 2) should things exist in and move between linked locations?    
 3) should things have state?    
