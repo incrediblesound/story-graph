@@ -16,9 +16,10 @@ var Thing = function(data, storyEvent, world){
 
 Thing.prototype.fetchMembers = function(storyEvent, world){
 	_.each(this.members, function(member, idx){
-		if(member === c.source || member === c.target){
-			var member = world.getByRole(member, storyEvent);
-			this.members[idx] = member;
+		if(member === c.source){
+			this.members[idx] = world.getById(storyEvent[0]);
+		} else if(member === c.target){
+			this.members[idx] = world.getById(storyEvent[2]);
 		}
 	}, this)
 }

@@ -80,6 +80,7 @@ World.prototype.addThing = function(thing){
 /*
  * Main run story functions
  */
+ 
 World.prototype.runStory = function(story){
 	var output = '';
 	_.each(story, function(storyEvent){
@@ -107,16 +108,6 @@ World.prototype.makeStory = function(time){
 	}
 	return output;
 }
-
-World.prototype.getByRole = function(role, storyEvent){
-	if(role === c.source){
-		return this.getById(storyEvent[0]);
-	}
-	else if(role === c.target){
-		return this.getById(storyEvent[2]);
-	}
-}
-
 
 World.prototype.processEvent = function(rule, storyEvent){
 	var causeType = this.populateRuleType(rule.cause.value, storyEvent);
@@ -221,6 +212,46 @@ World.prototype.processElementValue = function(element, originalElement){
 	}
 }
 
+/*
+ * The main match function that determines whether or not
+ * an event [source, action, target] matches a rule
+ */
+
+World.prototype.checkMatch = function(rule, source, target, action){
+	var match;
+	var ruleSource = rule.getSource();
+	var ruleTarget = rule.getTarget();
+
+	var sourceMatch = ruleSource instanceof Type ? contains(source.getTypes(),ruleSource.get()) : ruleSource === source.id; 
+	var targetMatch = (target === undefined) || (ruleTarget instanceof Type ? contains(target.getTypes(),ruleTarget.get()) : ruleTarget === target.id);
+
+	if(!rule.isDirectional && target !== undefined){
+
+		var flippedSourceMatch = ruleSource instanceof Type ? contains(target.getTypes(),ruleSource.get()) : ruleSource === target.id;
+		var flippedTargetMatch = ruleTarget instanceof Type ? contains(source.getTypes(),ruleTarget.get()) : ruleTarget === source.id;
+		
+		match = (sourceMatch && targetMatch) || (flippedTargetMatch && flippedSourceMatch);
+	
+	} else { match = (sourceMatch && targetMatch); }
+
+	var sourceInTarget = !(target === undefined) && !!target.members && _.where(target.members, {id: source.id}).length;
+	var targetInSource = !(target === undefined) && !!source.members && _.where(source.members, {id: target.id}).length;
+
+	if(action !== undefined){
+
+		return match && (rule.getActionType() === action) && !(sourceInTarget || targetInSource);
+
+	} else {
+
+		return match && !(sourceInTarget || targetInSource);
+	}
+
+}
+
+/*
+ * Various helper functions for the above methods
+ */
+
 World.prototype.findRule = function(piece){
 	var source = this.getPiece(piece[0]);
 	var action = piece[1];
@@ -276,37 +307,6 @@ World.prototype.matchRuleFor = function(one, two, action){
 		}
 	}
 	return rules[Math.floor(Math.random()*rules.length)];
-}
-
-World.prototype.checkMatch = function(rule, source, target, action){
-	var match;
-	var ruleSource = rule.getSource();
-	var ruleTarget = rule.getTarget();
-
-	var sourceMatch = ruleSource instanceof Type ? contains(source.getTypes(),ruleSource.get()) : ruleSource === source.id; 
-	var targetMatch = (target === undefined) || (ruleTarget instanceof Type ? contains(target.getTypes(),ruleTarget.get()) : ruleTarget === target.id);
-
-	if(!rule.isDirectional && target !== undefined){
-
-		var flippedSourceMatch = ruleSource instanceof Type ? contains(target.getTypes(),ruleSource.get()) : ruleSource === target.id;
-		var flippedTargetMatch = ruleTarget instanceof Type ? contains(source.getTypes(),ruleTarget.get()) : ruleTarget === source.id;
-		
-		match = (sourceMatch && targetMatch) || (flippedTargetMatch && flippedSourceMatch);
-	
-	} else { match = (sourceMatch && targetMatch); }
-
-	var sourceInTarget = !(target === undefined) && !!target.members && _.where(target.members, {id: source.id}).length;
-	var targetInSource = !(target === undefined) && !!source.members && _.where(source.members, {id: target.id}).length;
-
-	if(action !== undefined){
-
-		return match && (rule.getActionType() === action) && !(sourceInTarget || targetInSource);
-
-	} else {
-
-		return match && !(sourceInTarget || targetInSource);
-	}
-
 }
 
 World.prototype.getById = function(id){
