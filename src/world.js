@@ -80,7 +80,7 @@ World.prototype.addThing = function(thing){
 /*
  * Main run story functions
  */
- 
+
 World.prototype.runStory = function(story){
 	var output = '';
 	_.each(story, function(storyEvent){
@@ -169,26 +169,6 @@ World.prototype.populateRuleType = function(event, sourceEvent){
 			return val;
 		}
 	}
-}
-
-World.prototype.processPopulatedValue = function(element, source, target){
-	var result = [], actor;
-	_.each(element, function(el){
-		if(el === c.source){
-			actor = source.name;
-		} else if(el === c.target){
-			actor = target.name;
-		} else {
-			actor = el;
-		}
-		result.push(actor);
-	}, this)
-	body = result.join(' ');
-	body += '. ';
-	var head = body[0].toUpperCase();
-	var tail = body.substring(1, body.length);
-	body = head+tail;
-	return body;
 }
 
 World.prototype.processElementValue = function(element, originalElement){
