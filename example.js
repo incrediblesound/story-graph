@@ -39,47 +39,47 @@ var world = new World();
 
 var whisper = new Thing({
   type: bumbling(quiet(dark(spirit))),
-  name: 'whisper'
+  name: 'the whisper'
 })
 
 var reeds = new Thing({
   type: outpouring(beautiful(simple(plant))),
-  name: 'cat tails'
+  name: 'the cat tails'
 })
 
 var river = new Thing({
 	type: curving(complex(outpouring(spirit))),
-	name: 'river'
+	name: 'the river'
 })
 
 var shadow = new Thing({
 	type: dark(inflowing(quiet(spirit))),
-	name: 'shadow'
+	name: 'the shadow'
 })
 
 var duck = new Thing({
 	type: bumbling(outpouring(curving(animal))),
-	name: 'duck'
+	name: 'a duck'
 })
 
 var bluejay = new Thing({
   type: bumbling(loud(jolting(animal))),
-  name: 'bluejay'
+  name: 'a bluejay'
 })
 
 var sunlight = new Thing({
   type: outpouring(bright(simple(hot(spirit)))),
-  name: 'sunlight'
+  name: 'the sunlight'
 })
 
 var snow = new Thing({
   type: bright(beautiful(complex(inflowing(cold(spirit))))),
-  name: 'snow'
+  name: 'the snow'
 })
 
 var ice = new Thing({
   type: bright(beautiful(simple(inflowing(cold(spirit))))),
-  name: 'ice'
+  name: 'the ice'
 })
 
 world.addThing([whisper, reeds, river, shadow, duck, snow, sunlight, bluejay, ice]);
@@ -87,7 +87,7 @@ world.addThing([whisper, reeds, river, shadow, duck, snow, sunlight, bluejay, ic
 world.addRule({
   cause:{
     type: [inflowing(spirit), c.encounter, outpouring(spirit)],
-    value: [c.source, 'joins with', c.target]
+    value: [c.source, 'joins with', c.target, 'for a moment']
   },
   consequent: {
     type: [],
@@ -193,7 +193,7 @@ world.addRule({
 world.addRule({
   cause:{
     type: [entity, c.encounter, complex(connection)],
-    value: [c.source, 'observes', c.target]
+    value: [c.source, 'discovers', c.target]
   },
   consequent: {
     type: [c.source, c.in, c.target],
@@ -237,4 +237,4 @@ world.addRule({
 // })
 
 
-console.log(world.makeStory(9));
+console.log(world.makeStory(3));
