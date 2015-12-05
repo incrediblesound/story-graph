@@ -64,10 +64,11 @@ World.prototype.addThing = function(thing){
 			add.apply(this, [item]);
 		}, this)
 	} else {
-		add.apply(this, [thing])
+		var id = add(thing);
+		return id;
 	}
 
-	function add(thing, self){
+	function add(thing){
 		var id = this.size;
 		thing.id = id;
 		thing.setEntryTime(this.timeIndex);

@@ -10,7 +10,7 @@ var Thing = function(data, storyEvent, world){
 	this.callback = data.callback || null;
 	this.fetchMembers(storyEvent, world);
 	if(!!data.initialize){
-		data.initialize.apply(this, [storyEvent, world]);
+		data.initialize.apply(this, [world]);
 	}
 }
 

@@ -115,15 +115,6 @@ world.addRule({
     value: [c.source, 'is illuminated by', c.target]
   },
   isDirectional: true
-  // consequentThing: {
-  //   type: discussion,
-  //   name: 'chatting with',
-  //   members: [c.source, c.target],
-  //   lifeTime: 1,
-  //   initialize: function(storyEvent, world){
-  //   	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
-  //   }
-  // }
 })
 
 world.addRule({
@@ -223,18 +214,5 @@ world.addRule({
   },
   isDirectional: true,
 })
-
-// world.addRule({
-//   cause:{
-//     type: [rude(person), c.encounter, niceChat],
-//     value: [c.source, 'meets', c.target]
-//   },
-//   consequent: {
-//     type: [],
-//     value: [c.source, 'interrupts the conversation']
-//   },
-//   isDirectional: true,
-// })
-
 
 console.log(world.makeStory(3));
