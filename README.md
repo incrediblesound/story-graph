@@ -145,6 +145,8 @@ console.log(story); // "Bob meets Tom..."
 ```
 
 ##TODO and possibilities for expansion
+1) types should be extended into dynamic attributes
+2) consider using NLP library to parse stories and generate worlds
 2) should things exist in and move between linked locations?    
 3) should things have state?    
 4) should the user be able to set specific events to happen at certain time-steps?    
