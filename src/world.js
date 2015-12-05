@@ -64,7 +64,7 @@ World.prototype.addThing = function(thing){
 			add.apply(this, [item]);
 		}, this)
 	} else {
-		var id = add(thing);
+		var id = add.apply(this, [thing]);
 		return id;
 	}
 
