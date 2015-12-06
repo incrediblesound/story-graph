@@ -13,6 +13,7 @@ You will see output something like this:
 ```
 The river joins with the shadow for a moment. The river does a whirling dance with the shadow. A bluejay discovers the river dancing with the shadow. A bluejay observes the patterns of the river dancing with the shadow. A bluejay dwells in the stillness of life. A duck approaches the whisper. A duck and the whisper pass eachother quietly.
 ```
+This project is licensed under the terms of the MIT license.
 
 ##Types
 
