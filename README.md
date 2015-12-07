@@ -75,6 +75,9 @@ world.addRule({
   cause: { type: [A, B, C], value: [A, B, C]},
   consequent: { type: [A, B, C], value: [A, B, C] },
   isDirectional: boolean,
+  mutations: function(source, target){
+    target.type.add('something');
+  },
   consequentThing: {
     type: type,
     name: "name"
