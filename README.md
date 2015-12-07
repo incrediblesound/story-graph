@@ -108,6 +108,20 @@ consequent : {
 **directionality**  
 The isDirectional property must be set to tell the graph how to match rules. If this property is set to false then the order of the things will be ignored when finding a match. When the soure and target are qualitatively different things and the action is truly directional you should set this property to true.
 
+**mutations**  
+If you want to mutate the things involved in an event you can add a mutations function to your rule. The mutations function takes the source thing and target thing as parameters. This allows you to alter the types of things as a part of the consequence of the rule being activated, for which you can use the remove, add, and replace helpers on the things type:
+```javascript
+{
+  cause: [ handsome(boy), meets, pretty(girl) ],
+  consequent: [ c.source, 'starts dating', c.target ],
+  isDirectional: false,
+  mutations: function(source, target){
+    source.type.replace('single', 'dating);
+    target.type.replace('single', 'dating');
+  }
+}
+```
+
 **consequent thing**  
 We've already seen how a rule can trigger another event, but a rule can also create a new thing in the world. If you want a rule to produce a thing write the things definition in the consequentThing property of the rule. Consequent things have a couple special properties: first they have members. Because the consequent thing is a product of some other set of specific things triggering a rule it makes sense that those things might be involved or compose in some way the consequent thing. Moreover, the name of the consequent thing might involve the names of the things that triggered the rule, so there is an intialize function that takes the world instance as a parameter and can be used to dynamically set thing properties with properties of the members. Here is a full rule example:
 ```javascript
@@ -146,8 +160,7 @@ console.log(story); // "Bob meets Tom..."
 ```
 
 ##TODO and possibilities for expansion
-1) types should be extended into dynamic attributes
-2) consider using NLP library to parse stories and generate worlds
+1) consider using NLP library to parse stories and generate worlds  
 2) should things exist in and move between linked locations?    
 3) should things have state?    
 4) should the user be able to set specific events to happen at certain time-steps?    
