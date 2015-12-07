@@ -15,7 +15,11 @@ var connection = new Type('connection');
 
 var extendType = function(typeName){
 	return function(type){
-		return type.extend(typeName);
+    if(type === undefined){
+      return new Type(typeName);
+    } else {
+  		return type.extend(typeName);
+    }
 	}
 }
 
@@ -114,7 +118,10 @@ world.addRule({
     type: [],
     value: [c.source, 'is illuminated by', c.target]
   },
-  isDirectional: true
+  isDirectional: true,
+  mutations: function(source, target){
+    source.type.replace('dark', 'bright');
+  }
 })
 
 world.addRule({

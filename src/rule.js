@@ -2,11 +2,14 @@ var _ = require('lodash');
 
 var Rule = function(data, id){
 	this.id = id;
-	this.cause = data.cause;
-	this.consequent = data.consequent;
-	this.consequentThing = data.consequentThing;
 	this.name = data.name;
 	this.isDirectional = data.isDirectional;
+
+	this.cause = data.cause;
+	this.consequent = data.consequent;
+
+	this.consequentThing = data.consequentThing;
+	this.mutations = data.mutations;
 }
 
 Rule.prototype.getSource = function(){

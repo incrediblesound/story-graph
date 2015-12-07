@@ -42,7 +42,7 @@ World.prototype.removeThing = function(id){
 			break;
 		}
 	}
-	this.world = this.world.slice(0, index).concat(this.world.slice(index+1, this.size));
+	this.world.splice(index, 1);
 	this.size--;
 }
 
@@ -120,12 +120,26 @@ World.prototype.processEvent = function(rule, storyEvent){
 	var tertiary = tertiaryType !== undefined ? this.applyConsequent(tertiaryType) : '';
 
 	if(!!rule.consequentThing){
-		var consequentThing = new Thing(rule.consequentThing, storyEvent, this);
-		consequentThing.parentId = rule.id;
-		this.addThing(consequentThing);
+		this.addConsequentThing(rule, storyEvent);
 	}
+	if(!!rule.mutations){
+		this.runMutations(rule, storyEvent);
+	}
+
 	var result = cause + consequent + tertiary;
 	return result;
+}
+
+World.prototype.addConsequentThing = function(rule, storyEvent){
+	var consequentThing = new Thing(rule.consequentThing, storyEvent, this);
+	consequentThing.parentId = rule.id;
+	this.addThing(consequentThing);
+}
+
+World.prototype.runMutations = function(rule, storyEvent){
+	var source = this.getById(storyEvent[0]);
+	var target = this.getById(storyEvent[2]);
+	rule.mutations(source, target);
 }
 
 World.prototype.applyConsequent = function(typeExpression){
