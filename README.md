@@ -116,7 +116,7 @@ If you want to mutate the things involved in an event you can add a mutations fu
   consequent: [ c.source, 'starts dating', c.target ],
   isDirectional: false,
   mutations: function(source, target){
-    source.type.replace('single', 'dating);
+    source.type.replace('single', 'dating');
     target.type.replace('single', 'dating');
   }
 }
