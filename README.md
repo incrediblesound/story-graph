@@ -3,7 +3,7 @@ The Graph that Generates Stories
 
 StoryGraph is a graph designed to generate and narrate the causal interactions between things in a world. The graph can be populated with entities and expressive rules about the interactions between specific entities or different classes of entities. General rules can create new entities in the graph populated with the specific entities that triggered the rule and attributes defined by those entities. Entities have lifetimes and (coming soon) behaviors that trigger events over time.
 
-Story graph is inspired by [progamming interactive worlds with linear logic](http://www.cs.cmu.edu/~cmartens/thesis/) by [Chris Martens](http://www.cs.cmu.edu/~cmartens/index.html) although it doesn't realize any of the specific principles she develops in that thesis.
+Story graph is inspired by [programming interactive worlds with linear logic](http://www.cs.cmu.edu/~cmartens/thesis/) by [Chris Martens](http://www.cs.cmu.edu/~cmartens/index.html) although it doesn't realize any of the specific principles she develops in that thesis.
 
 There is a more or less fleshed out example in ./example.js that produces sometimes surreal interactions in a snowy forest. To run that example, clone the repo and run the example directly with node.js:
 ```shell
@@ -36,9 +36,9 @@ var extendType = function(typeName){
 var smart = extendType('smart');
 var sneaky = extendType('cunning');
 var spy = new Thing({ 
-  type: smart(sneaky(person))
+  type: smart(sneaky(person)),
   name: 'spy'
-  })
+});
 ```
 Another strategy you might want to use is to make every type extend from one base type, called "entity" or something like that, which allows you to match on specific types while ignoring more general types. For example, if everything in the world extends from the "person" type, then you can match on sneaky(person) which will match any sneaky person young or old, male or female.
 
@@ -49,12 +49,12 @@ Making things is really straightforward. They take a type, which defines what ru
 var bob = new Thing({
   type: smart(man),
   name: 'Bob'
-})
+});
 
 var sally = new Thing({
   type: smart(girl),
   name: 'Sally'
-})
+});
 ```
 You can add things to the world one by one or as an array of things. You can save the id things by adding them individually.
 ```javascript
@@ -82,7 +82,7 @@ world.addRule({
     type: type,
     name: "name"
   }
-})
+});
 ```
 **Cause**    
 Cause is a description of the event that triggers the rule. The cause type has the following structure
@@ -147,7 +147,7 @@ world.addRule({
       this.name = this.members[0]+ ' '+ this.name+ ' '+this.members[1]; 
     }
   }
-})
+});
 
 ```
 If this rule was matched with two things "Bob" and "Tom" it would produce the following output:
