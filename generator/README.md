@@ -72,4 +72,4 @@ There is a stupid rude man called Joe. There is an intelligent boy called Dave. 
 
 If a rude person meets a friendly person then the rude person <is rude to> the friendly person.
 If a boy meets a girl then the boy <says "Eeew, girls have cooties!">.
-```code
+```
