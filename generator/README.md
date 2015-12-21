@@ -82,3 +82,4 @@ If an expansive entity <bears down on> a small entity then the expansive entity 
 If a bird <flies into> an expansive entity then the bird <soars high above> the expansive entity.
 If a bird <discovers> a small solid then the bird <settles upon> the small solid.
 ```
+Notice that in the above example the first rule would need some editing. The dry entity must be removed from the value section of the rule cause in order for the rendering of the rule to make sense. This is because the first part of the sentence is used to render both the type and value of the cause section of the rule.
