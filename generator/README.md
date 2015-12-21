@@ -56,26 +56,29 @@ There is a ghost called Slimer. There is a smart kind man named Joe. There is a 
 
 Again, the placeholder {type} may be preceded by any number of decorators.
 
-FORMAT: If a {type one} meets a {type two} then the {type one||two} <{text}>.  
-OPTIONAL FORMAT: If a {type one} meets a {type two} then the {type one||two} <{text}> the {type one||two}  
+FORMAT: If a {type one} <{encounter text}> a {type two} then the {type one||two} <{result text}>.  
+OPTIONAL FORMAT: If a {type one} <{encounter text}> a {type two} then the {type one||two} <{result text}> the {type one||two}  
 EXAMPLE: 
 ```code
-If a boy meets a ghost then the boy <starts to cry>. If a man meets a ghost then the man <stares in disbelief at> the ghost.
+If a boy <is startled by> a ghost then the boy <starts to cry>. If a man <sees> a ghost then the man <stares in disbelief at> the ghost.
 ```
 
 ###Full Example
 Here is a full working example:
 ```code
-There is a type called entity. A person is an entity. 
+There is a type called entity. A vapor is an entity. A life is an entity. 
+An animal is a life. A solid is an entity.
 
-A man is a male person. A woman is a female person. A boy is a young man. A girl is a young woman. 
+Some things are light and some are heavy. Some things are wet and some are dry. Some things are slow and some are fast. Some things are bright and some are dark. Some things are expansive and some are small.
 
-Some things are intelligent and some are stupid. Some things are friendly and some are rude.
+A rock is a dry heavy solid. A bird is a light fast animal.
 
-There is a stupid rude man called Joe. There is an intelligent boy called Dave. 
+There is a dark bird called crow. There is a bright bird called gull. There is a slow light animal called crab. There is a light wet vapor called waves. There is a wet bright slow vapor called clouds. There is a wet dark slow vapor called fog. There is a bright solid called seashore. There is an expansive rock called cliff. There is a small rock called Boulder.
 
-There is a friendly woman called Susan. There is a girl called Daisy.
-
-If a rude person meets a friendly person then the rude person <is rude to> the friendly person.
-If a boy meets a girl then the boy <says "Eeew, girls have cooties!">.
+If a slow wet entity <emerges> a dry entity then the slow wet entity <drifts across> the dry entity.
+If a vapor <billows up onto> an expansive solid then the vapor <lightly covers> the expansive solid.
+If a fast animal <comes upon> a slow entity then the fast animal <scurries over> the slow entity.
+If an expansive entity <bears down on> a small entity then the expansive entity <envelops> the small entity.
+If a bird <flies into> an expansive entity then the bird <soars high above> the expansive entity.
+If a bird <discovers> a small solid then the bird <settles upon> the small solid.
 ```

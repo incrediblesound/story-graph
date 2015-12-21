@@ -72,24 +72,36 @@ function rule(line, result){
 	line = line.slice(2);
 	var source = [];
 	var target = [];
-	while(line[0] !== 'meets'){
+	var encounterText = [];
+	var consequenceText = [];
+
+	while(!_.contains(line[0], '<')){
 		source.push(line.shift());
 	}
+	
+	while(!_.contains(line[0], '>')){
+		encounterText.push(line.shift());
+	}
+	encounterText.push(line.shift());
+
 	line = line.slice(2);
 	var consequentA = [];
 	var consequentB = [];
-	var text = [];
+
 	while(line[0] !== 'then'){
 		target.push(line.shift());
 	}
 	line = line.slice(2);
+
 	while(!_.contains(line[0], '<')){
 		consequentA.push(line.shift());
 	}
+
 	while(!_.contains(line[0], '>')){
-		text.push(line.shift());
+		consequenceText.push(line.shift());
 	}
-	text.push(line.shift());
+	consequenceText.push(line.shift());
+
 	if(line.length){
 		line.shift();
 		while(line.length){
@@ -101,6 +113,7 @@ function rule(line, result){
 		target: target,
 		consequentA: consequentA,
 		consequentB: consequentB,
-		encounterText: text.join(' ').replace(/\<|\>/g, '')
+		encounterText: encounterText.join(' ').replace(/\<|\>/g, ''),
+		consequenceText: consequenceText.join(' ').replace(/\<|\>/g, '')
 	})
 }

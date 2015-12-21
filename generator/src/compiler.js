@@ -66,12 +66,12 @@ function compileRules(rules, result){
 		result += '\tcause: {\n';
 		result += '\t\ttype: ['+processTypes(rule.source.slice())+', c.encounter, '+
 				   processTypes(rule.target.slice())+'],\n';
-		result += '\t\tvalue: [c.source, \'meets\', c.target]\n\t},\n';
+		result += '\t\tvalue: [c.source, \''+rule.encounterText+'\', c.target]\n\t},\n';
 		result += '\tconsequent: {\n';
 		result += '\t\ttype: [],\n';
 		var source = matchEntity(rule.consequentA, rule, 'c.source');
 		var target = matchEntity(rule.consequentB, rule, 'c.target');
-		result += '\t\tvalue: ['+source+', \''+rule.encounterText+'\''+target+']\n\t},\n';
+		result += '\t\tvalue: ['+source+', \''+rule.consequenceText+'\''+target+']\n\t},\n';
 		result += '\tisDirectional: true,\n';
 		result += '\tmutations: null,\n';
 		result += '\tconsequentThing: null/*{ type:\'\', name:\'\', members:[c.source,c.target],';
