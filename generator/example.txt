@@ -1,0 +1,6 @@
+There is a type called entity. A person is an entity. A man is a male person. A woman is a female person. A boy is a young man. A girl is a young woman. Some things are intelligent and some are stupid. Some things are friendly and some are rude.
+
+There is a stupid rude man called Joe. There is an intelligent boy called Dave. There is a friendly woman called Susan. There is a girl called Daisy.
+
+If a rude person meets a friendly person then the rude person <is rude to> the friendly person.
+If a boy meets a girl then the boy <says "Eeew, girls have cooties!">.
