@@ -1,4 +1,7 @@
-# story-graph
+## New
+There is now a special compiler that translates simple english descriptions of StoryGraph worlds into StoryGraph code. This relieves you of having to write any of the boilerplate necessary to start developing a world of your own. Go checkout [the documentation](https://github.com/incrediblesound/story-graph/blob/master/generator/README.md) in the subdirectory containing the source for the StoryGraph World Generator.
+
+# StoryGraph
 The Graph that Generates Stories
 
 StoryGraph is a graph designed to generate and narrate the causal interactions between things in a world. The graph can be populated with entities and expressive rules about the interactions between specific entities or different classes of entities. General rules can create new entities in the graph populated with the specific entities that triggered the rule and attributes defined by those entities. Entities have lifetimes and (coming soon) behaviors that trigger events over time.
