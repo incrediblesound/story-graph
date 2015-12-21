@@ -20,40 +20,56 @@ Here is the grammar of the world generator. Note that the formats provided here 
 ###Basic Types
 
 FORMAT: There is a type called {typename}.  
-EXAMPLE: There is a type called person. There is a type called ghost.  
+EXAMPLE: 
+```code
+There is a type called person. There is a type called ghost.
+```
 
 ###Type Extensions
 
 FORMAT: A {new type} is a {base type}.  
-EXAMPLE: A woman is a person. A cat is an animal. A skeleton is a ghost. 
+EXAMPLE: 
+```code
+A woman is a person. A cat is an animal. A skeleton is a ghost.
+```
 
 ###Type Decorators
 
 FORMAT: Some things are {typename}.  
-OPTIONAL FORMAT: Some things are {type one} and some are {type two}. 
-EXAMPLE: Some things are smart and some are stupid. Some things are scary.  
+OPTIONAL FORMAT: Some things are {type one} and some are {type two}.  
+EXAMPLE: 
+```code
+Some things are smart and some are stupid. Some things are scary.
+```
 
 ###Things
 
 Note that the placeholder {type} here may be a basic type or extended type preceded by any number of type decorators. See the example for clarification. 
 
 FORMAT: There is a {type} called {name}.  
-EXAMPLE: There is a ghost called Slimer. There is a smart kind man named Joe. There is a beautiful woman named Angelina.  
+EXAMPLE: 
+```code
+There is a ghost called Slimer. There is a smart kind man named Joe. There is a beautiful woman named Angelina.
+```
 
 ###Rules
 
 Again, the placeholder {type} may be preceded by any number of decorators.
 
 FORMAT: If a {type one} meets a {type two} then the {type one||two} <{text}>.  
-OPTIONAL FORMAT: If a {type one} meets a {type two} then the {type one||twp} <{text}> the {type one||two}  
-EXAMPLE: If a boy meets a ghost then the boy <starts to cry>. If a man meets a ghost then the man <stares in disbelief at> the ghost.  
+OPTIONAL FORMAT: If a {type one} meets a {type two} then the {type one||two} <{text}> the {type one||two}  
+EXAMPLE: 
+```code
+If a boy meets a ghost then the boy <starts to cry>. If a man meets a ghost then the man <stares in disbelief at> the ghost.
+```
 
 ##Full Example
 Here is a full working example:
-
+```code
 There is a type called entity. A person is an entity. A man is a male person. A woman is a female person. A boy is a young man. A girl is a young woman. Some things are intelligent and some are stupid. Some things are friendly and some are rude.
 
 There is a stupid rude man called Joe. There is an intelligent boy called Dave. There is a friendly woman called Susan. There is a girl called Daisy.
 
 If a rude person meets a friendly person then the rude person <is rude to> the friendly person.
 If a boy meets a girl then the boy <says "Eeew, girls have cooties!">.
+```code
