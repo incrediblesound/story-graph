@@ -37,7 +37,7 @@ function writeSimpleType(data, result){
 
 function writeCompoundType(data, result){
 	result += 'var '+data.name+' = ';
-	result += data.base+'.extend(\''+data.addition+'\')\n\n';
+	result += data.base+'.extend(\''+data.name+'\')\n\n';
 	return result;
 }
 
@@ -70,7 +70,7 @@ function compileRules(rules, result){
 		result += '\tconsequent: {\n';
 		result += '\t\ttype: [],\n';
 		var source = matchEntity(rule.consequentA, rule, 'c.source');
-		var target = matchEntity(rule.consequentB, rule, ', c.target');
+		var target = matchEntity(rule.consequentB, rule, 'c.target');
 		result += '\t\tvalue: ['+source+', \''+rule.encounterText+'\''+target+']\n\t},\n';
 		result += '\tisDirectional: true,\n';
 		result += '\tmutations: null,\n';
@@ -82,17 +82,22 @@ function compileRules(rules, result){
 	return result;
 
 	function matchEntity(data, rule, position){
+		var result;
 		if(!data.length){
 			return '';
 		}
 		if(isEqual(data, rule.source) && isEqual(data, rule.target)){
-			return position;
+			result = position;
 		} 
 		else if(isEqual(data, rule.source)){
-			return 'c.source'
+			result = 'c.source'
 		} else {
-			return ', c.target'
+			result = 'c.target'
 		}
+
+		if(position === 'c.target'){ result = ', '+result; }
+
+		return result;
 	}
 }
 

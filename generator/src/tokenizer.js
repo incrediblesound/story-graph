@@ -41,7 +41,7 @@ function isATypeOrThing(line){
 
 function isACompondType(line){
 	return (
-		line[0] === 'A' &&
+		(line[0] === 'A' || line[0] === 'An') &&
 		line[2] === 'is' &&
 		(line[3] === 'a' || line[3] === 'an')
 	)
@@ -57,7 +57,7 @@ function isATypeDecorator(line){
 function isARuleDefinition(line){
 	return (
 		line[0] === 'If'&&
-		line[1] === 'a' &&
+		(line[1] === 'a' || line[1] === 'an') &&
 		_.contains(line, 'then')
 	)
 }
