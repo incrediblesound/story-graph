@@ -5,9 +5,10 @@ var Thing = function(data, storyEvent, world){
 	this.id = null;
 	this.type = data.type;
 	this.name = data.name;
-
-	this.location = data.location || data.locations[0];
-	this.locations = data.locations;
+	if(data.locations !== undefined){
+		this.location = data.location || data.locations[0];
+		this.locations = data.locations;
+	}
 
 	this.members = data.members;
 	this.lifeTime = data.lifeTime || 999;

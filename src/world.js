@@ -329,9 +329,13 @@ World.prototype.randomTransition = function(){
 
 World.prototype.twoThings = function(){
 	var localSet = [], randomLocation;
-	while(localSet.length < 2){
-		randomLocation = this.locations[Math.floor(Math.random()*this.numLocations)]
-		localSet = this.getLocalSet(randomLocation)
+	if(this.numLocations){
+		while(localSet.length < 2){
+			randomLocation = this.locations[Math.floor(Math.random()*this.numLocations)]
+			localSet = this.getLocalSet(randomLocation)
+		}
+	} else {
+		localSet = this.world.slice();
 	}
 	var thingOne = _.first(localSet.splice(Math.floor(Math.random()*localSet.length), 1));
 	var thingTwo = _.first(localSet.splice(Math.floor(Math.random()*localSet.length), 1));

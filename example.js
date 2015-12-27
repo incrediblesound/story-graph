@@ -206,7 +206,8 @@ world.addRule({
     value: [c.source, 'dwells in the stillness of life']
   },
   consequent: {
-    type: [c.source, c.stay]
+    type: [c.source, c.stay],
+    value: []
   }
 })
 
