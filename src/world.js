@@ -3,10 +3,14 @@ var Type = require('./type.js');
 var Thing = require('./thing.js');
 var c = require('./constants.js');
 var Rule = require('./rule.js');
+var Location = require('./location.js');
 
 var World = function(){
 	this.size = 0;
 	this.world = [];
+
+	this.numLocations = 0;
+	this.locations = [];
 
 	this.numRules = 0;
 	this.rules = [];
@@ -42,8 +46,10 @@ World.prototype.removeThing = function(id){
 			break;
 		}
 	}
-	this.world.splice(index, 1);
-	this.size--;
+	if(index !== null){
+		this.world.splice(index, 1);
+		this.size--;
+	}
 }
 
 /*
@@ -56,6 +62,12 @@ World.prototype.addRule = function(data){
 	this.rules.push(rule);
 	this.numRules++;
 	return id;
+}
+
+World.prototype.addLocation = function(data){
+	data.id = this.numLocations;
+	this.locations.push(new Location(data));
+	this.numLocations++;
 }
 
 World.prototype.addThing = function(thing){
@@ -101,19 +113,25 @@ World.prototype.makeStory = function(time){
 			if(counter > 100) {throw new Error('Couldn\'t find match')}
 			nextEvent = this.randomMatch();
 		}
-		var rule = nextEvent[0];
-		var one = nextEvent[1];
-		var two = nextEvent[2];
-		output += this.processEvent(rule, [one.id, rule.cause.type[1], two.id]);
+		if(nextEvent.length === 2){
+			var rule = nextEvent[0]
+			var thing = nextEvent[1]
+			output += this.processEvent(rule, [thing.id, rule.cause.type[1]])
+		} else {
+			var rule = nextEvent[0];
+			var one = nextEvent[1];
+			var two = nextEvent[2];
+			output += this.processEvent(rule, [one.id, rule.cause.type[1], two.id]);
+		}
 		this.advance();
 	}
 	return output;
 }
 
 World.prototype.processEvent = function(rule, storyEvent){
-	var causeType = this.populateRuleType(rule.cause.value, storyEvent);
-	var consequentType = this.populateRuleType(rule.consequent.value, storyEvent);
-	var tertiaryType = this.populateRuleType(rule.consequent.type, storyEvent);
+	var causeType = this.populateRuleType(rule.cause.value.slice(), storyEvent);
+	var consequentType = this.populateRuleType(rule.consequent.value.slice(), storyEvent);
+	var tertiaryType = this.populateRuleType(rule.consequent.type.slice(), storyEvent);
 
 	var cause = this.processElementValue(causeType);
 	var consequent = this.processElementValue(consequentType);
@@ -125,7 +143,6 @@ World.prototype.processEvent = function(rule, storyEvent){
 	if(!!rule.mutations){
 		this.runMutations(rule, storyEvent);
 	}
-
 	var result = cause + consequent + tertiary;
 	return result;
 }
@@ -149,11 +166,15 @@ World.prototype.applyConsequent = function(typeExpression){
 		typeExpression = [typeExpression];
 	}
 	var result = '';
-	_.each(typeExpression, function(expr){
+	_.each(typeExpression, (expr) => {
 		switch(expr[1]){
 			case c.vanish:
 				var thing = expr[0];
 				this.removeThing(thing);
+				break;
+			case c.move_in:
+				var thing = this.getById(expr[0]);
+				thing.location = expr[2];
 				break;
 			default:
 				var source = this.getPiece(expr[0]);
@@ -192,8 +213,8 @@ World.prototype.processElementValue = function(element, originalElement){
 		var actor = this.getPiece(el);
 		if(actor !== undefined){
 			actor = actor.name !== undefined ? actor.name : actor;
+			result.push(actor);
 		}
-		result.push(actor);
 	}, this)
 	body = result.join(' ');
 	if(!body.length){
@@ -243,6 +264,15 @@ World.prototype.checkMatch = function(rule, source, target, action){
 
 }
 
+World.prototype.checkTransitionMatch = function(rule, thing, locations, action){
+	var ruleSource = rule.getSource();
+	var targetLocation = rule.getConsequentTarget();
+	var sourceMatch = ruleSource instanceof Type ? contains(thing.getTypes(), ruleSource.get()) : ruleSource === thing.id;
+	var locationMatch = _.contains(locations, targetLocation);
+
+	return sourceMatch && locationMatch
+}
+
 /*
  * Various helper functions for the above methods
  */
@@ -278,18 +308,33 @@ World.prototype.getPiece = function(piece){
 }
 
 World.prototype.randomMatch = function(){
-	var pair = this.twoThings();
-	var one = pair[0], two = pair[1];
-	var rule = this.matchRuleFor(one, two, c.encounter);
-	return [rule, one, two]
+	if(rollDie() < 1){
+		return this.randomTransition()
+	} else {
+		var pair = this.twoThings();
+		var one = pair[0], two = pair[1];
+		var rule = this.matchRuleFor(one, two, c.encounter);
+		return [rule, one, two]
+	}
+}
+
+World.prototype.randomTransition = function(){
+	var moveableSet = _.filter(this.world, (thing) => {
+		return thing.locations.length > 1
+	})
+	var randomThing = moveableSet[Math.floor(Math.random() * moveableSet.length)]
+	var transition = this.matchTransitionFor(randomThing);
+	return [transition, randomThing]
 }
 
 World.prototype.twoThings = function(){
-	var thingOne = this.world[Math.floor(Math.random()*this.size)];
-	var thingTwo = this.world[Math.floor(Math.random()*this.size)];
-	while(thingTwo.id === thingOne.id){
-		thingTwo = this.world[Math.floor(Math.random()*this.size)];
+	var localSet = [], randomLocation;
+	while(localSet.length < 2){
+		randomLocation = this.locations[Math.floor(Math.random()*this.numLocations)]
+		localSet = this.getLocalSet(randomLocation)
 	}
+	var thingOne = _.first(localSet.splice(Math.floor(Math.random()*localSet.length), 1));
+	var thingTwo = _.first(localSet.splice(Math.floor(Math.random()*localSet.length), 1));
 	return [thingOne, thingTwo];
 }
 
@@ -304,6 +349,40 @@ World.prototype.matchRuleFor = function(one, two, action){
 	return rules[Math.floor(Math.random()*rules.length)];
 }
 
+World.prototype.matchTransitionFor = function(thing){
+	var potentialLocations = _.without(thing.locations, thing.location);
+	var rules = [];
+	for(var i = 0; i < this.numRules; i++){
+		var isMatch = this.checkTransitionMatch(this.rules[i], thing, potentialLocations, c.move_out);
+		if(isMatch){
+			rules.push(this.rules[i]);
+		}
+	}
+	return rules[Math.floor(Math.random()*rules.length)];
+}
+
+World.prototype.getLocationByName = function(name){
+	for(var i = 0; i < this.locations; i++){
+		if(this.locations[i].name === name){
+			return this.locations[i].id;
+		}
+	}
+}
+
+World.prototype.getLocalSet = function(location){
+	return _.filter(this.world, (thing) => {
+		return thing.location === location.name
+	})
+}
+
+World.prototype.getLocationById = function(id){
+	for(var i = 0; i < this.locations; i++){
+		if(this.locations[i].id === id){
+			return this.locations[i];
+		}
+	}
+}
+
 World.prototype.getById = function(id){
 	for(var i = 0; i < this.size; i++){
 		if(this.world[i].id === id){
@@ -314,10 +393,16 @@ World.prototype.getById = function(id){
 
 module.exports = World;
 
+// special contains for dealing with types
+// returns true if all of y are in x
 function contains(x, y){
 	var result = true;
 	_.each(y, function(item){
 		result = result && _.contains(x, item);
 	})
 	return result;
+}
+
+function rollDie(){
+	return Math.floor(Math.random() * 7 )
 }

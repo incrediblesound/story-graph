@@ -5,7 +5,15 @@ Some things are light and some are heavy. Some things are wet and some are dry. 
 
 A rock is a dry heavy solid. A bird is a light fast animal.
 
-There is a dark bird called crow. There is a bright bird called gull. There is a slow light animal called crab. There is a light wet vapor called waves. There is a wet bright slow vapor called clouds. There is a wet dark slow vapor called fog. There is a bright solid called seashore. There is an expansive rock called cliff. There is a small rock called Boulder.
+There is a place called <the grey sky>. There is a place called <the emerald ocean>. There is a place called <the seashore>. There is a place called <the painted cliffs>.
+
+There is a dark bird called crow, it is in <the grey sky> or <the seashore>. 
+There is a bright bird called gull, it is in <the grey sky> or <the seashore>. 
+There is a slow light animal called crab, it is in <the seashore> or <the emerald ocean>. 
+There is a light wet vapor called waves, it is in <the emerald ocean>. 
+There is a wet bright slow vapor called clouds, it is in <the grey sky>. 
+There is a wet dark slow vapor called fog, it is in <the grey sky>.
+There is a small rock called Boulder, is is on <the seashore>.
 
 If a slow wet entity <emerges> a dry entity then the slow wet entity <drifts across> the dry entity.
 If a vapor <billows up onto> an expansive solid then the vapor <lightly covers> the expansive solid.

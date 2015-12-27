@@ -1,6 +1,6 @@
 module.exports = {
-	in: 'MOVE_IN',
-	out: 'MOVE_OUT',
+	move_in: 'MOVE_IN',
+	move_out: 'MOVE_OUT',
 	stay: 'STAY',
 	appear: 'APPEAR',
 	vanish: 'VANISH',

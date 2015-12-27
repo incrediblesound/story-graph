@@ -2,7 +2,6 @@ var _ = require('lodash');
 
 var Rule = function(data, id){
 	this.id = id;
-	this.name = data.name;
 	this.isDirectional = data.isDirectional;
 
 	this.cause = data.cause;
@@ -18,6 +17,10 @@ Rule.prototype.getSource = function(){
 
 Rule.prototype.getTarget = function(){
 	return this.cause.type[2];
+}
+
+Rule.prototype.getConsequentTarget = function(){
+	return this.consequent.type[2];
 }
 
 Rule.prototype.getActionType = function(){

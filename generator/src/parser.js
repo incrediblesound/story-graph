@@ -7,7 +7,9 @@ function tokenizer(tokens){
 	var result = {
 		types: [],
 		things: [],
-		rules: []
+		rules: [],
+		locations: [],
+		transitions: []
 	}
 
 	var parserMap = {
@@ -15,7 +17,9 @@ function tokenizer(tokens){
 		['thing']: thing,
 		['compound type']: compoundType,
 		['decorator']: decorator,
-		['rule']: rule
+		['location']: location,
+		['rule']: rule,
+		['transition']: transition
 	}
 	_.each(tokens, function(tok){
 		parserMap[tok.type](tok.line, result)
@@ -35,7 +39,62 @@ function thing(line, result){
 	var calledIdx = line.indexOf('called');
 	var types = line.slice(preDef+1, calledIdx);
 	var name = line[calledIdx+1];
-	result.things.push({ types: types, name: name });
+	name = name.replace(',','')
+	var remainder = line.slice(calledIdx+1)
+	var current, location, locations = [];
+	while(remainder.length){
+		current = remainder.shift();
+		location = [];
+		while(!_.contains(current, '<')){
+			current = remainder.shift()
+		}
+		while(!_.contains(current, '>')){
+			location.push(current)
+			current = remainder.shift()
+		}
+		location.push(current)
+		locations.push(location.join(' ').replace(/<|>/g, ''));
+	}
+	result.things.push({ types, name, locations });
+}
+
+function transition(line, result){
+	line.shift(); // remove the 'From'
+	var first = [], second = [], text = [];
+	var typeOrThing;
+
+	var current = line.shift();
+	while(!_.contains(current, '>')){
+		first.push(current);
+		current = line.shift();
+	}
+	first.push(current);
+	line.shift() // remove the 'to'
+
+	current = line.shift();
+	while(!_.contains(current, '>')){
+		second.push(current);
+		current = line.shift();
+	}
+	second.push(current);
+
+	if(line[0] === 'the'){ line.shift() }
+
+	typeOrThing = line.shift()
+	
+	current = line.shift();
+	while(!_.contains(current, '>')){
+		text.push(current);
+		current = line.shift();
+	}
+	text.push(current);
+	result.transitions.push({
+		from: first.join(' ').replace(/<|>/g, ''),
+		to:  second.join(' ').replace(/<|>/g, ''),
+		text:  text.join(' ').replace(/<|>/g, ''),
+		typeOrThing
+	})
+
 }
 
 function compoundType(line, result){
@@ -68,6 +127,24 @@ function decorator(line, result){
 	}
 }
 
+function location(line, result){
+	var current = line.shift();
+	while(!_.contains(current, '<')){
+		current = line.shift();
+	}
+
+	var name = [];
+	while(!_.contains(current, '>')){
+		name.push(current);
+		current = line.shift();
+	}
+	name.push(current)
+
+	result.locations.push({
+		name: name.join(' ').replace(/<|>/g, '')
+	})
+}
+
 function rule(line, result){
 	line = line.slice(2);
 	var source = [];
@@ -84,7 +161,7 @@ function rule(line, result){
 	}
 	encounterText.push(line.shift());
 
-	line = line.slice(2);
+	line.shift() // remove a or an
 	var consequentA = [];
 	var consequentB = [];
 

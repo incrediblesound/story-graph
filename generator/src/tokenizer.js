@@ -12,9 +12,14 @@ function tokenizer(body){
 		if(isATypeOrThing(line)){
 			if(isATypeDefinition(line)){
 				tokens.push({type: 'simple type', line: line });
+			} else if(isAPlaceDefinition(line)){
+				tokens.push({type: 'location', line: line})
 			} else {
 				tokens.push({type: 'thing', line: line })
 			}
+		}
+		else if(isATransition(line)){
+			tokens.push({type: 'transition', line: line })
 		}
 		else if(isACompondType(line)){
 			tokens.push({type: 'compound type', line: line })
@@ -36,6 +41,13 @@ function isATypeOrThing(line){
 		line[0] === 'There' &&
 		line[1] === 'is' &&
 		(line[2] === 'a' || line[2] === 'an')
+	)
+}
+
+function isATransition(line){
+	return (
+		line[0] === 'From' &&
+		_.contains(line, 'to')
 	)
 }
 
@@ -65,5 +77,11 @@ function isARuleDefinition(line){
 function isATypeDefinition(line){
 	return (
 		line[3] === 'type'
+	)
+}
+
+function isAPlaceDefinition(line){
+	return (
+		line[3] === 'place'
 	)
 }

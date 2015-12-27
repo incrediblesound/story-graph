@@ -1,0 +1,33 @@
+There is a type called entity. A vapor is an entity. A life is an entity. 
+An animal is a life. A solid is an entity.
+
+Some things are light and some are heavy. Some things are wet and some are dry. Some things are slow and some are fast. Some things are bright and some are dark. Some things are expansive and some are small.
+
+A rock is a dry heavy solid. A bird is a light fast animal.
+
+There is a place called <the grey sky>. There is a place called <the ocean>. There is a place called <the seashore>. There is a place called <the painted cliffs>.
+
+There is a dark bird called crow, it is in <the grey sky> or <the seashore>.
+There is a life called minnows, it is in <the ocean>.
+There is a life called hermitcrabs, it is on <the seashore>.
+There is a bright bird called gull, it is in <the grey sky> or <the seashore>. 
+There is a slow light animal called crab, it is in <the seashore> or <the ocean>. 
+There is a light wet entity called waves, it is in <the ocean>. 
+There is a wet bright slow vapor called clouds, it is in <the grey sky>. 
+There is a wet dark slow vapor called fog, it is in <the grey sky>.
+There is a small rock called Boulder, it is on <the seashore>.
+There is an expansive rock called cliff, it is on <the painted cliffs>.
+
+If a slow wet entity <emerges> a dry entity then the slow wet entity <drifts across> the dry entity.
+If a vapor <billows up onto> an expansive solid then the vapor <lightly covers> the expansive solid.
+If a fast animal <comes upon> a slow entity then the fast animal <scurries over> the slow entity.
+If an expansive entity <bears down on> a small entity then the expansive entity <envelops> the small entity.
+If a crab <stumbles over> a hermitcrabs then the hermit-crabs <rolls around>.
+If a crab <startles> a minnows then the minnows <dart away>.
+If a bird <flies into> an expansive entity then the bird <soars high above> the expansive entity.
+If a bird <discovers> a small solid then the bird <settles upon> the small solid.
+
+From <the grey sky> to <the seashore> the bird <swoops down onto>.
+From <the seashore> to <the grey sky> the bird <soars up into>.
+From <the ocean> to <the seashore> the crab <crawls slowly up onto>.
+From <the seashore> to <the ocean> the crab <is swept down into>.

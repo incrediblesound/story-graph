@@ -8,8 +8,10 @@ var result  = 'var World = require(\'./src/world.js\');\n';
 	result += 'var c = require(\'./src/constants.js\');'
 
 result = compileTypes(structure.types, result);
+result = compileLocations(structure.locations, result);
 result = compileThings(structure.things, result);
 result = compileRules(structure.rules, result);
+result = compileTransitions(structure.transitions, result)
 
 result += 'var story = world.makeStory(4);\n console.log(story);\n';
 
@@ -49,12 +51,41 @@ function writeTypeDecorator(data, result){
 	return result;
 }
 
+// compile locations
+function compileLocations(data, result){
+	_.each(data, (location) => {
+		result += 'world.addLocation({ name: \''+location.name+'\' });\n\n';
+	})
+	return result;
+}
+
+//compile transitions
+function compileTransitions(data, result){
+	_.each(data, function(transition){
+		result += 'world.addRule({\n';
+		result += '\tcause: {\n';
+		result += '\t\ttype: ['+transition.typeOrThing+', c.move_out, \''+transition.from+'\'],\n';
+		result += '\t\tvalue: [\'\']\n\t},\n';
+		result += '\tconsequent: {\n';
+		result += '\t\ttype: [c.source, c.move_in, \''+transition.to+'\'],\n';
+		result += '\t\tvalue: [c.source, \''+transition.text+'\', \''+transition.to+'\']\n\t},\n';
+		result += '\tisDirectional: true,\n';
+		result += '\tmutations: null,\n';
+		result += '\tconsequentThing: null\n'
+    	result += '})\n\n';
+	})
+	return result;
+}
+
 // compile all the things
 function compileThings(things, result){
 	_.each(things, function(data){
 		result += 'var '+data.name+' = new Thing({';
-		result += 'type: '+processTypes(data.types)+', name: \''+data.name+'\' })\n'
-		result += 'world.addThing('+data.name+')\n\n';
+		result += 'type: '+processTypes(data.types)+
+				  ', name: \''+data.name+'\''+
+				  ', locations: '+JSON.stringify(data.locations)+
+				  ' })\n';
+		result += 'var '+data.name+' = world.addThing('+data.name+')\n\n';
 	})
 	return result;
 }

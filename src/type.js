@@ -3,13 +3,20 @@ var Type = function(name){
 }
 
 Type.prototype.extend = function(name){
-	var newType = new Type(this.types);
-	newType.types.push(name);
+	if(name instanceof Type){
+		name = name.get();
+	} else {
+		name = [].concat(name)
+	}
+	var types = this.get();
+	types = types.concat(name)
+	var newType = new Type(types);
+	
 	return newType;
 }
 
 Type.prototype.get = function(){
-	return this.types;
+	return this.types.slice();
 }
 
 Type.prototype.replace = function(oldType, newType){
