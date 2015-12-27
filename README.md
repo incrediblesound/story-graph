@@ -3,9 +3,10 @@ Things in the world now have locations. Things will only generate encounters wit
 
 Locations increases the complexity of StoryGraph quite a bit, and as a result I am moving the world generator facility to the front of the readme to encourage people to use that interface for generating their worlds. The API documentation will come after the generator facility documentation and will be useful for those who want to tweak their world in various ways.
 
-[Overview](#overview)
-[World Generator](#generator)
-[API Documenation](#docs)
+###Index
+[Overview](#overview)  
+[World Generator](#generator)  
+[API Documenation](#docs)  
 
 <a name="overview"/>
 # StoryGraph
