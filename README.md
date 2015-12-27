@@ -80,7 +80,7 @@ There is a place called <the field of wheat>.
 
 ###Things
 
-Note that the placeholder {type} here may be a basic type or extended type preceded by any number of type decorators. See the example for clarification. 
+Note that the placeholder {type} here may be a basic type or extended type preceded by any number of type decorators. After the thing's description there is a second clause listing out what locations this thing may enter. You may list any number of locations separated by the word "or". Note that only things with multiple locations can enter into transitions that describe their change of location.
 
 FORMAT: There is a {type} called {name}, he/she/it is in/on <{place}>.
 OPTIONAL FORMAT: There is a {type} called {name}, he/she/it is in/on <{place}> or <{place two}>.
