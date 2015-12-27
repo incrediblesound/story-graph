@@ -308,7 +308,7 @@ World.prototype.getPiece = function(piece){
 }
 
 World.prototype.randomMatch = function(){
-	if(rollDie() < 1){
+	if(this.numLocations && rollDie() < 1){
 		return this.randomTransition()
 	} else {
 		var pair = this.twoThings();
