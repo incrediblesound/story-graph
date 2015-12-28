@@ -270,10 +270,11 @@ World.prototype.checkTransitionMatch = function(rule, thing, locations, action){
 	var ruleSource = rule.getSource();
 	var targetLocation = rule.getConsequentTarget();
 	var sourceMatch = ruleSource instanceof Type ? contains(thing.getTypes(), ruleSource.get()) : ruleSource === thing.id;
-	var locationMatch = _.contains(locations, targetLocation);
+	var originMatch = thing.location === rule.getTarget();
+	var destinationMatch = _.contains(locations, targetLocation);
 	var actionMatch = rule.getActionType() === action;
-
-	return sourceMatch && locationMatch && actionMatch
+	
+	return sourceMatch && destinationMatch && originMatch && actionMatch
 }
 
 /*
@@ -288,24 +289,6 @@ World.prototype.findRule = function(piece){
 		var current = this.rules[i];
 		if(this.checkMatch(current, source, target, action)){
 			return current;
-		}
-	}
-}
-
-World.prototype.getPiece = function(piece){
-	if(piece === undefined) return;
-
-	if(typeof piece === 'number'){
-		return this.getById(piece);
-	} else if(typeof piece === 'string'){
-		return piece;
-	} else if(piece.where !== undefined){
-		var property = piece.where[0];
-		var value = piece.where[1];
-		for(var i = 0; i < this.size; i++){
-			if(this.world[i][property] === value){
-				return this.world[i];
-			}
 		}
 	}
 }
@@ -387,6 +370,24 @@ World.prototype.getLocationById = function(id){
 	for(var i = 0; i < this.locations; i++){
 		if(this.locations[i].id === id){
 			return this.locations[i];
+		}
+	}
+}
+
+World.prototype.getPiece = function(piece){
+	if(piece === undefined) return;
+
+	if(typeof piece === 'number'){
+		return this.getById(piece);
+	} else if(typeof piece === 'string'){
+		return piece;
+	} else if(piece.where !== undefined){
+		var property = piece.where[0];
+		var value = piece.where[1];
+		for(var i = 0; i < this.size; i++){
+			if(this.world[i][property] === value){
+				return this.world[i];
+			}
 		}
 	}
 }
