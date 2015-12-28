@@ -7,6 +7,7 @@ var Location = require('./location.js');
 
 var World = function(){
 	this.size = 0;
+	this.lastId = -1;
 	this.world = [];
 
 	this.numLocations = 0;
@@ -81,7 +82,8 @@ World.prototype.addThing = function(thing){
 	}
 
 	function add(thing){
-		var id = this.size;
+		var id = this.lastId+1;
+		this.lastId = id;
 		thing.id = id;
 		thing.setEntryTime(this.timeIndex);
 		this.world.push(thing);
@@ -269,8 +271,9 @@ World.prototype.checkTransitionMatch = function(rule, thing, locations, action){
 	var targetLocation = rule.getConsequentTarget();
 	var sourceMatch = ruleSource instanceof Type ? contains(thing.getTypes(), ruleSource.get()) : ruleSource === thing.id;
 	var locationMatch = _.contains(locations, targetLocation);
+	var actionMatch = rule.getActionType() === action;
 
-	return sourceMatch && locationMatch
+	return sourceMatch && locationMatch && actionMatch
 }
 
 /*
@@ -322,7 +325,8 @@ World.prototype.randomTransition = function(){
 	var moveableSet = _.filter(this.world, (thing) => {
 		return thing.locations.length > 1
 	})
-	var randomThing = moveableSet[Math.floor(Math.random() * moveableSet.length)]
+	var index = Math.floor(Math.random() * moveableSet.length)
+	var randomThing = moveableSet[index]
 	var transition = this.matchTransitionFor(randomThing);
 	return [transition, randomThing]
 }
