@@ -1,11 +1,11 @@
 var _ = require('lodash');
 
 module.exports = function(structure){
-var result  = 'var World = require(\'./src/world.js\');\n';
-	result += 'var world = new World();\n\n';
-	result += 'var Thing = require(\'./src/thing.js\');\n';
-	result += 'var Type = require(\'./src/type.js\');'
-	result += 'var c = require(\'./src/constants.js\');'
+var result  = 'var SG = require(\'./src/main.js\');\n';
+	result += 'var world = new SG.World();\n\n';
+	result += 'var Thing = SG.Thing;\n';
+	result += 'var Type = SG.Type;\n';
+	result += 'var c = SG.constants;\n';
 
 result = compileTypes(structure.types, result);
 result = compileLocations(structure.locations, result);

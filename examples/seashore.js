@@ -1,8 +1,11 @@
-var World = require('../src/world.js');
+var World = require('../src/world/world.js');
 var world = new World();
 
-var Thing = require('../src/thing.js');
-var Type = require('../src/type.js');var c = require('../src/constants.js');var entity = new Type('entity')
+var Thing = require('../src/components/thing.js');
+var Type = require('../src/components/type.js');
+var c = require('../src/components/constants.js');
+
+var entity = new Type('entity')
 var vapor = entity.extend('vapor')
 
 var life = entity.extend('life')
@@ -63,7 +66,9 @@ world.addLocation({ name: 'the seashore' });
 
 world.addLocation({ name: 'the painted cliffs' });
 
-var crow = new Thing({type: dark(bird), name: 'the crow', locations: ["the grey sky","the seashore","the painted cliffs"] })
+world.addLocation({ name: 'the granite boulder' });
+
+var crow = new Thing({type: dark(bird), name: 'the crow', locations: ["the painted cliffs", "the grey sky","the seashore", "the granite boulder"] })
 var crow = world.addThing(crow)
 
 var minnows = new Thing({type: life, name: 'a group of minnows', locations: ["the ocean"] })
@@ -72,7 +77,7 @@ var minnows = world.addThing(minnows)
 var hermitcrabs = new Thing({type: life, name: 'hermit crabs', locations: ["the seashore"] })
 var hermitcrabs = world.addThing(hermitcrabs)
 
-var gull = new Thing({type: bright(bird), name: 'the gull', locations: ["the grey sky","the seashore", "the painted cliffs"] })
+var gull = new Thing({type: bright(bird), name: 'the gull', locations: ["the grey sky","the seashore", "the painted cliffs", "the granite boulder"] })
 var gull = world.addThing(gull)
 
 var crab = new Thing({type: slow(light(animal)), name: 'the tiny crab', locations: ["the seashore","the ocean"] })
@@ -81,22 +86,19 @@ var crab = world.addThing(crab)
 var waves = new Thing({type: light(wet(entity)), name: 'sluggish waves', locations: ["the ocean"] })
 var waves = world.addThing(waves)
 
-var clouds = new Thing({type: wet(bright(slow(vapor))), name: 'clouds', locations: ["the grey sky", "the painted cliffs", "the ocean"] })
+var clouds = new Thing({type: wet(bright(slow(vapor))), name: 'the clouds', locations: ["the grey sky", "the painted cliffs", "the ocean"] })
 var clouds = world.addThing(clouds)
 
-var Boulder = new Thing({type: small(rock), name: 'the granite boulder', locations: ["the seashore"] })
-var Boulder = world.addThing(Boulder)
-
-var cliff = new Thing({type: expansive(rock), name: 'cliff', locations: ["the painted cliffs"] })
+var cliff = new Thing({type: expansive(rock), name: 'the cliff', locations: ["the painted cliffs"] })
 var cliff = world.addThing(cliff)
 
-var shadows = new Thing({type: dark(expansive(entity)), name: 'shadows', locations: ["the painted cliffs"] })
+var shadows = new Thing({type: dark(expansive(entity)), name: 'the shadows', locations: ["the painted cliffs"] })
 var shadows = world.addThing(shadows)
 
-var branch = new Thing({type: small(solid), name: 'branch', locations: ["the painted cliffs"] })
+var branch = new Thing({type: small(solid), name: 'the branch', locations: ["the painted cliffs"] })
 var branch = world.addThing(branch)
 
-var ledge = new Thing({type: small(solid), name: 'ledge', locations: ["the painted cliffs"] })
+var ledge = new Thing({type: small(solid), name: 'the ledge', locations: ["the painted cliffs"] })
 var ledge = world.addThing(ledge)
 
 world.addRule({
@@ -145,7 +147,7 @@ world.addRule({
 world.addRule({
 	cause: {
 		type: [bird, c.encounter, expansive(entity)],
-		value: [c.source, 'flies into', c.target]
+		value: [c.source, 'swoops across', c.target]
 	},
 	consequent: {
 		type: [],
@@ -190,7 +192,7 @@ world.addRule({
 		value: ['']
 	},
 	consequent: {
-		type: [c.source, c.move_in, 'the seashore'],
+		type: [c.source, c.move_in, 'the painted cliffs'],
 		value: [c.source, 'swoops down onto', 'the painted cliffs']
 	},
 	isDirectional: true,
@@ -220,6 +222,20 @@ world.addRule({
 	consequent: {
 		type: [c.source, c.move_in, 'the painted cliffs'],
 		value: [c.source, 'flies over to', 'the painted cliffs']
+	},
+	isDirectional: true,
+	mutations: null,
+	consequentThing: null
+})
+
+world.addRule({
+	cause: {
+		type: [bird, c.move_out, 'the painted cliffs'],
+		value: ['']
+	},
+	consequent: {
+		type: [c.source, c.move_in, 'the granite boulder'],
+		value: [c.source, 'settles on', 'the granite boulder']
 	},
 	isDirectional: true,
 	mutations: null,

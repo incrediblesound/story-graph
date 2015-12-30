@@ -1,8 +1,8 @@
-var World = require('../src/world.js');
-var Thing = require('../src/thing.js');
-var c = require('../src/constants.js');
+var World = require('../src/world/world.js');
+var Thing = require('../src/components/thing.js');
+var c = require('../src/components/constants.js');
 var _ = require('lodash');
-var Type = require('../src/type.js');
+var Type = require('../src/components/type.js');
 
 var entity = new Type('entity');
 

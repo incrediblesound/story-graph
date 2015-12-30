@@ -22,9 +22,9 @@ var Thing = function(data, storyEvent, world){
 Thing.prototype.fetchMembers = function(storyEvent, world){
 	_.each(this.members, function(member, idx){
 		if(member === c.source){
-			this.members[idx] = world.getById(storyEvent[0]);
+			this.members[idx] = world.getThingById(storyEvent[0]);
 		} else if(member === c.target){
-			this.members[idx] = world.getById(storyEvent[2]);
+			this.members[idx] = world.getThingById(storyEvent[2]);
 		}
 	}, this)
 }
