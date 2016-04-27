@@ -14,13 +14,13 @@ var spirit = entity.extend('spirit');
 var connection = new Type('connection');
 
 var extendType = function(typeName){
-	return function(type){
+    return function(type){
     if(type === undefined){
       return new Type(typeName);
     } else {
-  		return type.extend(typeName);
+          return type.extend(typeName);
     }
-	}
+    }
 }
 
 var bumbling = extendType('bumbling');
@@ -52,18 +52,18 @@ var reeds = new Thing({
 })
 
 var river = new Thing({
-	type: curving(complex(outpouring(spirit))),
-	name: 'the river'
+    type: curving(complex(outpouring(spirit))),
+    name: 'the river'
 })
 
 var shadow = new Thing({
-	type: dark(inflowing(quiet(spirit))),
-	name: 'the shadow'
+    type: dark(inflowing(quiet(spirit))),
+    name: 'the shadow'
 })
 
 var duck = new Thing({
-	type: bumbling(outpouring(curving(animal))),
-	name: 'a duck'
+    type: bumbling(outpouring(curving(animal))),
+    name: 'a duck'
 })
 
 var bluejay = new Thing({
@@ -104,7 +104,7 @@ world.addRule({
     members: [c.source, c.target],
     lifeTime: 2,
     initialize: function(storyEvent, world){
-    	this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
+        this.name = this.members[0].name+' '+this.name+' '+this.members[1].name;
     }
   }
 })
@@ -194,7 +194,7 @@ world.addRule({
     value: [c.source, 'discovers', c.target]
   },
   consequent: {
-    type: [c.source, c.in, c.target],
+    type: [c.source, c.move_in, c.target],
     value: [c.source, 'observes the patterns of', c.target]
   },
   isDirectional: true
@@ -202,7 +202,7 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [entity, c.in, complex(connection)],
+    type: [entity, c.move_in, complex(connection)],
     value: [c.source, 'dwells in the stillness of life']
   },
   consequent: {

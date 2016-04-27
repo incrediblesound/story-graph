@@ -1,22 +1,24 @@
-var _ = require('lodash')
+const _ = require('lodash');
+const utility = require('./utility.js');
 
 module.exports = {
-	advance,
-	processTimeTrigger
+    advance,
+    processTimeTrigger
 }
 
 function advance(world){
-	world.timeIndex++;
-	_.each(world.things, function(thing, idx){
-		if((world.timeIndex - thing.entryTime) >= thing.lifeTime){
-			world.removeThing(thing.id);
-		} 
-		else if(thing.callback !== null){
-			world.processTimeTrigger(world, thing.callback(world.timeIndex));
-		}
-	})
+    world.timeIndex++;
+    _.each(world.things, function(thing, idx){
+        if(idx >= world.size) return;
+        if((world.timeIndex - thing.entryTime) >= thing.lifeTime){
+            utility.removeThing(world, thing.id);
+        }
+        else if(thing.callback !== null){
+            world.processTimeTrigger(world, thing.callback(world.timeIndex));
+        }
+    })
 }
 
 function processTimeTrigger(world, timeEvent){
-	//do smth
+    //do smth
 }
