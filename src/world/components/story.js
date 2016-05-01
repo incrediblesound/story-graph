@@ -64,7 +64,11 @@ function matchRuleFor(world, one, two, action){
             rules.push(world.rules[i]);
         }
     }
-    return rules[Math.floor(Math.random()*rules.length)];
+    if(!rules.length){
+        return false;
+    } else {
+        return rules[Math.floor(Math.random()*rules.length)];
+    }
 }
 
 function matchTransitionFor(thing){
@@ -76,10 +80,13 @@ function matchTransitionFor(thing){
             rules.push(this.rules[i]);
         }
     }
-    return rules[Math.floor(Math.random()*rules.length)];
+    if(!rules.length){
+        // no rule matches for this pair
+        return false;
+    } else {
+        return rules[Math.floor(Math.random()*rules.length)];
+    }
 }
-
-// various helpers for the above methods //
 
 function randomMatch(world){
     if(world.numLocations && rollDie() < 1){
@@ -88,7 +95,11 @@ function randomMatch(world){
         var pair = twoThings(world);
         var one = pair[0], two = pair[1];
         var rule = matchRuleFor(world, one, two, c.encounter);
-        return [rule, one, two]
+        if(!rule){
+            return false;
+        } else {
+            return [rule, one, two]
+        }
     }
 }
 
@@ -99,7 +110,11 @@ function randomTransition(world){
     var index = Math.floor(Math.random() * moveableSet.length)
     var randomThing = moveableSet[index]
     var transition = matchTransitionFor(randomThing);
-    return [transition, randomThing]
+    if(!transition){
+        return false;
+    } else {
+        return [transition, randomThing]
+    }
 }
 
 function twoThings(world){

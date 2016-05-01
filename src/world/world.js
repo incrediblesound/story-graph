@@ -70,8 +70,8 @@ class World {
     makeStory(timeSteps){
         var output = ''
         while(timeSteps > this.timeIndex){
-            var nextEvent = [], counter = 0;
-            while(nextEvent[0] === undefined){
+            var nextEvent = false, counter = 0;
+            while(!nextEvent){
                 counter++;
                 if(counter > 100) {throw new Error('Couldn\'t find match')}
                 nextEvent = story.randomMatch(this);
