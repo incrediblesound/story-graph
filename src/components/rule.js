@@ -1,30 +1,26 @@
-var _ = require('lodash');
+'use strict';
 
-var Rule = function(data, id){
-	this.id = id;
-	this.isDirectional = data.isDirectional;
+module.exports = class Rule {
+  constructor(data, id) {
+  	this.id = id;
+  	this.isDirectional = data.isDirectional;
 
-	this.cause = data.cause;
-	this.consequent = data.consequent;
+  	this.cause = data.cause;
+  	this.consequent = data.consequent;
 
-	this.consequentThing = data.consequentThing;
-	this.mutations = data.mutations;
+  	this.consequentThing = data.consequentThing;
+  	this.mutations = data.mutations;
+  }
+  getSource() {
+  	return this.cause.type[0];
+  }
+  getTarget() {
+  	return this.cause.type[2];
+  }
+  getConsequentTarget() {
+  	return this.consequent.type[2];
+  }
+  getActionType() {
+  	return this.cause.type[1];
+  }
 }
-
-Rule.prototype.getSource = function(){
-	return this.cause.type[0];
-}
-
-Rule.prototype.getTarget = function(){
-	return this.cause.type[2];
-}
-
-Rule.prototype.getConsequentTarget = function(){
-	return this.consequent.type[2];
-}
-
-Rule.prototype.getActionType = function(){
-	return this.cause.type[1];
-}
-
-module.exports = Rule;
