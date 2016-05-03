@@ -4,12 +4,25 @@
   "description": "Define a world and generate stories.",
   "main": "generateWorld.js",
   "scripts": {
-    "test": ""
+    "test": "node_modules/.bin/_mocha --",
+    "coverage": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha --",
+    "view-coverage": "open ./coverage/lcov-report/index.html"
   },
-  "keywords": ["Literature","Poetry","Generation"],
+  "keywords": [
+    "Literature",
+    "Poetry",
+    "Generation"
+  ],
   "author": "James Edwards",
   "license": "MIT",
   "dependencies": {
     "lodash": "^3.10.1"
+  },
+  "devDependencies": {
+    "istanbul": "^0.4.3",
+    "mocha": "^2.4.5"
+  },
+  "engines": {
+    "node": ">=5.0.0"
   }
 }
