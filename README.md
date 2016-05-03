@@ -49,7 +49,6 @@ Here is the grammar of the world generator. Note that the formats provided here 
 ###Basic Types
 
 FORMAT: There is a type called {typename}.  
-EXAMPLE: 
 ```code
 There is a type called person. There is a type called ghost.
 ```
@@ -57,7 +56,6 @@ There is a type called person. There is a type called ghost.
 ###Type Extensions
 
 FORMAT: A {new type} is a {base type}.  
-EXAMPLE: 
 ```code
 A woman is a person. A cat is an animal. A skeleton is a ghost.
 ```
@@ -66,13 +64,11 @@ A woman is a person. A cat is an animal. A skeleton is a ghost.
 
 FORMAT: Some things are {typename}.  
 OPTIONAL FORMAT: Some things are {type one} and some are {type two}.  
-EXAMPLE: 
 ```code
 Some things are smart and some are stupid. Some things are scary.
 ```
 ###Locations
 FORMAT: There is a place called <{place name}>.   
-EXAMPLE:
 ```code
 There is a place called <the red house>.
 There is a place called <the field of wheat>.
@@ -84,10 +80,9 @@ Note that the placeholder {type} here may be a basic type or extended type prece
 
 FORMAT: There is a {type} called {name}, he/she/it is in/on <{place}>.
 OPTIONAL FORMAT: There is a {type} called {name}, he/she/it is in/on <{place}> or <{place two}>.
-EXAMPLE: 
 ```code
-There is a ghost called Slimer, it is in <the red house>. 
-There is a smart kind man named Joe, he is in <the red house> or <the field of wheat>. 
+There is a ghost called Slimer, it is in <the red house>.
+There is a smart kind man named Joe, he is in <the red house> or <the field of wheat>.
 There is a beautiful woman named Angelina, she is in <the red house> or <the law office>.
 ```
 
@@ -97,7 +92,6 @@ Again, the placeholder {type} may be preceded by any number of decorators.
 
 FORMAT: If a {type one} <{encounter text}> a {type two} then the {type one||two} <{result text}>.  
 OPTIONAL FORMAT: If a {type one} <{encounter text}> a {type two} then the {type one||two} <{result text}> the {type one||two}  
-EXAMPLE: 
 ```code
 If a boy <is startled by> a ghost then the boy <starts to cry>. If a man <sees> a ghost then the man <stares in disbelief at> the ghost.
 ```
@@ -105,7 +99,6 @@ If a boy <is startled by> a ghost then the boy <starts to cry>. If a man <sees> 
 ###Transitions
 
 FORMAT: From <{place one}> to <{place two}> the {type or thing} <{does something}>.
-EXAMPLE:
 ```code
 From <the red house> to <the field of wheat> the man <goes out to>.
 From <the sky> to <the field of wheat> the bird <swoops down into>.
@@ -138,7 +131,7 @@ var extendType = function(typeName){
 // now I can do this:
 var smart = extendType('smart');
 var sneaky = extendType('cunning');
-var spy = new Thing({ 
+var spy = new Thing({
   type: smart(sneaky(person)),
   name: 'spy'
 });
@@ -204,7 +197,7 @@ cause: {
 }
 ```
 **consequent**  
-The type property of consequent is different from the type property of cause: it is the type of event that is triggered by the rule as a consequence of the rule being matched, kind of like a chain reaction. If you want a rule that results in a thing being removed from the world you can use constants.vanish, but all other action type will simply trigger a search for a matching rule. The value of the consequent is any mix of strings and references to the things that triggered the rule. The consequent value will produce a string describing the outcome of the interation when the rule is triggered. 
+The type property of consequent is different from the type property of cause: it is the type of event that is triggered by the rule as a consequence of the rule being matched, kind of like a chain reaction. If you want a rule that results in a thing being removed from the world you can use constants.vanish, but all other action type will simply trigger a search for a matching rule. The value of the consequent is any mix of strings and references to the things that triggered the rule. The consequent value will produce a string describing the outcome of the interation when the rule is triggered.
 
 This distinction is important: The consequent type describes an event that will trigger a rule after the current rule is done, the consequent value describes a sentence that will be rendered by the current rule as part of its execution.
 
@@ -216,7 +209,7 @@ consequent : {
 ```
 
 **directionality**  
-The isDirectional property must be set to tell the graph how to match rules. If this property is set to false then the order of the things will be ignored when finding a match. When the soure and target are qualitatively different things and the action is truly directional you should set this property to true.
+The isDirectional property must be set to tell the graph how to match rules. If this property is set to false then the order of the things will be ignored when finding a match. When the source and target are qualitatively different things and the action is truly directional you should set this property to true.
 
 **mutations**  
 If you want to mutate the things involved in an event you can add a mutations function to your rule. The mutations function takes the source thing and target thing as parameters. This allows you to alter the types of things as a part of the consequence of the rule being activated, for which you can use the remove, add, and replace helpers on the things type:
@@ -251,7 +244,7 @@ world.addRule({
     members: [c.source, c.target],
     lifeTime: Math.floor(Math.random()*3),
     initialize: function(world){
-      this.name = this.members[0]+ ' '+ this.name+ ' '+this.members[1]; 
+      this.name = this.members[0]+ ' '+ this.name+ ' '+this.members[1];
     }
   }
 });
@@ -268,9 +261,3 @@ To generate a narrative based on a random series of interactions use the makeSto
 var story = world.makeStory(4);
 console.log(story); // "Bob meets Tom..."
 ```
-
-##TODO and possibilities for expansion
-1) consider using NLP library to parse stories and generate worlds  
-2) should things exist in and move between linked locations?    
-3) should things have state?    
-4) should the user be able to set specific events to happen at certain time-steps?    
