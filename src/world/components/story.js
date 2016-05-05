@@ -1,18 +1,15 @@
 const utility = require('./utility.js');
 const c = require('../../components/constants.js');
 const Type = require('../../components/type.js');
+const getRandomTransition = require('./lib/getRandomTransition');
 const _ = require('lodash');
 
 module.exports = {
     checkMatch,
-    checkTransitionMatch,
     matchRuleFor,
-    matchTransitionFor,
     twoThings,
-    randomTransition,
     randomMatch
 }
-
 
 function checkMatch(rule, source, target, action){
     var match;
@@ -45,17 +42,6 @@ function checkMatch(rule, source, target, action){
 
 }
 
-function checkTransitionMatch(rule, thing, locations, action){
-    var ruleSource = rule.getSource();
-    var targetLocation = rule.getConsequentTarget();
-    var sourceMatch = ruleSource instanceof Type ? contains(thing.getTypes(), ruleSource.get()) : ruleSource === thing.id;
-    var originMatch = thing.location === rule.getTarget();
-    var destinationMatch = _.contains(locations, targetLocation);
-    var actionMatch = rule.getActionType() === action;
-
-    return sourceMatch && destinationMatch && originMatch && actionMatch
-}
-
 function matchRuleFor(world, one, two, action){
     var rules = [];
     for(var i = 0; i < world.numRules; i++){
@@ -71,26 +57,9 @@ function matchRuleFor(world, one, two, action){
     }
 }
 
-function matchTransitionFor(thing){
-    var potentialLocations = _.without(thing.locations, thing.location);
-    var rules = [];
-    for(var i = 0; i < this.numRules; i++){
-        var isMatch = this.checkTransitionMatch(this.rules[i], thing, potentialLocations, c.move_out);
-        if(isMatch){
-            rules.push(this.rules[i]);
-        }
-    }
-    if(!rules.length){
-        // no rule matches for this pair
-        return false;
-    } else {
-        return rules[Math.floor(Math.random()*rules.length)];
-    }
-}
-
 function randomMatch(world){
     if(world.numLocations && rollDie() < 1){
-        return randomTransition(world)
+        return getRandomTransition(world)
     } else {
         var pair = twoThings(world);
         var one = pair[0], two = pair[1];
@@ -100,20 +69,6 @@ function randomMatch(world){
         } else {
             return [rule, one, two]
         }
-    }
-}
-
-function randomTransition(world){
-    var moveableSet = _.filter(world.things, (thing) => {
-        return thing.locations.length > 1
-    })
-    var index = Math.floor(Math.random() * moveableSet.length)
-    var randomThing = moveableSet[index]
-    var transition = matchTransitionFor(randomThing);
-    if(!transition){
-        return false;
-    } else {
-        return [transition, randomThing]
     }
 }
 
