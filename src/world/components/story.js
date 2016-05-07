@@ -135,6 +135,7 @@ function twoThings(world){
 // special contains for dealing with types
 // returns true if all of y are in x
 function contains(x, y){
+    console.log(x, y)
     var result = true;
     _.each(y, function(item){
         result = result && _.contains(x, item);

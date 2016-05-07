@@ -24,7 +24,9 @@ class World {
         this.numRules = 0;
         this.rules = [];
 
-        this.timeIndex = 0;
+        this.timeIndex = 1;
+        this.timedEvents = {};
+        this.output = '';
     }
     addRule(data){
         var id = this.numRules;
@@ -58,48 +60,56 @@ class World {
             return id;
         }
     }
-    runStory(story){
+    renderEvent(story){
         var output = '';
-        _.each(story, function(storyEvent){
-            var rule = this.findRule(world, storyEvent);
-            output += events.processEvent(world, rule, storyEvent);
-            this.advance();
-        }, this)
-        return output;
+        story.forEach((storyEvent) => {
+            const rule = this.findRule(storyEvent);
+            output += events.processEvent(this, rule, storyEvent);
+        });
+        this.output = `${this.output}${output}`;
     }
-    makeStory(timeSteps){
-        var output = ''
-        while(timeSteps > this.timeIndex){
-            var nextEvent = false, counter = 0;
-            while(!nextEvent){
-                counter++;
-                if(counter > 100) {throw new Error('Couldn\'t find match')}
-                nextEvent = story.randomMatch(this);
-            }
-            if(nextEvent.length === 2){
-                var rule = nextEvent[0]
-                var thing = nextEvent[1]
-                output += events.processEvent(this, rule, [thing.id, rule.cause.type[1]])
-            } else {
-                var rule = nextEvent[0];
-                var one = nextEvent[1];
-                var two = nextEvent[2];
-                output += events.processEvent(this, rule, [one.id, rule.cause.type[1], two.id]);
-            }
+    randomEvent(){
+        var output = '';
+        var nextEvent = false, counter = 0;
+        while(!nextEvent){
+            counter++;
+            if(counter > 100) {throw new Error('Couldn\'t find match')}
+            nextEvent = story.randomMatch(this);
+        }
+        if(nextEvent.length === 2){
+            var rule = nextEvent[0]
+            var thing = nextEvent[1]
+            output += events.processEvent(this, rule, [thing.id, rule.cause.type[1]])
+        } else {
+            var rule = nextEvent[0];
+            var one = nextEvent[1];
+            var two = nextEvent[2];
+            output += events.processEvent(this, rule, [one.id, rule.cause.type[1], two.id]);
+        }
+        this.output = `${this.output}${output}`;
+    }
+    runStory(steps, events){
+        this.registerTimedEvents(events);
+        while(this.timeIndex < steps){
             time.advance(this);
         }
-        return output;
+    }
+    registerTimedEvents(events){
+        events.forEach((event) => {
+            this.timedEvents[event.step] = event.event;
+        })
     }
     findRule(piece){
-        var source = utility.getPiece(piece[0]);
+        var source = utility.getPiece(this, piece[0]);
         var action = piece[1];
-        var target = utility.getPiece(piece[2]);
+        var target = utility.getPiece(this, piece[2]);
         for(var i = 0; i < this.numRules; i++){
             var current = this.rules[i];
-            if(story.checkMatch(this, current, source, target, action)){
+            if(story.checkMatch(current, source, target, action)){
                 return current;
             }
         }
+        return false;
     }
     getLocationByName(name){
         for(var i = 0; i < this.locations; i++){
