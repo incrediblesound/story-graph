@@ -265,7 +265,7 @@ To generate a narrative use the runStory method on the world object. This method
 ```
  At each time step the runStory method will check to see if there is an event set for that step, and if not it will generate a random event. The result will be stored on the output property of the world object.
 ```javascript
-world.makeStory(4, [
+world.runStory(4, [
     { step: 1, event: [ bob, c.encounter, tom ]},
     { step: 4, event: [ bob, c.move_out, cafe ]}
 ]);
