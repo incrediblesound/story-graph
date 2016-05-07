@@ -256,8 +256,18 @@ If this rule was matched with two things "Bob" and "Tom" it would produce the fo
 
 ##Generate Stories
 
-To generate a narrative based on a random series of interactions use the makeStory method on the world object. This method takes a number which determines how many time ticks the graph will run for.
+To generate a narrative use the runStory method on the world object. This method takes a number which determines how many time steps the graph will run for and an optional array of events that happen at specific time steps. Events have the following structure:
 ```javascript
-var story = world.makeStory(4);
-console.log(story); // "Bob meets Tom..."
+{
+    step: 1 // this is the time step when this event will be rendered
+    event: [ (id || type), action, (id || type) ] //this is the type of the rule to be rendered
+}
+```
+ At each time step the runStory method will check to see if there is an event set for that step, and if not it will generate a random event. The result will be stored on the output property of the world object.
+```javascript
+world.makeStory(4, [
+    { step: 1, event: [ bob, c.encounter, tom ]},
+    { step: 4, event: [ bob, c.move_out, cafe ]}
+]);
+console.log(world.output); // "Bob meets Tom..."
 ```
