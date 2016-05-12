@@ -92,7 +92,7 @@ function twoThings(world){
 function contains(x, y){
     var result = true;
     _.each(y, function(item){
-        result = result && _.contains(x, item);
+        result = result && _.includes(x, item);
     })
     return result;
 }

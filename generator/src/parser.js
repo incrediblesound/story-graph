@@ -45,10 +45,10 @@ function thing(line, result){
     while(remainder.length){
         current = remainder.shift();
         location = [];
-        while(!_.contains(current, '<')){
+        while(!_.includes(current, '<')){
             current = remainder.shift()
         }
-        while(!_.contains(current, '>')){
+        while(!_.includes(current, '>')){
             location.push(current)
             current = remainder.shift()
         }
@@ -64,7 +64,7 @@ function transition(line, result){
     var typeOrThing;
 
     var current = line.shift();
-    while(!_.contains(current, '>')){
+    while(!_.includes(current, '>')){
         first.push(current);
         current = line.shift();
     }
@@ -72,7 +72,7 @@ function transition(line, result){
     line.shift() // remove the 'to'
 
     current = line.shift();
-    while(!_.contains(current, '>')){
+    while(!_.includes(current, '>')){
         second.push(current);
         current = line.shift();
     }
@@ -83,7 +83,7 @@ function transition(line, result){
     typeOrThing = line.shift()
 
     current = line.shift();
-    while(!_.contains(current, '>')){
+    while(!_.includes(current, '>')){
         text.push(current);
         current = line.shift();
     }
@@ -129,12 +129,12 @@ function decorator(line, result){
 
 function location(line, result){
     var current = line.shift();
-    while(!_.contains(current, '<')){
+    while(!_.includes(current, '<')){
         current = line.shift();
     }
 
     var name = [];
-    while(!_.contains(current, '>')){
+    while(!_.includes(current, '>')){
         name.push(current);
         current = line.shift();
     }
@@ -152,11 +152,11 @@ function rule(line, result){
     var encounterText = [];
     var consequenceText = [];
 
-    while(!_.contains(line[0], '<')){
+    while(!_.includes(line[0], '<')){
         source.push(line.shift());
     }
 
-    while(!_.contains(line[0], '>')){
+    while(!_.includes(line[0], '>')){
         encounterText.push(line.shift());
     }
     encounterText.push(line.shift());
@@ -170,11 +170,11 @@ function rule(line, result){
     }
     line = line.slice(2);
 
-    while(!_.contains(line[0], '<')){
+    while(!_.includes(line[0], '<')){
         consequentA.push(line.shift());
     }
 
-    while(!_.contains(line[0], '>')){
+    while(!_.includes(line[0], '>')){
         consequenceText.push(line.shift());
     }
     consequenceText.push(line.shift());

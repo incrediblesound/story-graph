@@ -10,41 +10,46 @@ const c = SG.constants;
 
 describe('checkTransitionMatch', () => {
   const world = new SG.World();
-  const animal = new Type('animal');
-  const cat = animal.extend('cat');
-  const dog = animal.extend('dog');
-  const cute = type => type.extend('cute');
-  const fluffy = type => type.extend('fluffy');
+  const cat = new Type('cat');
   world.addLocation({ name: 'the garden' });
+  world.addLocation({ name: 'the shed' });
   const Sport = world.addThing(new Thing({
-    type: cute(cat),
+    type: cat,
     name: 'Sport',
-    locations: ['the garden']
-  }));
-  const Flex = world.addThing(new Thing({
-    type: fluffy(dog),
-    name: 'Flex',
-    locations: ['the garden']
+    locations: ['the garden', 'the shed']
   }));
   const rule = new Rule({
     cause: {
-      type: [Sport, c.encounter, Flex],
-      value: [c.source, 'trips on', c.target]
+      type: [Sport, c.move_out, 'the garden'],
+      value: []
     },
     consequent: {
-      type: [],
-      value: [c.target, 'rolls around']
+  		type: [c.source, c.move_in, 'the shed'],
+  		value: [c.source, 'wanders', 'the shed']
     },
     isDirectional: true,
     mutations: null,
     consequentThing: null
-  }, 0);
-  const thing = world.things[0];
-  const locations = _.without(thing.locations, thing.location)
-  it('returns false when ', () => {
-    assert.deepEqual(checkTransitionMatch(rule, thing, locations, c.move_out), false);
   });
-  it('', () => {
+  const thing = world.things[0];
+  const locations = _.without(thing.locations, thing.location);
+  it('Returns false if the Rule cannot be caused by the Thing', () => {
+    assert.deepEqual(checkTransitionMatch({
+      getSource: () => 1,
+    }, thing, locations, c.move_out), false);
+  });
+  it('Returns false if the Thing is not in the correct origin Location', () => {
+    const thingInShed = Object.assign({}, thing, { location: 'the shed' });
+    assert.deepEqual(checkTransitionMatch(rule, thingInShed, locations, c.move_out), false);
+  });
+  it('Returns false if the Thing is not moving to the correct destination Location', () => {
+    const justTheGarden = ['the garden'];
+    assert.deepEqual(checkTransitionMatch(rule, thing, justTheGarden, c.move_out), false);
+  });
+  it('Returns false if the Action is not "move_out"', () => {
+    assert.deepEqual(checkTransitionMatch(rule, thing, locations, c.encounter), false);
+  });
+  it('Returns true when everything is right 😉', () => {
     assert.deepEqual(checkTransitionMatch(rule, thing, locations, c.move_out), true);
   });
 });

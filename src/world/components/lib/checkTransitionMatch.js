@@ -19,12 +19,17 @@ const Type = require('../../../components/type.js');
  */
 module.exports = function checkTransitionMatch(rule, thing, locations, action) {
   const ruleSource = rule.getSource();
-  const targetLocation = rule.getConsequentTarget();
   const sourceMatch = ruleSource instanceof Type
     ? includes(thing.getTypes(), ruleSource.get())
     : ruleSource === thing.id;
-  const originMatch = thing.location === rule.getTarget();
-  const destinationMatch = includes(locations, targetLocation);
-  const actionMatch = rule.getActionType() === action;
-  return sourceMatch && destinationMatch && originMatch && actionMatch;
+  if (!sourceMatch) {
+    return false;
+  } else if (!(thing.location === rule.getTarget())) {
+    return false;
+  } else if (!includes(locations, rule.getConsequentTarget())) {
+    return false;
+  } else if (!(rule.getActionType() === action)) {
+    return false;
+  }
+  return true;
 }
