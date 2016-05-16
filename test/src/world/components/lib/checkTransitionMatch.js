@@ -34,9 +34,20 @@ describe('checkTransitionMatch', () => {
   const thing = world.things[0];
   const locations = _.without(thing.locations, thing.location);
   it('Returns false if the Rule cannot be caused by the Thing', () => {
-    assert.deepEqual(checkTransitionMatch({
-      getSource: () => 1,
-    }, thing, locations, c.move_out), false);
+    const bustedRule = new Rule({
+      cause: {
+        type: [cat, c.move_out, 'the garden'],
+        value: []
+      },
+      consequent: {
+    		type: [c.source, c.move_in, 'the shed'],
+    		value: [c.source, 'wanders', 'the shed']
+      },
+      isDirectional: true,
+      mutations: null,
+      consequentThing: null
+    });
+    assert.deepEqual(checkTransitionMatch(bustedRule, thing, locations, c.move_out), false);
   });
   it('Returns false if the Thing is not in the correct origin Location', () => {
     const thingInShed = Object.assign({}, thing, { location: 'the shed' });

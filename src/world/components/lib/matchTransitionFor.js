@@ -19,11 +19,8 @@ const checkTransitionMatch = require('./checkTransitionMatch');
  */
 module.exports = function matchTransitionFor(thing, numRules, rules) {
   const potentialLocations = without(thing.locations, thing.location);
-  const matchedRules = [];
-  for(let i = 0; i < numRules; i++) {
-    if (checkTransitionMatch(rules[i], thing, potentialLocations, c.move_out)) {
-      matchedRules.push(rules[i]);
-    }
-  }
-  return matchedRules.length && matchedRules[Math.floor(Math.random() * matchedRules.length)];
+  const matchedRules = rules.filter(rule => {
+    return checkTransitionMatch(rule, thing, potentialLocations, c.move_out);
+  });
+  return !!matchedRules.length && matchedRules[Math.floor(Math.random() * matchedRules.length)];
 }
