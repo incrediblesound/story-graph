@@ -6,11 +6,12 @@ const matchTransitionFor = require('./matchTransitionFor');
  *
  * @param  {World} world
  *   The world to look for things within.
- * @return {Thing}
- *   A random Thing that has more than one location.
+ * @return {Boolean | [Transition, Thing]}
+ *   A Transition and matching Thing that has more than one location.
  */
 module.exports = function getRandomTransition(world) {
   const moveableSet = world.things.filter(thing => thing.locations.length > 1);
   const randomThing = moveableSet[Math.floor(Math.random() * moveableSet.length)];
-  return randomThing && [matchTransitionFor(randomThing, world.numRules, world.rules), randomThing];
+  const transition = matchTransitionFor(randomThing, world.numRules, world.rules);
+  return transition && [transition, randomThing];
 }
