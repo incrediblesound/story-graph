@@ -16,7 +16,7 @@
   "author": "James Edwards",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^3.10.1"
+    "lodash": "^4.12.0"
   },
   "devDependencies": {
     "istanbul": "^0.4.3",

@@ -47,7 +47,7 @@ function isATypeOrThing(line){
 function isATransition(line){
 	return (
 		line[0] === 'From' &&
-		_.contains(line, 'to')
+		_.includes(line, 'to')
 	)
 }
 
@@ -70,7 +70,7 @@ function isARuleDefinition(line){
 	return (
 		line[0] === 'If'&&
 		(line[1] === 'a' || line[1] === 'an') &&
-		_.contains(line, 'then')
+		_.includes(line, 'then')
 	)
 }
 
