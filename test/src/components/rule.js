@@ -28,17 +28,17 @@ describe('Rule', () => {
   describe('#constructor()', () => {
     it('Creates a new Rule', () => {
       rule = new Rule({
-      	cause: {
-      		type: [Sport, c.encounter, Flex],
-      		value: [c.source, 'trips on', c.target]
-      	},
-      	consequent: {
-      		type: [],
-      		value: [c.target, 'rolls around']
-      	},
-      	isDirectional: true,
-      	mutations: null,
-      	consequentThing: null
+        cause: {
+          type: [Sport, c.encounter, Flex],
+          value: [c.source, 'trips on', c.target]
+        },
+        consequent: {
+          type: [],
+          value: [c.target, 'rolls around']
+        },
+        isDirectional: true,
+        mutations: null,
+        consequentThing: null
       }, 0);
       assert.deepEqual(rule, {
         cause: {
