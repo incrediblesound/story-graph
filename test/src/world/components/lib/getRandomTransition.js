@@ -74,7 +74,7 @@ describe('getRandomTransition', () => {
         members: undefined,
         lifeTime: 999,
         callback: null,
-        entryTime: 0
+        entryTime: 1
       }
     ]);
   });
