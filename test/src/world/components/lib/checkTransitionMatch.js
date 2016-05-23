@@ -24,8 +24,8 @@ describe('checkTransitionMatch', () => {
       value: []
     },
     consequent: {
-  		type: [c.source, c.move_in, 'the shed'],
-  		value: [c.source, 'wanders', 'the shed']
+      type: [c.source, c.move_in, 'the shed'],
+      value: [c.source, 'wanders', 'the shed']
     },
     isDirectional: true,
     mutations: null,
@@ -40,8 +40,8 @@ describe('checkTransitionMatch', () => {
         value: []
       },
       consequent: {
-    		type: [c.source, c.move_in, 'the shed'],
-    		value: [c.source, 'wanders', 'the shed']
+        type: [c.source, c.move_in, 'the shed'],
+        value: [c.source, 'wanders', 'the shed']
       },
       isDirectional: true,
       mutations: null,
