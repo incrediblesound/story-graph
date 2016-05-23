@@ -1,7 +1,4 @@
-## New
-Things in the world now have locations. Things will only generate encounters with other things in the same location. Also, the makeStory method of the world object will randomly add in "transitions" which are special rules that move a thing from one location to another.
-
-Locations increases the complexity of StoryGraph quite a bit, and as a result I am moving the world generator facility to the front of the readme to encourage people to use that interface for generating their worlds. The API documentation will come after the generator facility documentation and will be useful for those who want to tweak their world in various ways.
+[![Build Status](https://travis-ci.org/incrediblesound/story-graph.svg?branch=master)](https://travis-ci.org/incrediblesound/story-graph)
 
 ###Index
 [Overview](#overview)  
