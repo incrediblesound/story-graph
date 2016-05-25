@@ -1,36 +1,22 @@
-var Type = function(name){
-  this.types = [].concat(name);
-}
+'use strict';
 
-Type.prototype.extend = function(name){
-  if(name instanceof Type){
-    name = name.get();
-  } else {
-    name = [].concat(name)
+module.exports = class Type {
+  constructor(name) {
+    this.types = [name];
   }
-  var types = this.get();
-  types = types.concat(name)
-  var newType = new Type(types);
-  
-  return newType;
-}
-
-Type.prototype.get = function(){
-  return this.types.slice();
-}
-
-Type.prototype.replace = function(oldType, newType){
-  var index = this.types.indexOf(oldType);
-  this.types[index] = newType;
-}
-
-Type.prototype.add = function(newType){
-  this.types.push(newType);
-}
-
-Type.prototype.remove = function(type){
-  var index = this.types.indexOf(type);
-  this.types.splice(index, 1);
-}
-
-module.exports = Type;
+  extend(name) {
+    return new Type(this.get().concat(name instanceof Type ? name.get() : [name]));
+  }
+  get() {
+    return this.types.slice();
+  }
+  replace(oldType, newType) {
+    this.types[this.types.indexOf(oldType)] = newType;
+  }
+  add(type) {
+    this.types.push(type);
+  }
+  remove(type) {
+    this.types.splice(this.types.indexOf(type), 1);
+  }
+};
