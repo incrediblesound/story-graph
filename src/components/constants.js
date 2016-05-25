@@ -7,4 +7,4 @@ module.exports = {
   encounter: 'ENCOUNTER',
   target: 'TARGET',
   source: 'SOURCE'
-}
+};

@@ -23,4 +23,4 @@ module.exports = function matchTransitionFor(thing, numRules, rules) {
     return checkTransitionMatch(rule, thing, potentialLocations, c.move_out);
   });
   return !!matchedRules.length && matchedRules[Math.floor(Math.random() * matchedRules.length)];
-}
+};

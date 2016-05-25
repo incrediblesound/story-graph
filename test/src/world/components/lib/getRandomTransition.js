@@ -24,8 +24,8 @@ describe('getRandomTransition', () => {
         value: []
       },
       consequent: {
-    		type: [c.source, c.move_in, 'the shed'],
-    		value: [c.source, 'wanders', 'the shed']
+    		                                        type: [c.source, c.move_in, 'the shed'],
+    		                                        value: [c.source, 'wanders', 'the shed']
       },
       isDirectional: true,
       mutations: null,
@@ -36,23 +36,23 @@ describe('getRandomTransition', () => {
         id: 0,
         isDirectional: true,
         cause: {
-          "type": [
+          'type': [
             0,
-            "MOVE_OUT",
-            "the garden",
+            'MOVE_OUT',
+            'the garden'
           ],
           value: []
         },
         consequent: {
-          "type": [
-            "SOURCE",
-            "MOVE_IN",
-            "the shed",
+          'type': [
+            'SOURCE',
+            'MOVE_IN',
+            'the shed'
           ],
-          "value": [
-            "SOURCE",
-            "wanders",
-            "the shed",
+          'value': [
+            'SOURCE',
+            'wanders',
+            'the shed'
           ]
         },
         consequentThing: null,
@@ -61,8 +61,8 @@ describe('getRandomTransition', () => {
       {
         id: 0,
         type: {
-          "types": [
-            "cat"
+          'types': [
+            'cat'
           ]
         },
         name: 'Sport',

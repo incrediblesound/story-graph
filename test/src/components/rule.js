@@ -45,19 +45,19 @@ describe('Rule', () => {
           type: [
             0,
             'ENCOUNTER',
-            1,
+            1
           ],
           value: [
             'SOURCE',
             'trips on',
-            'TARGET',
+            'TARGET'
           ]
         },
         consequent: {
           type: [],
           value: [
             'TARGET',
-            'rolls around',
+            'rolls around'
           ]
         },
         consequentThing: null,
