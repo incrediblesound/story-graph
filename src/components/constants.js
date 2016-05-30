@@ -6,5 +6,5 @@ module.exports = {
   vanish: 'VANISH',
   encounter: 'ENCOUNTER',
   target: 'TARGET',
-  source: 'SOURCE'
+  source: 'SOURCE',
 };

@@ -1,10 +1,4 @@
-const _ = require('lodash');
 const utility = require('./utility.js');
-
-module.exports = {
-  advance,
-  processTimeTrigger
-};
 
 function advance(world) {
   if (world.timedEvents[world.timeIndex] !== undefined) {
@@ -17,14 +11,16 @@ function advance(world) {
     const age = world.timeIndex - thing.entryTime;
     if (age > thing.lifeTime) {
       utility.removeThing(world, thing.id);
-    }
-    else if (thing.callback !== null) {
+    } else if (thing.callback !== null) {
       world.processTimeTrigger(world, thing.callback(world.timeIndex));
     }
   });
   world.timeIndex++;
 }
 
-function processTimeTrigger(world, timeEvent) {
-    // do smth
-}
+// function processTimeTrigger(world, timeEvent) {}
+
+module.exports = {
+  advance,
+  // processTimeTrigger,
+};

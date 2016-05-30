@@ -1,69 +1,47 @@
-var _ = require('lodash');
-
-module.exports = tokenizer;
-
-function tokenizer(tokens) {
-
-  var result = {
-    types: [],
-    things: [],
-    rules: [],
-    locations: [],
-    transitions: []
-  };
-
-  var parserMap = {
-    ['simple type']: simpleType,
-    ['thing']: thing,
-    ['compound type']: compoundType,
-    ['decorator']: decorator,
-    ['location']: location,
-    ['rule']: rule,
-    ['transition']: transition
-  };
-  _.each(tokens, function (tok) {
-    parserMap[tok.type](tok.line, result);
-  });
-
-  return result;
-}
+const _ = require('lodash');
 
 function simpleType(line, result) {
-  var calledIdx = line.indexOf('called');
-  var name = line[calledIdx + 1];
-  result.types.push({ type: 'simple', name: name });
+  const calledIdx = line.indexOf('called');
+  const name = line[calledIdx + 1];
+  result.types.push({
+    type: 'simple',
+    name,
+  });
 }
 
 function thing(line, result) {
-  var preDef = line.indexOf('a') > -1 ? line.indexOf('a') : line.indexOf('an');
-  var calledIdx = line.indexOf('called');
-  var types = line.slice(preDef + 1, calledIdx);
-  var name = line[calledIdx + 1];
+  const preDef = line.indexOf('a') > -1 ? line.indexOf('a') : line.indexOf('an');
+  const calledIdx = line.indexOf('called');
+  const types = line.slice(preDef + 1, calledIdx);
+  let name = line[calledIdx + 1];
   name = name.replace(',', '');
-  var remainder = line.slice(calledIdx + 1);
-  var current, location, locations = [];
+  const remainder = line.slice(calledIdx + 1);
+  let current;
+  let theLocation;
+  const locations = [];
   while (remainder.length) {
     current = remainder.shift();
-    location = [];
+    theLocation = [];
     while (!_.includes(current, '<')) {
       current = remainder.shift();
     }
     while (!_.includes(current, '>')) {
-      location.push(current);
+      theLocation.push(current);
       current = remainder.shift();
     }
-    location.push(current);
-    locations.push(location.join(' ').replace(/<|>/g, ''));
+    theLocation.push(current);
+    locations.push(theLocation.join(' ').replace(/<|>/g, ''));
   }
   result.things.push({ types, name, locations });
 }
 
 function transition(line, result) {
   line.shift(); // remove the 'From'
-  var first = [], second = [], text = [];
-  var typeOrThing;
+  const first = [];
+  const second = [];
+  const text = [];
 
-  var current = line.shift();
+  let current = line.shift();
   while (!_.includes(current, '>')) {
     first.push(current);
     current = line.shift();
@@ -80,7 +58,7 @@ function transition(line, result) {
 
   if (line[0] === 'the') { line.shift(); }
 
-  typeOrThing = line.shift();
+  const typeOrThing = line.shift();
 
   current = line.shift();
   while (!_.includes(current, '>')) {
@@ -90,50 +68,49 @@ function transition(line, result) {
   text.push(current);
   result.transitions.push({
     from: first.join(' ').replace(/<|>/g, ''),
-    to:  second.join(' ').replace(/<|>/g, ''),
-    text:  text.join(' ').replace(/<|>/g, ''),
-    typeOrThing
+    to: second.join(' ').replace(/<|>/g, ''),
+    text: text.join(' ').replace(/<|>/g, ''),
+    typeOrThing,
   });
-
 }
 
 function compoundType(line, result) {
-  var referenceName = line[1];
-  var baseType = line[line.length - 1];
-  var addedTypes = line.slice(4, line.length - 1);
+  const referenceName = line[1];
+  const baseType = line[line.length - 1];
+  const addedTypes = line.slice(4, line.length - 1);
   if (!addedTypes.length) {
     result.types.push({
       type: 'compound',
       name: referenceName,
-      base: baseType
+      base: baseType,
     });
   } else {
     result.types.push({
       type: 'compound',
       name: referenceName,
       base: baseType,
-      additions: addedTypes
+      additions: addedTypes,
     });
   }
 }
 
 function decorator(line, result) {
-  var first = line[3];
+  const first = line[3];
   if (line.length === 4) {
     result.types.push({ type: 'decorator', addition: [first] });
   } else {
-    var second = line[7];
+    const second = line[7];
     result.types.push({ type: 'decorator', addition: [first, second] });
   }
 }
 
 function location(line, result) {
-  var current = line.shift();
+  let current = line.shift();
   while (!_.includes(current, '<')) {
     current = line.shift();
   }
 
-  var name = [];
+  const name = [];
   while (!_.includes(current, '>')) {
     name.push(current);
     current = line.shift();
@@ -141,56 +118,83 @@ function location(line, result) {
   name.push(current);
 
   result.locations.push({
-    name: name.join(' ').replace(/<|>/g, '')
+    name: name.join(' ').replace(/<|>/g, ''),
   });
 }
 
 function rule(line, result) {
-  line = line.slice(2);
-  var source = [];
-  var target = [];
-  var encounterText = [];
-  var consequenceText = [];
+  let theLine = line.slice(2);
+  const source = [];
+  const target = [];
+  const encounterText = [];
+  const consequenceText = [];
 
-  while (!_.includes(line[0], '<')) {
-    source.push(line.shift());
+  while (!_.includes(theLine[0], '<')) {
+    source.push(theLine.shift());
   }
 
   while (!_.includes(line[0], '>')) {
-    encounterText.push(line.shift());
+    encounterText.push(theLine.shift());
   }
-  encounterText.push(line.shift());
+  encounterText.push(theLine.shift());
 
-  line.shift(); // remove a or an
-  var consequentA = [];
-  var consequentB = [];
+  theLine.shift(); // remove a or an
+  const consequentA = [];
+  const consequentB = [];
 
-  while (line[0] !== 'then') {
-    target.push(line.shift());
+  while (theLine[0] !== 'then') {
+    target.push(theLine.shift());
   }
-  line = line.slice(2);
+  theLine = theLine.slice(2);
 
-  while (!_.includes(line[0], '<')) {
-    consequentA.push(line.shift());
+  while (!_.includes(theLine[0], '<')) {
+    consequentA.push(theLine.shift());
   }
 
-  while (!_.includes(line[0], '>')) {
-    consequenceText.push(line.shift());
+  while (!_.includes(theLine[0], '>')) {
+    consequenceText.push(theLine.shift());
   }
-  consequenceText.push(line.shift());
+  consequenceText.push(theLine.shift());
 
-  if (line.length) {
-    line.shift();
-    while (line.length) {
-      consequentB.push(line.shift());
+  if (theLine.length) {
+    theLine.shift();
+    while (theLine.length) {
+      consequentB.push(theLine.shift());
     }
   }
   result.rules.push({
-    source: source,
-    target: target,
-    consequentA: consequentA,
-    consequentB: consequentB,
-    encounterText: encounterText.join(' ').replace(/\<|\>/g, ''),
-    consequenceText: consequenceText.join(' ').replace(/\<|\>/g, '')
+    source,
+    target,
+    consequentA,
+    consequentB,
+    encounterText: encounterText.join(' ').replace(/<|>/g, ''),
+    consequenceText: consequenceText.join(' ').replace(/<|>/g, ''),
   });
 }
+
+function tokenizer(tokens) {
+  const result = {
+    types: [],
+    things: [],
+    rules: [],
+    locations: [],
+    transitions: [],
+  };
+
+  const parserMap = {
+    'simple type': simpleType,
+    thing,
+    'compound type': compoundType,
+    decorator,
+    location,
+    rule,
+    transition,
+  };
+  _.each(tokens, tok => {
+    parserMap[tok.type](tok.line, result);
+  });
+
+  return result;
+}
+
+module.exports = tokenizer;

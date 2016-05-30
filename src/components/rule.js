@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = class Rule {
   constructor(data, id) {
     this.id = id;

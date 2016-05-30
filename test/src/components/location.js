@@ -6,10 +6,10 @@ describe('Location', () => {
     it('Creates a new Location', () => {
       assert.deepEqual(new Location({
         name: 'the garden',
-        id: 0
+        id: 0,
       }), {
         name: 'the garden',
-        id: 0
+        id: 0,
       });
     });
   });

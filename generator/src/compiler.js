@@ -24,7 +24,7 @@ function compileTypes(types, result) {
   var funcMap = {
     simple: writeSimpleType,
     compound: writeCompoundType,
-    decorator: writeTypeDecorator
+    decorator: writeTypeDecorator,
   };
   _.each(types, function (data) {
     result = funcMap[data.type](data, result);

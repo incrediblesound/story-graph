@@ -1,9 +1,4 @@
-'use strict';
-
 const _ = require('lodash');
-const Type = require('../components/type.js');
-const Thing = require('../components/thing.js');
-const c = require('../components/constants.js');
 const Rule = require('../components/rule.js');
 const Location = require('../components/location.js');
 
@@ -29,8 +24,8 @@ class World {
     this.output = '';
   }
   addRule(data) {
-    var id = this.numRules;
-    var rule = new Rule(data, id);
+    const id = this.numRules;
+    const rule = new Rule(data, id);
     this.rules.push(rule);
     this.numRules++;
     return id;
@@ -41,70 +36,69 @@ class World {
     this.numLocations++;
   }
   addThing(thing) {
-    if (Array.isArray(thing)) {
-      _.each(thing, function (item) {
-        add.apply(this, [item]);
-      }, this);
-    } else {
-      var id = add.apply(this, [thing]);
-      return id;
-    }
-
-    function add(thing) {
-      var id = this.lastId + 1;
+    function add(thingToAdd) {
+      const id = this.lastId + 1;
       this.lastId = id;
-      thing.id = id;
-      thing.setEntryTime(this.timeIndex);
-      this.things.push(thing);
+      thingToAdd.id = id;
+      thingToAdd.setEntryTime(this.timeIndex);
+      this.things.push(thingToAdd);
       this.size++;
       return id;
     }
+
+    if (Array.isArray(thing)) {
+      _.each(thing, item => add.apply(this, [item]), this);
+      return false;
+    }
+    const id = add.apply(this, [thing]);
+    return id;
   }
-  renderEvent(story) {
-    var output = '';
-    story.forEach((storyEvent) => {
+  renderEvent(theStory) {
+    let output = '';
+    theStory.forEach(storyEvent => {
       const rule = this.findRule(storyEvent);
       output += events.processEvent(this, rule, storyEvent);
     });
     this.output = `${this.output}${output}`;
   }
   randomEvent() {
-    var output = '';
-    var nextEvent = false, counter = 0;
+    let output = '';
+    let nextEvent = false;
+    let counter = 0;
     while (!nextEvent) {
       counter++;
       if (counter > 100) { throw new Error('Couldn\'t find match'); }
       nextEvent = story.randomMatch(this);
     }
     if (nextEvent.length === 2) {
-      var rule = nextEvent[0];
-      var thing = nextEvent[1];
+      const rule = nextEvent[0];
+      const thing = nextEvent[1];
       output += events.processEvent(this, rule, [thing.id, rule.cause.type[1]]);
     } else {
-      var rule = nextEvent[0];
-      var one = nextEvent[1];
-      var two = nextEvent[2];
+      const rule = nextEvent[0];
+      const one = nextEvent[1];
+      const two = nextEvent[2];
       output += events.processEvent(this, rule, [one.id, rule.cause.type[1], two.id]);
     }
     this.output = `${this.output}${output}`;
   }
-  runStory(steps, events) {
-    this.registerTimedEvents(events);
+  runStory(steps, theEvents) {
+    this.registerTimedEvents(theEvents);
     while (this.timeIndex < steps) {
       time.advance(this);
     }
   }
-  registerTimedEvents(events) {
-    events.forEach((event) => {
+  registerTimedEvents(theEvents) {
+    theEvents.forEach(event => {
       this.timedEvents[event.step] = event.event;
     });
   }
   findRule(piece) {
-    var source = utility.getPiece(this, piece[0]);
-    var action = piece[1];
-    var target = utility.getPiece(this, piece[2]);
-    for (var i = 0; i < this.numRules; i++) {
-      var current = this.rules[i];
+    const source = utility.getPiece(this, piece[0]);
+    const action = piece[1];
+    const target = utility.getPiece(this, piece[2]);
+    for (let i = 0; i < this.numRules; i++) {
+      const current = this.rules[i];
       if (story.checkMatch(current, source, target, action)) {
         return current;
       }
@@ -112,25 +106,28 @@ class World {
     return false;
   }
   getLocationByName(name) {
-    for (var i = 0; i < this.locations; i++) {
+    for (let i = 0; i < this.locations; i++) {
       if (this.locations[i].name === name) {
         return this.locations[i].id;
       }
     }
+    return false;
   }
   getLocationById(id) {
-    for (var i = 0; i < this.locations; i++) {
+    for (let i = 0; i < this.locations; i++) {
       if (this.locations[i].id === id) {
         return this.locations[i];
       }
     }
+    return false;
   }
   getThingById(id) {
-    for (var i = 0; i < this.size; i++) {
+    for (let i = 0; i < this.size; i++) {
       if (this.things[i].id === id) {
         return this.things[i];
       }
     }
+    return false;
   }
 }
 
