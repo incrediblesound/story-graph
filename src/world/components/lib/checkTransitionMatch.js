@@ -29,4 +29,4 @@ module.exports = function checkTransitionMatch(rule, thing, locations, action) {
   return ruleSource instanceof Type
     ? includes(thing.getTypes(), ruleSource.get())
     : ruleSource === thing.id;
-}
+};

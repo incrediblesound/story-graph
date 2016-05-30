@@ -11,5 +11,5 @@ module.exports = {
   Rule,
   Type,
   Location,
-  World
+  World,
 };

@@ -14,4 +14,4 @@ module.exports = function getRandomTransition(world) {
   const randomThing = moveableSet[Math.floor(Math.random() * moveableSet.length)];
   const transition = matchTransitionFor(randomThing, world.numRules, world.rules);
   return transition && [transition, randomThing];
-}
+};

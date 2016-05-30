@@ -1,7 +1,6 @@
 const assert = require('assert');
 const Rule = require('../../../src/components/rule');
 const SG = require('../../../src/main');
-const world = new SG.World();
 const Thing = SG.Thing;
 const Type = SG.Type;
 const c = SG.constants;
@@ -17,28 +16,28 @@ describe('Rule', () => {
   const Sport = world.addThing(new Thing({
     type: cute(cat),
     name: 'Sport',
-    locations: ['the garden']
+    locations: ['the garden'],
   }));
   const Flex = world.addThing(new Thing({
     type: fluffy(dog),
     name: 'Flex',
-    locations: ['the garden']
+    locations: ['the garden'],
   }));
-  var rule;
+  let rule;
   describe('#constructor()', () => {
     it('Creates a new Rule', () => {
       rule = new Rule({
         cause: {
           type: [Sport, c.encounter, Flex],
-          value: [c.source, 'trips on', c.target]
+          value: [c.source, 'trips on', c.target],
         },
         consequent: {
           type: [],
-          value: [c.target, 'rolls around']
+          value: [c.target, 'rolls around'],
         },
         isDirectional: true,
         mutations: null,
-        consequentThing: null
+        consequentThing: null,
       }, 0);
       assert.deepEqual(rule, {
         cause: {
@@ -51,19 +50,19 @@ describe('Rule', () => {
             'SOURCE',
             'trips on',
             'TARGET',
-          ]
+          ],
         },
         consequent: {
           type: [],
           value: [
             'TARGET',
             'rolls around',
-          ]
+          ],
         },
         consequentThing: null,
         id: 0,
         isDirectional: true,
-        mutations: null
+        mutations: null,
       });
     });
   });
