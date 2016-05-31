@@ -82,7 +82,7 @@ class World {
     }
     this.output = `${this.output}${output}`;
   }
-  runStory(steps, theEvents) {
+  runStory(steps, theEvents = []) {
     this.registerTimedEvents(theEvents);
     while (this.timeIndex < steps) {
       time.advance(this);

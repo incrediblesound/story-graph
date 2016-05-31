@@ -62,7 +62,7 @@ function tokenizer(body) {
           type: 'simple type',
           line: theLine,
         });
-      } else if (isAPlaceDefinition(line)) {
+      } else if (isAPlaceDefinition(theLine)) {
         tokens.push({
           type: 'location',
           line: theLine,
@@ -70,16 +70,16 @@ function tokenizer(body) {
       } else {
         tokens.push({ type: 'thing', line: theLine });
       }
-    } else if (isATransition(line)) {
+    } else if (isATransition(theLine)) {
       tokens.push({ type: 'transition', line: theLine });
-    } else if (isACompondType(line)) {
+    } else if (isACompondType(theLine)) {
       tokens.push({ type: 'compound type', line: theLine });
-    } else if (isATypeDecorator(line)) {
+    } else if (isATypeDecorator(theLine)) {
       tokens.push({ type: 'decorator', line: theLine });
-    } else if (isARuleDefinition(line)) {
+    } else if (isARuleDefinition(theLine)) {
       tokens.push({ type: 'rule', line: theLine });
     } else {
-      process.stdout.write(`Error: no match for line \"${line.join(' ')}\".`);
+      process.stdout.write(`Error: no match for line \"${line}\".\n`);
     }
   });
   return tokens;

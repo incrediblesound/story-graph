@@ -2,7 +2,7 @@ const _ = require('lodash');
 const c = require('./constants.js');
 
 module.exports = class Thing {
-  constructory(data, storyEvent, world) {
+  constructor(data, storyEvent, world) {
     this.id = null;
     this.type = data.type;
     this.name = data.name;
@@ -29,7 +29,7 @@ module.exports = class Thing {
     }, this);
   }
   getTypes() {
-    this.type.get();
+    return this.type.get();
   }
   setEntryTime(time) {
     this.entryTime = time;

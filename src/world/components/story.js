@@ -39,7 +39,6 @@ function checkMatch(rule, source, target, action) {
   let match;
   const ruleSource = rule.getSource();
   const ruleTarget = rule.getTarget();
-
   const sourceMatch = ruleSource instanceof Type
     ? contains(source.getTypes(), ruleSource.get())
     : ruleSource === source.id;

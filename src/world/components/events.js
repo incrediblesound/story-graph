@@ -23,7 +23,7 @@ function populateRuleType(world, event, sourceEvent) {
 }
 
 function processElementValue(world, element) {
-  const result = [];
+  let result = [];
   _.each(element, (el) => {
     let actor = utility.getPiece(world, el);
 
@@ -32,6 +32,7 @@ function processElementValue(world, element) {
       result.push(actor);
     }
   }, this);
+  result = _.compact(result);
   let body = result.join(' ');
   if (!body.length) {
     return '';
@@ -91,7 +92,7 @@ function processEvent(world, rule, storyEvent) {
   const tertiaryType = populateRuleType(world, rule.consequent.type.slice(), storyEvent);
   const cause = processElementValue(world, causeType);
   const consequent = processElementValue(world, consequentType);
-  const tertiary = tertiaryType !== undefined ? applyConsequent(world, tertiaryType) : '';
+  const tertiary = !!tertiaryType ? applyConsequent(world, tertiaryType) : '';
 
   if (!!rule.consequentThing) {
     addConsequentThing(world, rule, storyEvent);

@@ -15,7 +15,7 @@ function thing(line, result) {
   const types = line.slice(preDef + 1, calledIdx);
   let name = line[calledIdx + 1];
   name = name.replace(',', '');
-  const remainder = line.slice(calledIdx + 1);
+  const remainder = line.slice(calledIdx + 2);
   let current;
   let theLocation;
   const locations = [];
@@ -133,7 +133,7 @@ function rule(line, result) {
     source.push(theLine.shift());
   }
 
-  while (!_.includes(line[0], '>')) {
+  while (!_.includes(theLine[0], '>')) {
     encounterText.push(theLine.shift());
   }
   encounterText.push(theLine.shift());
