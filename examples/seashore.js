@@ -11,33 +11,19 @@ const life = entity.extend('life');
 const animal = life.extend('animal');
 const solid = entity.extend('solid');
 
-const light = type => {
-  return type.extend('light');
-};
+const light = type => type.extend('light');
 
-const wet = type => {
-  return type.extend('wet');
-};
+const wet = type => type.extend('wet');
 
-const slow = type => {
-  return type.extend('slow');
-};
+const slow = type => type.extend('slow');
 
-const bright = type => {
-  return type.extend('bright');
-};
+const bright = type => type.extend('bright');
 
-const dark = type => {
-  return type.extend('dark');
-};
+const dark = type => type.extend('dark');
 
-const expansive = type => {
-  return type.extend('expansive');
-};
+const expansive = type => type.extend('expansive');
 
-const small = type => {
-  return type.extend('small');
-};
+const small = type => type.extend('small');
 
 const bird = animal.extend('bird');
 

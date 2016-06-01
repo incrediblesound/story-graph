@@ -1,84 +1,82 @@
-var World = require('../src/world/world.js');
-var Thing = require('../src/components/thing.js');
-var c = require('../src/components/constants.js');
-var Type = require('../src/components/type.js');
+const World = require('../src/world/world.js');
+const Thing = require('../src/components/thing.js');
+const c = require('../src/components/constants.js');
+const Type = require('../src/components/type.js');
 
-var entity = new Type('entity');
+const entity = new Type('entity');
 
-var life = entity.extend('life');
-var animal = life.extend('animal');
-var plant = life.extend('plant');
+const life = entity.extend('life');
+const animal = life.extend('animal');
+const plant = life.extend('plant');
 
-var spirit = entity.extend('spirit');
-var connection = new Type('connection');
+const spirit = entity.extend('spirit');
+const connection = new Type('connection');
 
-var extendType = typeName => {
-  return type => {
-    if (type === undefined) {
-      return new Type(typeName);
-    }
-    return type.extend(typeName);
-  };
+const extendType = typeName => type => {
+  if (type === undefined) {
+    return new Type(typeName);
+  }
+  return type.extend(typeName);
 };
 
-var bumbling = extendType('bumbling');
-var bright = extendType('bright');
-var cold = extendType('cold');
-var hot = extendType('hot');
-var dark = extendType('dark');
-var jolting = extendType('jolting');
-var curving = extendType('curving');
-var outpouring = extendType('outpouring');
-var beautiful = extendType('beautiful');
-var complex = extendType('complex');
-var simple = extendType('simple');
-var quiet = extendType('quiet');
-var loud = extendType('loud');
-var inflowing = extendType('inflowing');
+const bumbling = extendType('bumbling');
+const bright = extendType('bright');
+const cold = extendType('cold');
+const hot = extendType('hot');
+const dark = extendType('dark');
+const jolting = extendType('jolting');
+const curving = extendType('curving');
+const outpouring = extendType('outpouring');
+const beautiful = extendType('beautiful');
+const complex = extendType('complex');
+const simple = extendType('simple');
+const quiet = extendType('quiet');
+const loud = extendType('loud');
+const inflowing = extendType('inflowing');
 
-var world = new World();
+const world = new World();
 
-var whisper = new Thing({
+const whisper = new Thing({
   type: bumbling(quiet(dark(spirit))),
   name: 'the whisper',
 });
 
-var reeds = new Thing({
+const reeds = new Thing({
   type: outpouring(beautiful(simple(plant))),
   name: 'the cat tails',
 });
 
-var river = new Thing({
+const river = new Thing({
   type: curving(complex(outpouring(spirit))),
   name: 'the river',
 });
 
-var shadow = new Thing({
+const shadow = new Thing({
   type: dark(inflowing(quiet(spirit))),
   name: 'the shadow',
 });
 
-var duck = new Thing({
+const duck = new Thing({
   type: bumbling(outpouring(curving(animal))),
   name: 'a duck',
 });
 
-var bluejay = new Thing({
+const bluejay = new Thing({
   type: bumbling(loud(jolting(animal))),
   name: 'a bluejay',
 });
 
-var sunlight = new Thing({
+const sunlight = new Thing({
   type: outpouring(bright(simple(hot(spirit)))),
   name: 'the sunlight',
 });
 
-var snow = new Thing({
+const snow = new Thing({
   type: bright(beautiful(complex(inflowing(cold(spirit))))),
   name: 'the snow',
 });
 
-var ice = new Thing({
+const ice = new Thing({
   type: bright(beautiful(simple(inflowing(cold(spirit))))),
   name: 'the ice',
 });
@@ -101,7 +99,7 @@ world.addRule({
     members: [c.source, c.target],
     lifeTime: 2,
     initialize: () => {
-      this.name = this.members[0].name + ' ' + this.name + ' ' + this.members[1].name;
+      this.name = `${this.members[0].name} ${this.name} ${this.members[1].name}`;
     },
   },
 });
@@ -137,7 +135,7 @@ world.addRule({
     members: [c.source, c.target],
     lifeTime: 2,
     initialize: () => {
-      this.name = this.members[0].name + ' ' + this.name + ' ' + this.members[1].name;
+      this.name = `${this.members[0].name} ${this.name} ${this.members[1].name}`;
     },
   },
 });
@@ -158,7 +156,7 @@ world.addRule({
     members: [c.source, c.target],
     lifeTime: 2,
     initialize: () => {
-      this.name = this.members[0].name + ' ' + this.name + ' ' + this.members[1].name;
+      this.name = `${this.members[0].name} ${this.name} ${this.members[1].name}`;
     },
   },
 });
@@ -179,7 +177,7 @@ world.addRule({
     members: [c.source, c.target],
     lifeTime: 2,
     initialize: () => {
-      this.name = this.members[1].name + ' ' + this.name;
+      this.name = `${this.members[1].name} ${this.name}`;
     },
   },
 });
