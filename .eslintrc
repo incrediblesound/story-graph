@@ -3,3 +3,4 @@ env:
 extends: airbnb-base
 rules:
   no-param-reassign: [2, { props: false }]
+  comma-dangle: 0

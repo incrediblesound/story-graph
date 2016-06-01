@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 function writeSimpleType(data, result) {
-  return `${result}const ${data.name} = new Type(\'${data.name}\')\n`;
+  return `${result}const ${data.name} = new Type(\'${data.name}\');\n\n`;
 }
 
 function writeCompoundType(data, result) {
@@ -11,14 +11,14 @@ function writeCompoundType(data, result) {
       typeExpression = `${decorator}(${typeExpression})`;
     });
   }
-  return `${result}const ${data.name} = ${typeExpression} ;\n\n`;
+  return `${result}const ${data.name} = ${typeExpression};\n\n`;
 }
 
 function writeTypeDecorator(data, result) {
   let newResult = result;
   _.each(data.addition, value => {
     newResult += `const ${value} = function(type) {\n`;
-    newResult += `\treturn type.extend(\'${value}\');\n}\n\n`;
+    newResult += ` return type.extend(\'${value}\');\n}\n\n`;
   });
   return newResult;
 }
@@ -37,15 +37,15 @@ function compileTransitions(data, result) {
   let newResult = result;
   _.each(data, transition => {
     newResult += 'world.addRule({\n';
-    newResult += '\tcause: {\n';
-    newResult += `\t\ttype: [${transition.typeOrThing}, c.move_out, \'${transition.from}\'],\n`;
-    newResult += '\t\tvalue: [\'\']\n\t},\n';
-    newResult += '\tconsequent: {\n';
-    newResult += `\t\ttype: [c.source, c.move_in, \'${transition.to}\'],\n`;
-    newResult += `\t\tvalue: [c.source, \'${transition.text}\', \'${transition.to}\']\n\t},\n`;
-    newResult += '\tisDirectional: true,\n';
-    newResult += '\tmutations: null,\n';
-    newResult += '\tconsequentThing: null\n';
+    newResult += '  cause: {\n';
+    newResult += `    type: [${transition.typeOrThing}, c.move_out, \'${transition.from}\'],\n`;
+    newResult += '    value: [\'\']\n  },\n';
+    newResult += '  consequent: {\n';
+    newResult += `    type: [c.source, c.move_in, \'${transition.to}\'],\n`;
+    newResult += `    value: [c.source, \'${transition.text}\', \'${transition.to}\']\n  },\n`;
+    newResult += '  isDirectional: true,\n';
+    newResult += '  mutations: null,\n';
+    newResult += '  consequentThing: null\n';
     newResult += '})\n\n';
   });
   return newResult;
@@ -76,12 +76,11 @@ function isEqual(a, b) {
 function compileThings(things, result) {
   let newResult = result;
   _.each(things, data => {
-    newResult += `const ${data.name} = new Thing({`;
-    newResult += `type: ${processTypes(data.types)}`;
-    newResult += `, name: \'${data.name}\'`;
-    newResult += `, locations: ${JSON.stringify(data.locations)}`;
-    newResult += '})\n';
-    newResult += `const ${data.name} = world.addThing(${data.name})\n\n`;
+    newResult += `const ${data.name} = world.addThing(`;
+    newResult += `new Thing({\n  type: ${processTypes(data.types)}`;
+    newResult += `,\n  name: \'${data.name}\'`;
+    newResult += `,\n  locations: ${JSON.stringify(data.locations)}`;
+    newResult += '\n}));\n\n';
   });
   return newResult;
 }
@@ -111,20 +110,20 @@ function compileRules(rules, result) {
 
   _.each(rules, rule => {
     newResult += 'world.addRule({\n';
-    newResult += '\tcause: {\n';
-    newResult += `\t\ttype: [${processTypes(rule.source.slice())}, c.encounter, `;
+    newResult += '  cause: {\n';
+    newResult += `    type: [${processTypes(rule.source.slice())}, c.encounter, `;
     newResult += `${processTypes(rule.target.slice())}],\n`;
-    newResult += `\t\tvalue: [c.source, \'${rule.encounterText}\', c.target]\n\t},\n`;
-    newResult += '\tconsequent: {\n';
-    newResult += '\t\ttype: [],\n';
+    newResult += `    value: [c.source, \'${rule.encounterText}\', c.target]\n  },\n`;
+    newResult += '  consequent: {\n';
+    newResult += '    type: [],\n';
     const source = matchEntity(rule.consequentA, rule, 'c.source');
     const target = matchEntity(rule.consequentB, rule, 'c.target');
-    newResult += `\t\tvalue: [${source}, \'' + rule.consequenceText + '\'${target}]\n\t},\n`;
-    newResult += '\tisDirectional: true,\n';
-    newResult += '\tmutations: null,\n';
-    newResult += '\tconsequentThing: null/*{ type:\'\', name:\'\', members:[c.source,c.target],';
+    newResult += `    value: [${source}, \'${rule.consequenceText}\'${target}]\n  },\n`;
+    newResult += '  isDirectional: true,\n';
+    newResult += '  mutations: null,\n';
+    newResult += '  consequentThing: null/*{ type:\'\', name:\'\', members:[c.source,c.target],';
     newResult += 'lifeTime: 1, initialize: function(world){}}*/\n';
-    newResult += '})\n\n';
+    newResult += '});\n\n';
   });
 
   return newResult;
@@ -139,17 +138,17 @@ function compileTypes(types, result) {
     decorator: writeTypeDecorator,
   };
   _.each(types, data => {
-    newResult = funcMap[data.type](data, result);
+    newResult = funcMap[data.type](data, newResult);
   });
   return newResult;
 }
 
 module.exports = structure => {
-  let result = `const SG = require(\'./src/main.js\');\n
-  const world = new SG.World();
-  const Thing = SG.Thing;
-  const Type = SG.Type;
-  const c = SG.constants;\n`;
+  let result = 'const SG = require(\'./src/main.js\');\n'
+    + 'const world = new SG.World();\n'
+    + 'const Thing = SG.Thing;\n'
+    + 'const Type = SG.Type;\n'
+    + 'const c = SG.constants;\n\n';
 
   result = compileTypes(structure.types, result);
   result = compileLocations(structure.locations, result);
@@ -157,7 +156,7 @@ module.exports = structure => {
   result = compileRules(structure.rules, result);
   result = compileTransitions(structure.transitions, result);
 
-  result += 'const story = world.makeStory(4);\n console.log(story);\n';
+  result += 'world.runStory(4);\nconsole.log(world.output);\n';
 
   return result;
 };
