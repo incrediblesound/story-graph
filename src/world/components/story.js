@@ -15,18 +15,14 @@ function contains(x, y) {
 }
 
 function twoThings(world) {
-  let localSet = [];
-  let randomLocation;
-  if (world.numLocations) {
-    while (localSet.length < 2) {
-      randomLocation = world.locations[Math.floor(Math.random() * world.numLocations)];
-      localSet = utility.getLocalSet(world, randomLocation);
-    }
-  } else {
-    localSet = world.things.slice();
+  const thingOne = world.things[Math.floor(Math.random() * world.things.length)];
+  const localThings = world.things.filter((thing) => {
+    return (thing.location === thingOne.location) && (thing.name !== thingOne.name);
+  });
+  if (!localThings.length) {
+    return false;
   }
-  const thingOne = _.first(localSet.splice(Math.floor(Math.random() * localSet.length), 1));
-  const thingTwo = _.first(localSet.splice(Math.floor(Math.random() * localSet.length), 1));
+  const thingTwo = localThings[Math.floor(Math.random() * localThings.length)];
   return [thingOne, thingTwo];
 }
 
@@ -83,10 +79,16 @@ function matchRuleFor(world, one, two, action) {
 }
 
 function randomMatch(world) {
-  if (world.numLocations && rollDie() < 1) {
-    return getRandomTransition(world);
+  // this function checks the random result of rollDie()
+  // to occasionally render a location transition
+  if (world.numLocations && rollDie() < 2) {
+    const randomTransition = getRandomTransition(world);
+    return randomTransition;
   }
   const pair = twoThings(world);
+  if (!pair) {
+    return false;
+  }
   const one = pair[0];
   const two = pair[1];
   const rule = matchRuleFor(world, one, two, c.encounter);

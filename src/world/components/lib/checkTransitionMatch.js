@@ -18,15 +18,23 @@ const Type = require('../../../components/type.js');
  *   Whether or not the transition is valid.
  */
 module.exports = function checkTransitionMatch(rule, thing, locations, action) {
-  if (!(thing.location === rule.getTarget())) {
-    return false;
-  } else if (!includes(locations, rule.getConsequentTarget())) {
+  if (!includes(locations, rule.getConsequentTarget())) {
     return false;
   } else if (!(rule.getActionType() === action)) {
     return false;
   }
   const ruleSource = rule.getSource();
   return ruleSource instanceof Type
-    ? includes(thing.getTypes(), ruleSource.get())
+    ? isSubset(thing.getTypes(), ruleSource.get())
     : ruleSource === thing.id;
 };
+
+function isSubset(set, valueOrSet) {
+  if (!Array.isArray(valueOrSet)) {
+    return includes(set, valueOrSet);
+  } else {
+    return set.reduce((acc, curr) => {
+      return acc && includes(valueOrSet, curr);
+    }, true);
+  }
+}

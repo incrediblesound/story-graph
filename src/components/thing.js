@@ -9,6 +9,8 @@ module.exports = class Thing {
     if (data.locations !== undefined) {
       this.location = data.location || data.locations[0];
       this.locations = data.locations;
+    } else {
+      this.location = null;
     }
 
     this.members = data.members;
