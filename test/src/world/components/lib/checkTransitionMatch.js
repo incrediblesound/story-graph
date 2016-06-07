@@ -36,7 +36,7 @@ describe('checkTransitionMatch', () => {
   it('Returns false if the Rule cannot be caused by the Thing', () => {
     const bustedRule = new Rule({
       cause: {
-        type: [cat, c.move_out, 'the garden'],
+        type: [cat, c.move_in, 'the garden'],
         value: [],
       },
       consequent: {
@@ -51,11 +51,10 @@ describe('checkTransitionMatch', () => {
   });
   it('Returns false if the Thing is not in the correct origin Location', () => {
     const thingInShed = Object.assign({}, thing, { location: 'the shed' });
-    assert.deepEqual(checkTransitionMatch(rule, thingInShed, locations, c.move_out), false);
+    assert.deepEqual(checkTransitionMatch(rule, thingInShed, ['the garden'], c.move_out), false);
   });
   it('Returns false if the Thing is not moving to the correct destination Location', () => {
-    const justTheGarden = ['the garden'];
-    assert.deepEqual(checkTransitionMatch(rule, thing, justTheGarden, c.move_out), false);
+    assert.deepEqual(checkTransitionMatch(rule, thing, ['the garden'], c.move_out), false);
   });
   it('Returns false if the Action is not "move_out"', () => {
     assert.deepEqual(checkTransitionMatch(rule, thing, locations, c.encounter), false);

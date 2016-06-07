@@ -1,4 +1,3 @@
-const utility = require('./utility.js');
 const c = require('../../components/constants.js');
 const Type = require('../../components/type.js');
 const getRandomTransition = require('./lib/getRandomTransition');
@@ -16,9 +15,9 @@ function contains(x, y) {
 
 function twoThings(world) {
   const thingOne = world.things[Math.floor(Math.random() * world.things.length)];
-  const localThings = world.things.filter((thing) => {
-    return (thing.location === thingOne.location) && (thing.name !== thingOne.name);
-  });
+  const localThings = world.things.filter((thing) =>
+    (thing.location === thingOne.location) && (thing.name !== thingOne.name)
+  );
   if (!localThings.length) {
     return false;
   }

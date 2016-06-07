@@ -1,6 +1,13 @@
 const includes = require('lodash/includes');
 const Type = require('../../../components/type.js');
 
+function isSubset(set, valueOrSet) {
+  if (!Array.isArray(valueOrSet)) {
+    return includes(set, valueOrSet);
+  }
+  return set.reduce((acc, curr) => acc && includes(valueOrSet, curr), true);
+}
+
 /**
  * checkTransitionMatch
  *   Checks that a Rule can be caused by a Thing, a Thing is in the correct origin Location, a Thing
@@ -28,13 +35,3 @@ module.exports = function checkTransitionMatch(rule, thing, locations, action) {
     ? isSubset(thing.getTypes(), ruleSource.get())
     : ruleSource === thing.id;
 };
-
-function isSubset(set, valueOrSet) {
-  if (!Array.isArray(valueOrSet)) {
-    return includes(set, valueOrSet);
-  } else {
-    return set.reduce((acc, curr) => {
-      return acc && includes(valueOrSet, curr);
-    }, true);
-  }
-}
