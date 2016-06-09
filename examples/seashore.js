@@ -33,6 +33,18 @@ world.addLocation({ name: 'the seashore' });
 world.addLocation({ name: 'the painted cliffs' });
 world.addLocation({ name: 'the granite boulder' });
 
+const cliffs = world.addThing(new Thing({
+  type: dark(expansive(entity)),
+  name: 'the cliffs',
+  locations: null
+}));
+
+const ocean = world.addThing(new Thing({
+  type: bright(expansive(entity)),
+  name: 'the ocean',
+  locations: null
+}));
+
 const minnows = world.addThing(new Thing({
   type: life,
   name: 'a group of minnows',
@@ -267,4 +279,8 @@ world.addRule({
 });
 
 /* eslint-disable no-console */
-console.log(world.makeStory(8));
+world.runStory(4, [
+  { step: 1, event: [clouds, c.encounter, cliffs] },
+  { step: 3, event: [clouds, c.encounter, ocean] }
+]);
+console.log(world.output);

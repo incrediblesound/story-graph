@@ -223,7 +223,7 @@ If you want to mutate the things involved in an event you can add a mutations fu
 ```
 
 **consequent thing**  
-We've already seen how a rule can trigger another event, but a rule can also create a new thing in the world. If you want a rule to produce a thing write the things definition in the consequentThing property of the rule. Consequent things have a couple special properties: first they have members. Because the consequent thing is a product of some other set of specific things triggering a rule it makes sense that those things might be involved or compose in some way the consequent thing. Moreover, the name of the consequent thing might involve the names of the things that triggered the rule, so there is an intialize function that takes the world instance as a parameter and can be used to dynamically set thing properties with properties of the members. Here is a full rule example:
+We've already seen how a rule can trigger another event, but a rule can also create a new thing in the world. If you want a rule to produce a thing write the things definition in the consequentThing property of the rule. Consequent things have a couple special properties: first they can have members. Because the consequent thing is a product of some other set of specific things triggering a rule it makes sense that those things might merge or compose to create the consequent thing. Moreover, the name of the consequent thing might involve the names of the things that triggered the rule, so there is an initializeName function that takes the instance of the new thing and the world instance as a parameters and returns a string that will be set as the name of the new thing instance. This allows you to use the members of the new thing to set the name. Here is a full rule example:
 ```javascript
 world.addRule({
   cause: {
@@ -240,8 +240,7 @@ world.addRule({
     name: 'having a discussion with',
     members: [c.source, c.target],
     lifeTime: Math.floor(Math.random()*3),
-    initialize: function(world){
-      this.name = this.members[0]+ ' '+ this.name+ ' '+this.members[1];
+    initializeName: (thing, world) => `${this.members[0]} ${this.name} ${this.members[1]}`
     }
   }
 });
@@ -250,6 +249,10 @@ world.addRule({
 If this rule was matched with two things "Bob" and "Tom" it would produce the following output:
 
 "Bob meets Tom. Bob and Tom start chatting."
+
+And it would create a new thing with the name:
+
+"Bob having a discussion with Tom"
 
 ##Generate Stories
 

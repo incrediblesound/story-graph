@@ -6,19 +6,19 @@ module.exports = class Thing {
     this.id = null;
     this.type = data.type;
     this.name = data.name;
-    if (data.locations !== undefined) {
+    if (!!data.locations) {
       this.location = data.location || data.locations[0];
       this.locations = data.locations;
     } else {
-      this.location = null;
+      this.locations = [];
     }
 
     this.members = data.members;
     this.lifeTime = data.lifeTime || 999;
     this.callback = data.callback || null;
     this.fetchMembers(storyEvent, world);
-    if (!!data.initialize) {
-      data.initialize.apply(this, [world]);
+    if (!!data.initializeName) {
+      this.name = data.initializeName(this, world);
     }
   }
   fetchMembers(storyEvent, world) {

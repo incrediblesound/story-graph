@@ -34,9 +34,11 @@ function checkMatch(rule, source, target, action) {
   let match;
   const ruleSource = rule.getSource();
   const ruleTarget = rule.getTarget();
+
   const sourceMatch = ruleSource instanceof Type
     ? contains(source.getTypes(), ruleSource.get())
     : ruleSource === source.id;
+
   const targetMatch = (target === undefined)
     || (ruleTarget instanceof Type
       ? contains(target.getTypes(), ruleTarget.get())
@@ -53,12 +55,14 @@ function checkMatch(rule, source, target, action) {
   } else { match = (sourceMatch && targetMatch); }
 
   const sourceInTarget = !(target === undefined) && !!target.members
-    && _.where(target.members, { id: source.id }).length;
+    && _.find(target.members, { id: source.id }).length;
   const targetInSource = !(target === undefined) && !!source.members
-    && _.where(source.members, { id: target.id }).length;
+    && _.find(source.members, { id: target.id }).length;
 
   if (action !== undefined) {
-    return match && (rule.getActionType() === action) && !(sourceInTarget || targetInSource);
+    return match
+      && (rule.getActionType() === action)
+      && !(sourceInTarget || targetInSource);
   }
   return match && !(sourceInTarget || targetInSource);
 }

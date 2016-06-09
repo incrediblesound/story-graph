@@ -98,9 +98,7 @@ world.addRule({
     name: 'dancing with',
     members: [c.source, c.target],
     lifeTime: 2,
-    initialize: () => {
-      this.name = `${this.members[0].name} ${this.name} ${this.members[1].name}`;
-    },
+    initializeName: (thing) => `${thing.members[0].name} ${thing.name} ${thing.members[1].name}`
   },
 });
 
@@ -134,9 +132,7 @@ world.addRule({
     name: 'calling out to',
     members: [c.source, c.target],
     lifeTime: 2,
-    initialize: () => {
-      this.name = `${this.members[0].name} ${this.name} ${this.members[1].name}`;
-    },
+    initializeName: (thing) => `${thing.members[0].name} ${thing.name} ${thing.members[1].name}`
   },
 });
 
@@ -155,9 +151,7 @@ world.addRule({
     name: 'conversing silently with',
     members: [c.source, c.target],
     lifeTime: 2,
-    initialize: () => {
-      this.name = `${this.members[0].name} ${this.name} ${this.members[1].name}`;
-    },
+    initializeName: (thing) => `${thing.members[0].name} ${thing.name} ${thing.members[1].name}`
   },
 });
 
@@ -176,10 +170,8 @@ world.addRule({
     name: 'cracking and melting',
     members: [c.source, c.target],
     lifeTime: 2,
-    initialize: () => {
-      this.name = `${this.members[1].name} ${this.name}`;
-    },
-  },
+    initializeName: (thing) => `${thing.members[1].name} ${thing.name}`
+  }
 });
 
 
@@ -219,4 +211,5 @@ world.addRule({
 });
 
 /* eslint-disable no-console */
-console.log(world.makeStory(3));
+world.runStory(3);
+console.log(world.output);

@@ -39,7 +39,7 @@ function processElementValue(world, element) {
   }
   body += '. ';
   const head = body[0].toUpperCase();
-  const tail = body.substring(1, body.length);
+  const tail = body.substring(1);
   body = head + tail;
   return body;
 }
