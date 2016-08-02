@@ -8,6 +8,8 @@ module.exports = class Rule {
 
     this.consequentThing = data.consequentThing;
     this.mutations = data.mutations;
+
+    this.locations = data.locations || [];
   }
   getSource() {
     return this.cause.type[0];

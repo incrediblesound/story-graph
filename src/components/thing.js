@@ -11,6 +11,7 @@ module.exports = class Thing {
       this.locations = data.locations;
     } else {
       this.locations = [];
+      this.location = null;
     }
 
     this.members = data.members;

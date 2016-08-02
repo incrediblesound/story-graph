@@ -68,17 +68,24 @@ function checkMatch(rule, source, target, action) {
 }
 
 function matchRuleFor(world, one, two, action) {
-  const rules = [];
-  for (let i = 0; i < world.numRules; i++) {
-    const isMatch = checkMatch(world.rules[i], one, two, action);
+  const matchedRules = [];
+  // create a list of rules that either have no location limitation or whose location
+  // limitations contain the location of the two thing one && two.
+  const localRules = world.rules.filter((rule) => {
+    const hasLocation = !!rule.locations.length;
+    if (!hasLocation || !one.location) return true;
+    return one.location && (!hasLocation || _.includes(rule.locations, one.location));
+  });
+  for (let i = 0; i < localRules.length; i++) {
+    const isMatch = checkMatch(localRules[i], one, two, action);
     if (isMatch) {
-      rules.push(world.rules[i]);
+      matchedRules.push(localRules[i]);
     }
   }
-  if (!rules.length) {
+  if (!matchedRules.length) {
     return false;
   }
-  return rules[Math.floor(Math.random() * rules.length)];
+  return matchedRules[Math.floor(Math.random() * matchedRules.length)];
 }
 
 function randomMatch(world) {
