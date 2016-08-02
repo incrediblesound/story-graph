@@ -34,6 +34,7 @@ describe('getRandomTransition', () => {
       {
         id: 0,
         isDirectional: true,
+        locations: [],
         cause: {
           type: [
             0,

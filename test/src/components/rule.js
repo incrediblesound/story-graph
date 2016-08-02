@@ -59,6 +59,7 @@ describe('Rule', () => {
             'rolls around',
           ],
         },
+        locations: [],
         consequentThing: null,
         id: 0,
         isDirectional: true,
