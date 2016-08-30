@@ -262,7 +262,7 @@ And it would create a new thing with the name:
 
 "Bob having a discussion with Tom"
 
-**locations**
+**locations**  
 Locations are an optional feature of StoryGraph that add a lot of complexity and narrative possibilities. I think of locations as named graphs. When you add a location to your StoryGraph world, you are saying that there is a specific named place where things can reside and where specific rules may apply.
 
 Adding a location to a world is as simple as this:
