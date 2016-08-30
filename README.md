@@ -110,15 +110,17 @@ For a full working example look at example.txt in the root directory of this rep
 
 ##Types
 
-The first step is to define types. While it is possible to make rules that apply to specific things, you'll probably want to make general rules that apply to classes of things. First the basics:
+The first step is to define types. Types are how the story graph engine determines whether or not a thing matches a given rule. While it is possible to make rules that apply to specific things, you'll probably want to make general rules that apply to classes of things, and for that you use types. First the basics:
 ```javascript
 var Type = require('./src/type.js');
 
 var person = new Type('person');
-var adult = person.extend('adult'); // matches both rules for "person" generally and "adult" specifically
-var man = adult.extend('male'); // matches rules for "person", "adult" and "man"
+var adult = person.extend('adult');
+// A thing with the adult type will match rules for either "person" or "adult"
+var man = adult.extend('male');
+// A thing with the man type will match rules for "person", "adult" and "man"
 ```
-This is the most straightforward way to do it. I like to make a simple helper that allows me to easily create things with complex types:
+I like to make a simple helper that allows me to easily create things with complex types:
 ```javascript
 var extendType = function(typeName){
   return function(type){
@@ -133,7 +135,7 @@ var spy = new Thing({
   name: 'spy'
 });
 ```
-Another strategy you might want to use is to make every type extend from one base type, called "entity" or something like that, which allows you to match on specific types while ignoring more general types. For example, if everything in the world extends from the "person" type, then you can match on sneaky(person) which will match any sneaky person young or old, male or female.
+Another strategy you might want to use is to make every type extend from one base type, called "entity" or something like that, which allows you to match on specific types while ignoring more general types. For example, if everything in the world extends from the "person" type, then you can match on [ sneaky && person ] which will match any sneaky person young or old, male or female.
 
 ##Things
 
@@ -168,6 +170,7 @@ world.addRule({
   cause: { type: [A, B, C], value: [A, B, C]},
   consequent: { type: [A, B, C], value: [A, B, C] },
   isDirectional: boolean,
+  locations: [],
   mutations: function(source, target){
     target.type.add('something');
   },
@@ -180,27 +183,32 @@ world.addRule({
 **Cause**    
 Cause is a description of the event that triggers the rule. The cause type has the following structure
 ```javascript
-[ (id || type), action, (id || type) ]
+[ (id || type), ACTION, (id || type) ]
 ```
-where id is the id of a thing in the world, action is one of the actions described in ./src/constants.js, and type is an instance of Type. The cause value is an array that can be any mix of strings and references to the source and target things that triggered the rule. Here is an example cause:
+where id is the id of a thing in the world, action is one of the actions described in ./src/constants.js, and type is an instance of Type. Note that the first position in the cause type is referred to as the "source" and the third position as "target". It helps to think of it as describing vertex-edge->vertex structure in a directed graph.
+
+The cause value is an array that can be any mix of strings and references to the source and target that triggered the rule. Constants are provided that allow you to refer to source and target. Here is an example cause:
 ```javascript
 var c = require('src/constants.js');
-{
-cause: {
+
+var cause = {
   type: [ dancer, c.encounter, dancer ],
   value: [ c.source, 'dances with', c.target]
 }
-...
-}
 ```
 **consequent**  
-The type property of consequent is different from the type property of cause: it is the type of event that is triggered by the rule as a consequence of the rule being matched, kind of like a chain reaction. If you want a rule that results in a thing being removed from the world you can use constants.vanish, but all other action type will simply trigger a search for a matching rule. The value of the consequent is any mix of strings and references to the things that triggered the rule. The consequent value will produce a string describing the outcome of the interation when the rule is triggered.
+The type property of consequent is different from the type property of cause: it is the type of event that is triggered by the rule as a consequence of the rule being matched, like a chain reaction. If you want a rule that results in a thing being removed from the world you can use constants.vanish in the consequent type, but all other action type will trigger a search for a matching rule. The value of the consequent is any mix of strings and references to the things that triggered the rule. The consequent value will produce a string describing the outcome of the interaction when the rule is triggered.
 
-This distinction is important: The consequent type describes an event that will trigger a rule after the current rule is done, the consequent value describes a sentence that will be rendered by the current rule as part of its execution.
+This distinction is important: The consequent type describes an event that will trigger a rule after the current rule is done, the consequent value describes a sentence that will be rendered by the current rule as part of its execution. This means that a rule can render both the cause and effect of an event as output but it can also serve as the cause itself if the consequent type triggers another rule. Here are two examples, one to match the cause given above and one to demonstrate the vanish constant:
 
 ```javascript
-consequent : {
-  type: [ c.source, c.vanish ],
+consequent: {
+    type: [], // this rule doesn't trigger anything else
+    value: ['The crowd watches the skilled dancers performance.']
+}
+
+consequent: {
+  type: [ c.source, c.vanish ], // this rule removes the source from the graph
   value: [ c.source, 'disappears into thin air' ]
 }
 ```
@@ -223,7 +231,7 @@ If you want to mutate the things involved in an event you can add a mutations fu
 ```
 
 **consequent thing**  
-We've already seen how a rule can trigger another event, but a rule can also create a new thing in the world. If you want a rule to produce a thing write the things definition in the consequentThing property of the rule. Consequent things have a couple special properties: first they can have members. Because the consequent thing is a product of some other set of specific things triggering a rule it makes sense that those things might merge or compose to create the consequent thing. Moreover, the name of the consequent thing might involve the names of the things that triggered the rule, so there is an initializeName function that takes the instance of the new thing and the world instance as a parameters and returns a string that will be set as the name of the new thing instance. This allows you to use the members of the new thing to set the name. Here is a full rule example:
+We've already seen how a rule can trigger another event, but a rule can also create a new thing in the world. If you want a rule to produce a thing add the thing's definition in the consequentThing property of the rule. Consequent things have a couple of special properties: first they can have members. Because the consequent thing is a product of some other set of specific things triggering a rule it makes sense that those things might merge or compose to create the consequent thing. Moreover, the name of the consequent thing might involve the names of the things that triggered the rule, so there is an initializeName function that takes the instance of the new thing and the world instance as parameters and returns a string that will be set as the name of the new thing instance. This allows you to use the members of the new thing to set the name. Here is a full rule example:
 ```javascript
 world.addRule({
   cause: {
@@ -254,6 +262,65 @@ And it would create a new thing with the name:
 
 "Bob having a discussion with Tom"
 
+**locations**
+Locations are an optional feature of StoryGraph that add a lot of complexity and narrative possibilities. I think of locations as named graphs. When you add a location to your StoryGraph world, you are saying that there is a specific named place where things can reside and where specific rules may apply.
+
+Adding a location to a world is as simple as this:
+```javascript
+const world = new SG.World();
+world.addLocation({ name: 'the house'});
+world.addLocation({ name: 'the garden'});
+```
+When creating things you can provide a list of possible locations for that thing and an optional starting location.
+```javascript
+const Bob = world.addThing(new Thing({
+  type: human,
+  name: 'Robert',
+  locations: ['the house', 'the garden'],
+  location: 'the house' // optional; defaults to first location in the locations array
+}));
+```
+There are two ways to use locations in your StoryGraph rules. First of all, if you have a thing that can exist in multiple different locations you have to create rules to model the transitions between those locations.
+```javascript
+world.addRule({
+  cause: {
+    type: [human, c.move_out, 'the house'],
+    value: ['']
+  },
+  consequent: {
+    type: [c.source, c.move_in, 'the garden'],
+    value: [c.source, 'walks out into the garden']
+  },
+})
+world.addRule({
+  cause: {
+    type: [human, c.move_out, 'the garden'],
+    value: ['']
+  },
+  consequent: {
+    type: [c.source, c.move_in, 'the house'],
+    value: [c.source, 'enters the house']
+  },
+})
+```
+As you can see from these examples we have special constants move_out and move_in for modeling location transitions. A thing will only match a location transition if it is currently in the location indicated in the rule type with move_out, and if the location indicated in the type with move_in is contained in the possible locations of that thing. So, for the first example above, a thing will match the rule if its current location is "the house" and if "the garden" is contained in its potential locations.
+
+The second way to use locations in your rules is to localize them. Some rules might describe events that make sense if they happen in one location but not in another. To configure this, simply add a locations property to the rule with an array of locations where that rule can occur. Here is an example of a rule I wrote that is localized:
+```javascript
+world.addRule({
+  cause: {
+    type: [human, c.encounter, ghoul],
+    value: [c.source, 'sees', c.target]
+  },
+  consequent: {
+    type: [],
+    value: [c.source, 'turns pale and runs away']
+  },
+  locations: ['the graveyard'],
+  isDirectional: true,
+  mutations: null,
+});
+```
 ##Generate Stories
 
 To generate a narrative use the runStory method on the world object. This method takes a number which determines how many time steps the graph will run for and an optional array of events that happen at specific time steps. Events have the following structure:
