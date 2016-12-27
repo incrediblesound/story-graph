@@ -4,7 +4,7 @@
   "description": "Define a world and generate stories.",
   "main": "generateWorld.js",
   "scripts": {
-    "lint": "node_modules/.bin/eslint .",
+    "lint": "node_modules/.bin/eslint ./src/.",
     "test": "node_modules/.bin/_mocha --",
     "coverage": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha --",
     "view-coverage": "open ./coverage/lcov-report/index.html"

@@ -10,8 +10,9 @@ function isSubset(set, valueOrSet) {
 
 /**
  * checkTransitionMatch
- *   Checks that a Rule can be caused by an Actor, an Actor is in the correct origin Location, an Actor
- *   is moving to a valid destination Location, and the Action is "move_out".
+ *   Checks that a Rule can be caused by an Actor, an Actor is in the correct
+ *   origin Location, an Actor is moving to a valid destination Location,
+ *   and the Action is "move_out".
  *
  * @param  {Rule} rule
  *   The Rule to validate.
