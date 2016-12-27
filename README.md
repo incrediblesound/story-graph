@@ -9,7 +9,7 @@
 # StoryGraph
 The Graph that Generates Stories
 
-StoryGraph is a graph designed to generate and narrate the causal interactions between things in a world. The graph can be populated with entities and expressive rules about the interactions between specific entities or different classes of entities. General rules can create new entities in the graph populated with the specific entities that triggered the rule and attributes defined by those entities. Entities have lifetimes and (coming soon) behaviors that trigger events over time.
+StoryGraph is a graph designed to generate and narrate the causal interactions between actors in a world. The graph can be populated with entities and expressive rules about the interactions between specific entities or different classes of entities. General rules can create new entities in the graph populated with the specific entities that triggered the rule and attributes defined by those entities. Entities have lifetimes and (coming soon) behaviors that trigger events over time.
 
 Story graph is inspired by [programming interactive worlds with linear logic](http://www.cs.cmu.edu/~cmartens/thesis/) by [Chris Martens](http://www.cs.cmu.edu/~cmartens/index.html) although it doesn't realize any of the specific principles she develops in that thesis.
 
@@ -17,7 +17,7 @@ My own worlds are available in the /examples directory. You can run them directl
 ```shell
 $ node examples/forest.js
 ```
-You will see output something like this:
+You will see output someactor like this:
 ```
 The river joins with the shadow for a moment. The river does a whirling dance with the shadow. A bluejay discovers the river dancing with the shadow. A bluejay observes the patterns of the river dancing with the shadow. A bluejay dwells in the stillness of life. A duck approaches the whisper. A duck and the whisper pass eachother quietly.
 ```
@@ -59,10 +59,10 @@ A woman is a person. A cat is an animal. A skeleton is a ghost.
 
 ###Type Decorators
 
-FORMAT: Some things are {typename}.  
-OPTIONAL FORMAT: Some things are {type one} and some are {type two}.  
+FORMAT: Some actors are {typename}.  
+OPTIONAL FORMAT: Some actors are {type one} and some are {type two}.  
 ```code
-Some things are smart and some are stupid. Some things are scary.
+Some actors are smart and some are stupid. Some actors are scary.
 ```
 ###Locations
 FORMAT: There is a place called <{place name}>.   
@@ -71,9 +71,9 @@ There is a place called <the red house>.
 There is a place called <the field of wheat>.
 ```
 
-###Things
+###Actors
 
-Note that the placeholder {type} here may be a basic type or extended type preceded by any number of type decorators. After the thing's description there is a second clause listing out what locations this thing may enter. You may list any number of locations separated by the word "or". Note that only things with multiple locations can enter into transitions that describe their change of location.
+Note that the placeholder {type} here may be a basic type or extended type preceded by any number of type decorators. After the actor's description there is a second clause listing out what locations this actor may enter. You may list any number of locations separated by the word "or". Note that only actors with multiple locations can enter into transitions that describe their change of location.
 
 FORMAT: There is a {type} called {name}, he/she/it is in/on <{place}>.
 OPTIONAL FORMAT: There is a {type} called {name}, he/she/it is in/on <{place}> or <{place two}>.
@@ -95,7 +95,7 @@ If a boy <is startled by> a ghost then the boy <starts to cry>. If a man <sees> 
 
 ###Transitions
 
-FORMAT: From <{place one}> to <{place two}> the {type or thing} <{does something}>.
+FORMAT: From <{place one}> to <{place two}> the {type or actor} <{does someactor}>.
 ```code
 From <the red house> to <the field of wheat> the man <goes out to>.
 From <the sky> to <the field of wheat> the bird <swoops down into>.
@@ -110,17 +110,17 @@ For a full working example look at example.txt in the root directory of this rep
 
 ##Types
 
-The first step is to define types. Types are how the story graph engine determines whether or not a thing matches a given rule. While it is possible to make rules that apply to specific things, you'll probably want to make general rules that apply to classes of things, and for that you use types. First the basics:
+The first step is to define types. Types are how the story graph engine determines whether or not an actor matches a given rule. While it is possible to make rules that apply to specific actors, you'll probably want to make general rules that apply to classes of actors, and for that you use types. First the basics:
 ```javascript
 var Type = require('./src/type.js');
 
 var person = new Type('person');
 var adult = person.extend('adult');
-// A thing with the adult type will match rules for either "person" or "adult"
+// An actor with the adult type will match rules for either "person" or "adult"
 var man = adult.extend('male');
-// A thing with the man type will match rules for "person", "adult" and "man"
+// An actor with the man type will match rules for "person", "adult" and "man"
 ```
-I like to make a simple helper that allows me to easily create things with complex types:
+I like to make a simple helper that allows me to easily create actors with complex types:
 ```javascript
 var extendType = function(typeName){
   return function(type){
@@ -130,35 +130,35 @@ var extendType = function(typeName){
 // now I can do this:
 var smart = extendType('smart');
 var sneaky = extendType('cunning');
-var spy = new Thing({
+var spy = new Actor({
   type: smart(sneaky(person)),
   name: 'spy'
 });
 ```
-Another strategy you might want to use is to make every type extend from one base type, called "entity" or something like that, which allows you to match on specific types while ignoring more general types. For example, if everything in the world extends from the "person" type, then you can match on [ sneaky && person ] which will match any sneaky person young or old, male or female.
+Another strategy you might want to use is to make every type extend from one base type, called "entity" or someactor like that, which allows you to match on specific types while ignoring more general types. For example, if everyactor in the world extends from the "person" type, then you can match on [ sneaky && person ] which will match any sneaky person young or old, male or female.
 
-##Things
+##Actors
 
-Making things is really straightforward. They take a type, which defines what rules they match, and a name which is used to create the narrative output. Things can also be given a lifetime; after the graph goes through a number of time steps equal to the lifetime of a thing, the thing will be removed from the graph. Lifetimes are more useful for consequent things discussed below. Here are some basic examples:
+Making actors is really straightforward. They take a type, which defines what rules they match, and a name which is used to create the narrative output. Actors can also be given a lifetime; after the graph goes through a number of time steps equal to the lifetime of an actor, the actor will be removed from the graph. Lifetimes are more useful for consequent actors discussed below. Here are some basic examples:
 ```javascript
-var bob = new Thing({
+var bob = new Actor({
   type: smart(man),
   name: 'Bob'
 });
 
-var sally = new Thing({
+var sally = new Actor({
   type: smart(girl),
   name: 'Sally'
 });
 ```
-You can add things to the world one by one or as an array of things. You can save the id things by adding them individually.
+You can add actors to the world one by one or as an array of actors. You can save the id actors by adding them individually.
 ```javascript
 var World = require('./src/world.js');
 var world = new World();
 
-var bobId = world.addThing(bob);
-var sallyId = world.addThing(sally);
-world.addThing([tim, larry, david, moe]);
+var bobId = world.addActor(bob);
+var sallyId = world.addActor(sally);
+world.addActor([tim, larry, david, moe]);
 ```
 
 ##Rules
@@ -172,9 +172,9 @@ world.addRule({
   isDirectional: boolean,
   locations: [],
   mutations: function(source, target){
-    target.type.add('something');
+    target.type.add('someactor');
   },
-  consequentThing: {
+  consequentActor: {
     type: type,
     name: "name"
   }
@@ -185,7 +185,7 @@ Cause is a description of the event that triggers the rule. The cause type has t
 ```javascript
 [ (id || type), ACTION, (id || type) ]
 ```
-where id is the id of a thing in the world, action is one of the actions described in ./src/constants.js, and type is an instance of Type. Note that the first position in the cause type is referred to as the "source" and the third position as "target". It helps to think of it as describing vertex-edge->vertex structure in a directed graph.
+where id is the id of an actor in the world, action is one of the actions described in ./src/constants.js, and type is an instance of Type. Note that the first position in the cause type is referred to as the "source" and the third position as "target". It helps to think of it as describing vertex-edge->vertex structure in a directed graph.
 
 The cause value is an array that can be any mix of strings and references to the source and target that triggered the rule. Constants are provided that allow you to refer to source and target. Here is an example cause:
 ```javascript
@@ -197,13 +197,13 @@ var cause = {
 }
 ```
 **consequent**  
-The type property of consequent is different from the type property of cause: it is the type of event that is triggered by the rule as a consequence of the rule being matched, like a chain reaction. If you want a rule that results in a thing being removed from the world you can use constants.vanish in the consequent type, but all other action type will trigger a search for a matching rule. The value of the consequent is any mix of strings and references to the things that triggered the rule. The consequent value will produce a string describing the outcome of the interaction when the rule is triggered.
+The type property of consequent is different from the type property of cause: it is the type of event that is triggered by the rule as a consequence of the rule being matched, like a chain reaction. If you want a rule that results in an actor being removed from the world you can use constants.vanish in the consequent type, but all other action type will trigger a search for a matching rule. The value of the consequent is any mix of strings and references to the actors that triggered the rule. The consequent value will produce a string describing the outcome of the interaction when the rule is triggered.
 
 This distinction is important: The consequent type describes an event that will trigger a rule after the current rule is done, the consequent value describes a sentence that will be rendered by the current rule as part of its execution. This means that a rule can render both the cause and effect of an event as output but it can also serve as the cause itself if the consequent type triggers another rule. Here are two examples, one to match the cause given above and one to demonstrate the vanish constant:
 
 ```javascript
 consequent: {
-    type: [], // this rule doesn't trigger anything else
+    type: [], // this rule doesn't trigger anyactor else
     value: ['The crowd watches the skilled dancers performance.']
 }
 
@@ -214,10 +214,10 @@ consequent: {
 ```
 
 **directionality**  
-The isDirectional property must be set to tell the graph how to match rules. If this property is set to false then the order of the things will be ignored when finding a match. When the source and target are qualitatively different things and the action is truly directional you should set this property to true.
+The isDirectional property must be set to tell the graph how to match rules. If this property is set to false then the order of the actors will be ignored when finding a match. When the source and target are qualitatively different actors and the action is truly directional you should set this property to true.
 
 **mutations**  
-If you want to mutate the things involved in an event you can add a mutations function to your rule. The mutations function takes the source thing and target thing as parameters. This allows you to alter the types of things as a part of the consequence of the rule being activated, for which you can use the remove, add, and replace helpers on the things type:
+If you want to mutate the actors involved in an event you can add a mutations function to your rule. The mutations function takes the source actor and target actor as parameters. This allows you to alter the types of actors as a part of the consequence of the rule being activated, for which you can use the remove, add, and replace helpers on the actors type:
 ```javascript
 {
   cause: [ handsome(boy), meets, pretty(girl) ],
@@ -230,8 +230,8 @@ If you want to mutate the things involved in an event you can add a mutations fu
 }
 ```
 
-**consequent thing**  
-We've already seen how a rule can trigger another event, but a rule can also create a new thing in the world. If you want a rule to produce a thing add the thing's definition in the consequentThing property of the rule. Consequent things have a couple of special properties: first they can have members. Because the consequent thing is a product of some other set of specific things triggering a rule it makes sense that those things might merge or compose to create the consequent thing. Moreover, the name of the consequent thing might involve the names of the things that triggered the rule, so there is an initializeName function that takes the instance of the new thing and the world instance as parameters and returns a string that will be set as the name of the new thing instance. This allows you to use the members of the new thing to set the name. Here is a full rule example:
+**consequent actor**  
+We've already seen how a rule can trigger another event, but a rule can also create a new actor in the world. If you want a rule to produce an actor add the actor's definition in the consequentActor property of the rule. Consequent actors have a couple of special properties: first they can have members. Because the consequent actor is a product of some other set of specific actors triggering a rule it makes sense that those actors might merge or compose to create the consequent actor. Moreover, the name of the consequent actor might involve the names of the actors that triggered the rule, so there is an initializeName function that takes the instance of the new actor and the world instance as parameters and returns a string that will be set as the name of the new actor instance. This allows you to use the members of the new actor to set the name. Here is a full rule example:
 ```javascript
 world.addRule({
   cause: {
@@ -243,27 +243,28 @@ world.addRule({
     value: [c.source, 'and', c.target, 'start chatting']
   },
   isDirectional: false,
-  consequentThing: {
+  consequentActor: {
     type: casual(discussion(gathering)),
     name: 'having a discussion with',
     members: [c.source, c.target],
     lifeTime: Math.floor(Math.random()*3),
-    initializeName: (thing, world) => `${this.members[0]} ${this.name} ${this.members[1]}`
+    initializeName: (actor, world) => `${this.members[0]} ${this.name} ${this.members[1]}`
     }
   }
 });
 
 ```
-If this rule was matched with two things "Bob" and "Tom" it would produce the following output:
+If this rule was matched with two actors "Bob" and "Tom" it would produce the following output:
 
 "Bob meets Tom. Bob and Tom start chatting."
 
-And it would create a new thing with the name:
+And it would create a new actor with the name:
 
 "Bob having a discussion with Tom"
 
-**locations**  
-Locations are an optional feature of StoryGraph that add a lot of complexity and narrative possibilities. I think of locations as named graphs. When you add a location to your StoryGraph world, you are saying that there is a specific named place where things can reside and where specific rules may apply.
+
+**locations**
+Locations are an optional feature of StoryGraph that add a lot of complexity and narrative possibilities. I think of locations as named graphs. When you add a location to your StoryGraph world, you are saying that there is a specific named place where actors can reside and where specific rules may apply.
 
 Adding a location to a world is as simple as this:
 ```javascript
@@ -271,16 +272,16 @@ const world = new SG.World();
 world.addLocation({ name: 'the house'});
 world.addLocation({ name: 'the garden'});
 ```
-When creating things you can provide a list of possible locations for that thing and an optional starting location.
+When creating actors you can provide a list of possible locations for that actor and an optional starting location.
 ```javascript
-const Bob = world.addThing(new Thing({
+const Bob = world.addActor(new Actor({
   type: human,
   name: 'Robert',
   locations: ['the house', 'the garden'],
   location: 'the house' // optional; defaults to first location in the locations array
 }));
 ```
-There are two ways to use locations in your StoryGraph rules. First of all, if you have a thing that can exist in multiple different locations you have to create rules to model the transitions between those locations.
+There are two ways to use locations in your StoryGraph rules. First of all, if you have an actor that can exist in multiple different locations you have to create rules to model the transitions between those locations.
 ```javascript
 world.addRule({
   cause: {
@@ -303,7 +304,7 @@ world.addRule({
   },
 })
 ```
-As you can see from these examples we have special constants move_out and move_in for modeling location transitions. A thing will only match a location transition if it is currently in the location indicated in the rule type with move_out, and if the location indicated in the type with move_in is contained in the possible locations of that thing. So, for the first example above, a thing will match the rule if its current location is "the house" and if "the garden" is contained in its potential locations.
+As you can see from these examples we have special constants move_out and move_in for modeling location transitions. An actor will only match a location transition if it is currently in the location indicated in the rule type with move_out, and if the location indicated in the type with move_in is contained in the possible locations of that actor. So, for the first example above, an actor will match the rule if its current location is "the house" and if "the garden" is contained in its potential locations.
 
 The second way to use locations in your rules is to localize them. Some rules might describe events that make sense if they happen in one location but not in another. To configure this, simply add a locations property to the rule with an array of locations where that rule can occur. Here is an example of a rule I wrote that is localized:
 ```javascript

@@ -38,14 +38,14 @@ function compileTransitions(data, result) {
   _.each(data, transition => {
     newResult += 'world.addRule({\n';
     newResult += '  cause: {\n';
-    newResult += `    type: [${transition.typeOrThing}, c.move_out, \'${transition.from}\'],\n`;
+    newResult += `    type: [${transition.typeOrActor}, c.move_out, \'${transition.from}\'],\n`;
     newResult += '    value: [\'\']\n  },\n';
     newResult += '  consequent: {\n';
     newResult += `    type: [c.source, c.move_in, \'${transition.to}\'],\n`;
     newResult += `    value: [c.source, \'${transition.text}\', \'${transition.to}\']\n  },\n`;
     newResult += '  isDirectional: true,\n';
     newResult += '  mutations: null,\n';
-    newResult += '  consequentThing: null\n';
+    newResult += '  consequentActor: null\n';
     newResult += '})\n\n';
   });
   return newResult;
@@ -72,12 +72,12 @@ function isEqual(a, b) {
   return result;
 }
 
-// compile all the things
-function compileThings(things, result) {
+// compile all the actors
+function compileActors(actors, result) {
   let newResult = result;
-  _.each(things, data => {
-    newResult += `const ${data.name} = world.addThing(`;
-    newResult += `new Thing({\n  type: ${processTypes(data.types)}`;
+  _.each(actors, data => {
+    newResult += `const ${data.name} = world.addActor(`;
+    newResult += `new Actor({\n  type: ${processTypes(data.types)}`;
     newResult += `,\n  name: \'${data.name}\'`;
     newResult += `,\n  locations: ${JSON.stringify(data.locations)}`;
     newResult += '\n}));\n\n';
@@ -121,7 +121,7 @@ function compileRules(rules, result) {
     newResult += `    value: [${source}, \'${rule.consequenceText}\'${target}]\n  },\n`;
     newResult += '  isDirectional: true,\n';
     newResult += '  mutations: null,\n';
-    newResult += '  consequentThing: null/*{ type:\'\', name:\'\', members:[c.source,c.target],';
+    newResult += '  consequentActor: null/*{ type:\'\', name:\'\', members:[c.source,c.target],';
     newResult += 'lifeTime: 1, initialize: function(world){}}*/\n';
     newResult += '});\n\n';
   });
@@ -146,13 +146,13 @@ function compileTypes(types, result) {
 module.exports = structure => {
   let result = 'const SG = require(\'./src/main.js\');\n'
     + 'const world = new SG.World();\n'
-    + 'const Thing = SG.Thing;\n'
+    + 'const Actor = SG.Actor;\n'
     + 'const Type = SG.Type;\n'
     + 'const c = SG.constants;\n\n';
 
   result = compileTypes(structure.types, result);
   result = compileLocations(structure.locations, result);
-  result = compileThings(structure.things, result);
+  result = compileActors(structure.actors, result);
   result = compileRules(structure.rules, result);
   result = compileTransitions(structure.transitions, result);
 

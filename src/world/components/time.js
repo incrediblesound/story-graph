@@ -6,13 +6,13 @@ function advance(world) {
   } else {
     world.randomEvent();
   }
-  world.things.forEach((thing, idx) => {
+  world.actors.forEach((actor, idx) => {
     if (idx >= world.size) return;
-    const age = world.timeIndex - thing.entryTime;
-    if (age > thing.lifeTime) {
-      utility.removeThing(world, thing.id);
-    } else if (thing.callback !== null) {
-      world.processTimeTrigger(world, thing.callback(world.timeIndex));
+    const age = world.timeIndex - actor.entryTime;
+    if (age > actor.lifeTime) {
+      utility.removeActor(world, actor.id);
+    } else if (actor.callback !== null) {
+      world.processTimeTrigger(world, actor.callback(world.timeIndex));
     }
   });
   world.timeIndex++;

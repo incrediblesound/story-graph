@@ -1,5 +1,5 @@
 const World = require('../src/world/world.js');
-const Thing = require('../src/components/thing.js');
+const Actor = require('../src/components/actor.js');
 const c = require('../src/components/constants.js');
 const Type = require('../src/components/type.js');
 
@@ -36,52 +36,52 @@ const inflowing = extendType('inflowing');
 
 const world = new World();
 
-const whisper = new Thing({
+const whisper = new Actor({
   type: bumbling(quiet(dark(spirit))),
   name: 'the whisper',
 });
 
-const reeds = new Thing({
+const reeds = new Actor({
   type: outpouring(beautiful(simple(plant))),
   name: 'the cat tails',
 });
 
-const river = new Thing({
+const river = new Actor({
   type: curving(complex(outpouring(spirit))),
   name: 'the river',
 });
 
-const shadow = new Thing({
+const shadow = new Actor({
   type: dark(inflowing(quiet(spirit))),
   name: 'the shadow',
 });
 
-const duck = new Thing({
+const duck = new Actor({
   type: bumbling(outpouring(curving(animal))),
   name: 'a duck',
 });
 
-const bluejay = new Thing({
+const bluejay = new Actor({
   type: bumbling(loud(jolting(animal))),
   name: 'a bluejay',
 });
 
-const sunlight = new Thing({
+const sunlight = new Actor({
   type: outpouring(bright(simple(hot(spirit)))),
   name: 'the sunlight',
 });
 
-const snow = new Thing({
+const snow = new Actor({
   type: bright(beautiful(complex(inflowing(cold(spirit))))),
   name: 'the snow',
 });
 
-const ice = new Thing({
+const ice = new Actor({
   type: bright(beautiful(simple(inflowing(cold(spirit))))),
   name: 'the ice',
 });
 
-world.addThing([whisper, reeds, river, shadow, duck, snow, sunlight, bluejay, ice]);
+world.addActor([whisper, reeds, river, shadow, duck, snow, sunlight, bluejay, ice]);
 
 world.addRule({
   cause: {
@@ -93,12 +93,12 @@ world.addRule({
     value: [c.source, 'does a whirling dance with', c.target],
   },
   isDirectional: false,
-  consequentThing: {
+  consequentActor: {
     type: complex(connection),
     name: 'dancing with',
     members: [c.source, c.target],
     lifeTime: 2,
-    initializeName: (thing) => `${thing.members[0].name} ${thing.name} ${thing.members[1].name}`
+    initializeName: (actor) => `${actor.members[0].name} ${actor.name} ${actor.members[1].name}`
   },
 });
 
@@ -127,12 +127,12 @@ world.addRule({
     value: [c.source, 'and', c.target, 'call out to each other'],
   },
   isDirectional: false,
-  consequentThing: {
+  consequentActor: {
     type: complex(connection),
     name: 'calling out to',
     members: [c.source, c.target],
     lifeTime: 2,
-    initializeName: (thing) => `${thing.members[0].name} ${thing.name} ${thing.members[1].name}`
+    initializeName: (actor) => `${actor.members[0].name} ${actor.name} ${actor.members[1].name}`
   },
 });
 
@@ -146,12 +146,12 @@ world.addRule({
     value: [c.source, 'and', c.target, 'pass eachother quietly'],
   },
   isDirectional: true,
-  consequentThing: {
+  consequentActor: {
     type: complex(connection),
     name: 'conversing silently with',
     members: [c.source, c.target],
     lifeTime: 2,
-    initializeName: (thing) => `${thing.members[0].name} ${thing.name} ${thing.members[1].name}`
+    initializeName: (actor) => `${actor.members[0].name} ${actor.name} ${actor.members[1].name}`
   },
 });
 
@@ -165,12 +165,12 @@ world.addRule({
     value: [c.target, 'begins to crack and melt'],
   },
   isDirectional: true,
-  consequentThing: {
+  consequentActor: {
     type: loud(complex(entity)),
     name: 'cracking and melting',
     members: [c.source, c.target],
     lifeTime: 2,
-    initializeName: (thing) => `${thing.members[1].name} ${thing.name}`
+    initializeName: (actor) => `${actor.members[1].name} ${actor.name}`
   }
 });
 

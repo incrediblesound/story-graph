@@ -6,7 +6,7 @@ module.exports = class Rule {
     this.cause = data.cause;
     this.consequent = data.consequent;
 
-    this.consequentThing = data.consequentThing;
+    this.consequentActor = data.consequentActor;
     this.mutations = data.mutations;
 
     this.locations = data.locations || [];

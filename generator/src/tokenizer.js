@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-function isATypeOrThing(line) {
+function isATypeOrActor(line) {
   return (
     line[0] === 'There' &&
     line[1] === 'is' &&
@@ -26,7 +26,7 @@ function isACompondType(line) {
 function isATypeDecorator(line) {
   return (
     line[0] === 'Some' &&
-    line[1] === 'things'
+    line[1] === 'actors'
   );
 }
 
@@ -56,7 +56,7 @@ function tokenizer(body) {
   _.each(theBody, line => {
     const theLine = _.compact(line.split(/\s/));
     if (!theLine.length) return;
-    if (isATypeOrThing(theLine)) {
+    if (isATypeOrActor(theLine)) {
       if (isATypeDefinition(theLine)) {
         tokens.push({
           type: 'simple type',
@@ -68,7 +68,7 @@ function tokenizer(body) {
           line: theLine,
         });
       } else {
-        tokens.push({ type: 'thing', line: theLine });
+        tokens.push({ type: 'actor', line: theLine });
       }
     } else if (isATransition(theLine)) {
       tokens.push({ type: 'transition', line: theLine });

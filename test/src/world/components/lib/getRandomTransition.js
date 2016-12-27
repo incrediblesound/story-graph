@@ -2,17 +2,17 @@ const assert = require('assert');
 const getRandomTransition = require('../../../../../src/world/components/lib/getRandomTransition');
 const Rule = require('../../../../../src/components/rule');
 const SG = require('../../../../../src/main');
-const Thing = SG.Thing;
+const Actor = SG.Actor;
 const Type = SG.Type;
 const c = SG.constants;
 
 describe('getRandomTransition', () => {
-  it('Returns a random Transition and matching Thing from the World', () => {
+  it('Returns a random Transition and matching Actor from the World', () => {
     const world = new SG.World();
     const cat = new Type('cat');
     world.addLocation({ name: 'the garden' });
     world.addLocation({ name: 'the shed' });
-    const Sport = world.addThing(new Thing({
+    const Sport = world.addActor(new Actor({
       type: cat,
       name: 'Sport',
       locations: ['the garden', 'the shed'],
@@ -28,7 +28,7 @@ describe('getRandomTransition', () => {
       },
       isDirectional: true,
       mutations: null,
-      consequentThing: null,
+      consequentActor: null,
     }));
     assert.deepEqual(getRandomTransition(world), [
       {
@@ -55,7 +55,7 @@ describe('getRandomTransition', () => {
             'the shed',
           ],
         },
-        consequentThing: null,
+        consequentActor: null,
         mutations: null,
       },
       {
@@ -83,7 +83,7 @@ describe('getRandomTransition', () => {
     const cat = new Type('cat');
     world.addLocation({ name: 'the garden' });
     world.addLocation({ name: 'the shed' });
-    world.addThing(new Thing({
+    world.addActor(new Actor({
       type: cat,
       name: 'Sport',
       locations: ['the garden', 'the shed'],

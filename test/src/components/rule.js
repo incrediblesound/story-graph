@@ -1,7 +1,7 @@
 const assert = require('assert');
 const Rule = require('../../../src/components/rule');
 const SG = require('../../../src/main');
-const Thing = SG.Thing;
+const Actor = SG.Actor;
 const Type = SG.Type;
 const c = SG.constants;
 
@@ -13,12 +13,12 @@ describe('Rule', () => {
   const cute = type => type.extend('cute');
   const fluffy = type => type.extend('fluffy');
   world.addLocation({ name: 'the garden' });
-  const Sport = world.addThing(new Thing({
+  const Sport = world.addActor(new Actor({
     type: cute(cat),
     name: 'Sport',
     locations: ['the garden'],
   }));
-  const Flex = world.addThing(new Thing({
+  const Flex = world.addActor(new Actor({
     type: fluffy(dog),
     name: 'Flex',
     locations: ['the garden'],
@@ -37,7 +37,7 @@ describe('Rule', () => {
         },
         isDirectional: true,
         mutations: null,
-        consequentThing: null,
+        consequentActor: null,
       }, 0);
       assert.deepEqual(rule, {
         cause: {
@@ -60,7 +60,7 @@ describe('Rule', () => {
           ],
         },
         locations: [],
-        consequentThing: null,
+        consequentActor: null,
         id: 0,
         isDirectional: true,
         mutations: null,

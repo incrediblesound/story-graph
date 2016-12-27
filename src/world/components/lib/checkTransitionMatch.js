@@ -10,13 +10,13 @@ function isSubset(set, valueOrSet) {
 
 /**
  * checkTransitionMatch
- *   Checks that a Rule can be caused by a Thing, a Thing is in the correct origin Location, a Thing
+ *   Checks that a Rule can be caused by an Actor, an Actor is in the correct origin Location, an Actor
  *   is moving to a valid destination Location, and the Action is "move_out".
  *
  * @param  {Rule} rule
  *   The Rule to validate.
- * @param  {Thing} thing
- *   The Thing to validate.
+ * @param  {Actor} actor
+ *   The Actor to validate.
  * @param  {Location[]} locations
  *   All possible Locations.
  * @param  {Action} action
@@ -24,7 +24,7 @@ function isSubset(set, valueOrSet) {
  * @return {Boolean}
  *   Whether or not the transition is valid.
  */
-module.exports = function checkTransitionMatch(rule, thing, locations, action) {
+module.exports = function checkTransitionMatch(rule, actor, locations, action) {
   if (!includes(locations, rule.getConsequentTarget())) {
     return false;
   } else if (!(rule.getActionType() === action)) {
@@ -32,6 +32,6 @@ module.exports = function checkTransitionMatch(rule, thing, locations, action) {
   }
   const ruleSource = rule.getSource();
   return ruleSource instanceof Type
-    ? isSubset(thing.getTypes(), ruleSource.get())
-    : ruleSource === thing.id;
+    ? isSubset(actor.getTypes(), ruleSource.get())
+    : ruleSource === actor.id;
 };

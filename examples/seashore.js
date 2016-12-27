@@ -1,7 +1,7 @@
 const World = require('../src/world/world.js');
 const world = new World();
 
-const Thing = require('../src/components/thing.js');
+const Actor = require('../src/components/actor.js');
 const Type = require('../src/components/type.js');
 const c = require('../src/components/constants.js');
 
@@ -33,37 +33,37 @@ world.addLocation({ name: 'the seashore' });
 world.addLocation({ name: 'the painted cliffs' });
 world.addLocation({ name: 'the granite boulder' });
 
-const cliffs = world.addThing(new Thing({
+const cliffs = world.addActor(new Actor({
   type: dark(expansive(entity)),
   name: 'the cliffs',
   locations: null
 }));
 
-const ocean = world.addThing(new Thing({
+const ocean = world.addActor(new Actor({
   type: bright(expansive(entity)),
   name: 'the ocean',
   locations: null
 }));
 
-const minnows = world.addThing(new Thing({
+const minnows = world.addActor(new Actor({
   type: life,
   name: 'a group of minnows',
   locations: ['the ocean'],
 }));
 
-const hermitcrabs = world.addThing(new Thing({
+const hermitcrabs = world.addActor(new Actor({
   type: life,
   name: 'hermit crabs',
   locations: ['the seashore'],
 }));
 
-const crab = world.addThing(new Thing({
+const crab = world.addActor(new Actor({
   type: slow(light(animal)),
   name: 'the tiny crab',
   locations: ['the seashore', 'the ocean'],
 }));
 
-const clouds = world.addThing(new Thing({
+const clouds = world.addActor(new Actor({
   type: wet(bright(slow(vapor))),
   name: 'the clouds',
   locations: ['the grey sky', 'the painted cliffs', 'the ocean'],
@@ -81,7 +81,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -95,7 +95,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -109,7 +109,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -123,7 +123,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -137,7 +137,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -151,7 +151,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -165,7 +165,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -179,7 +179,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -193,7 +193,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -207,7 +207,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -221,7 +221,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -235,7 +235,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: null,
+  consequentActor: null,
 });
 
 world.addRule({
@@ -249,7 +249,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: {
+  consequentActor: {
     type: slow(dark(vapor)),
     name: 'A light fog',
     locations: ['the ocean'],
@@ -269,7 +269,7 @@ world.addRule({
   },
   isDirectional: true,
   mutations: null,
-  consequentThing: {
+  consequentActor: {
     type: slow(dark(vapor)),
     name: 'the fog',
     locations: ['the painted cliffs'],

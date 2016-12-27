@@ -1,4 +1,4 @@
-const Thing = require('../../components/thing.js');
+const Actor = require('../../components/actor.js');
 const story = require('./story.js');
 const c = require('../../components/constants.js');
 const utility = require('./utility.js');
@@ -44,15 +44,15 @@ function processElementValue(world, element) {
   return body;
 }
 
-function addConsequentThing(world, rule, storyEvent) {
-  const consequentThing = new Thing(rule.consequentThing, storyEvent, world);
-  consequentThing.parentId = rule.id;
-  world.addThing(consequentThing);
+function addConsequentActor(world, rule, storyEvent) {
+  const consequentActor = new Actor(rule.consequentActor, storyEvent, world);
+  consequentActor.parentId = rule.id;
+  world.addActor(consequentActor);
 }
 
 function runMutations(world, rule, storyEvent) {
-  const source = world.getThingById(storyEvent[0]);
-  const target = world.getThingById(storyEvent[2]);
+  const source = world.getActorById(storyEvent[0]);
+  const target = world.getActorById(storyEvent[2]);
   rule.mutations(source, target);
 }
 
@@ -63,13 +63,13 @@ function applyConsequent(world, typeExpression) {
   _.each(typeExpressionArray, (expr) => {
     switch (expr[1]) {
       case c.vanish: {
-        const thing = expr[0];
-        utility.removeThing(world, thing);
+        const actor = expr[0];
+        utility.removeActor(world, actor);
         break;
       }
       case c.move_in: {
-        const thing = world.getThingById(expr[0]);
-        thing.location = expr[2];
+        const actor = world.getActorById(expr[0]);
+        actor.location = expr[2];
         break;
       }
       default: {
@@ -94,8 +94,8 @@ function processEvent(world, rule, storyEvent) {
   const consequent = processElementValue(world, consequentType);
   const tertiary = !!tertiaryType ? applyConsequent(world, tertiaryType) : '';
 
-  if (!!rule.consequentThing) {
-    addConsequentThing(world, rule, storyEvent);
+  if (!!rule.consequentActor) {
+    addConsequentActor(world, rule, storyEvent);
   }
   if (!!rule.mutations) {
     runMutations(world, rule, storyEvent);
@@ -106,7 +106,7 @@ function processEvent(world, rule, storyEvent) {
 
 module.exports = {
   processEvent,
-  addConsequentThing,
+  addConsequentActor,
   runMutations,
   applyConsequent,
   populateRuleType,

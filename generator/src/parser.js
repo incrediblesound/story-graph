@@ -9,7 +9,7 @@ function simpleType(line, result) {
   });
 }
 
-function thing(line, result) {
+function actor(line, result) {
   const preDef = line.indexOf('a') > -1 ? line.indexOf('a') : line.indexOf('an');
   const calledIdx = line.indexOf('called');
   const types = line.slice(preDef + 1, calledIdx);
@@ -32,7 +32,7 @@ function thing(line, result) {
     theLocation.push(current);
     locations.push(theLocation.join(' ').replace(/<|>/g, ''));
   }
-  result.things.push({ types, name, locations });
+  result.actors.push({ types, name, locations });
 }
 
 function transition(line, result) {
@@ -58,7 +58,7 @@ function transition(line, result) {
 
   if (line[0] === 'the') { line.shift(); }
 
-  const typeOrThing = line.shift();
+  const typeOrActor = line.shift();
 
   current = line.shift();
   while (!_.includes(current, '>')) {
@@ -70,7 +70,7 @@ function transition(line, result) {
     from: first.join(' ').replace(/<|>/g, ''),
     to: second.join(' ').replace(/<|>/g, ''),
     text: text.join(' ').replace(/<|>/g, ''),
-    typeOrThing,
+    typeOrActor,
   });
 }
 
@@ -175,7 +175,7 @@ function rule(line, result) {
 function tokenizer(tokens) {
   const result = {
     types: [],
-    things: [],
+    actors: [],
     rules: [],
     locations: [],
     transitions: [],
@@ -183,7 +183,7 @@ function tokenizer(tokens) {
 
   const parserMap = {
     'simple type': simpleType,
-    thing,
+    actor,
     'compound type': compoundType,
     decorator,
     location,

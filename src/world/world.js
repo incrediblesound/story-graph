@@ -11,7 +11,7 @@ class World {
   constructor() {
     this.size = 0;
     this.lastId = -1;
-    this.things = [];
+    this.actors = [];
 
     this.numLocations = 0;
     this.locations = [];
@@ -35,22 +35,22 @@ class World {
     this.locations.push(new Location(data));
     this.numLocations++;
   }
-  addThing(thing) {
-    function add(thingToAdd) {
+  addActor(actor) {
+    function add(actorToAdd) {
       const id = this.lastId + 1;
       this.lastId = id;
-      thingToAdd.id = id;
-      thingToAdd.setEntryTime(this.timeIndex);
-      this.things.push(thingToAdd);
+      actorToAdd.id = id;
+      actorToAdd.setEntryTime(this.timeIndex);
+      this.actors.push(actorToAdd);
       this.size++;
       return id;
     }
 
-    if (Array.isArray(thing)) {
-      _.each(thing, item => add.apply(this, [item]), this);
+    if (Array.isArray(actor)) {
+      _.each(actor, item => add.apply(this, [item]), this);
       return false;
     }
-    const id = add.apply(this, [thing]);
+    const id = add.apply(this, [actor]);
     return id;
   }
   renderEvent(theStory) {
@@ -72,8 +72,8 @@ class World {
     }
     if (nextEvent.length === 2) {
       const rule = nextEvent[0];
-      const thing = nextEvent[1];
-      output += events.processEvent(this, rule, [thing.id, rule.cause.type[1]]);
+      const actor = nextEvent[1];
+      output += events.processEvent(this, rule, [actor.id, rule.cause.type[1]]);
     } else {
       const rule = nextEvent[0];
       const one = nextEvent[1];
@@ -121,10 +121,10 @@ class World {
     }
     return false;
   }
-  getThingById(id) {
+  getActorById(id) {
     for (let i = 0; i < this.size; i++) {
-      if (this.things[i].id === id) {
-        return this.things[i];
+      if (this.actors[i].id === id) {
+        return this.actors[i];
       }
     }
     return false;

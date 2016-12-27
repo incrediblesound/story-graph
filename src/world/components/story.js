@@ -13,16 +13,16 @@ function contains(x, y) {
   return result;
 }
 
-function twoThings(world) {
-  const thingOne = world.things[Math.floor(Math.random() * world.things.length)];
-  const localThings = world.things.filter((thing) =>
-    (thing.location === thingOne.location) && (thing.name !== thingOne.name)
+function twoActors(world) {
+  const actorOne = world.actors[Math.floor(Math.random() * world.actors.length)];
+  const localActors = world.actors.filter((actor) =>
+    (actor.location === actorOne.location) && (actor.name !== actorOne.name)
   );
-  if (!localThings.length) {
+  if (!localActors.length) {
     return false;
   }
-  const thingTwo = localThings[Math.floor(Math.random() * localThings.length)];
-  return [thingOne, thingTwo];
+  const actorTwo = localActors[Math.floor(Math.random() * localActors.length)];
+  return [actorOne, actorTwo];
 }
 
 function rollDie() {
@@ -70,7 +70,7 @@ function checkMatch(rule, source, target, action) {
 function matchRuleFor(world, one, two, action) {
   const matchedRules = [];
   // create a list of rules that either have no location limitation or whose location
-  // limitations contain the location of the two thing one && two.
+  // limitations contain the location of the two actor one && two.
   const localRules = world.rules.filter((rule) => {
     const hasLocation = !!rule.locations.length;
     if (!hasLocation || !one.location) return true;
@@ -95,7 +95,7 @@ function randomMatch(world) {
     const randomTransition = getRandomTransition(world);
     return randomTransition;
   }
-  const pair = twoThings(world);
+  const pair = twoActors(world);
   if (!pair) {
     return false;
   }
@@ -111,6 +111,6 @@ function randomMatch(world) {
 module.exports = {
   checkMatch,
   matchRuleFor,
-  twoThings,
+  twoActors,
   randomMatch,
 };

@@ -1,7 +1,7 @@
 There is a type called entity. A vapor is an entity. A life is an entity.
 An animal is a life. A solid is an entity.
 
-Some things are light and some are heavy. Some things are wet and some are dry. Some things are slow and some are fast. Some things are bright and some are dark. Some things are expansive and some are small.
+Some actors are light and some are heavy. Some actors are wet and some are dry. Some actors are slow and some are fast. Some actors are bright and some are dark. Some actors are expansive and some are small.
 
 A rock is a dry heavy solid. A bird is a light fast animal.
 
