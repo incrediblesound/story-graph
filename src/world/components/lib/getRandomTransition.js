@@ -11,8 +11,10 @@ const matchTransitionFor = require('./matchTransitionFor');
  */
 module.exports = function getRandomTransition(world) {
   const moveableSet = world.actors.filter(actor => actor.locations.length > 1);
-  if(!moveableSet.length){
-    throw new Error('You have defined transitions but none of your actors have multiple possible locations.')
+  if (!moveableSet.length) {
+    throw new Error(
+      'You have defined transitions but none of your actors have multiple possible locations.'
+    );
   }
   const randomActor = moveableSet[Math.floor(Math.random() * moveableSet.length)];
   const transition = matchTransitionFor(randomActor, world.numRules, world.rules);

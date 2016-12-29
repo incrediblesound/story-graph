@@ -19,7 +19,7 @@ function populateRuleType(eventTemplate, eventTrigger) {
       return eventTrigger[2];
     }
     return value;
-  })
+  });
 }
 
 function processElementValue(world, element) {
