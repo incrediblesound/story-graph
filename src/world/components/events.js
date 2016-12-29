@@ -5,21 +5,21 @@ const utility = require('./utility.js');
 
 const _ = require('lodash');
 
-function populateRuleType(world, event, sourceEvent) {
-  if (event === undefined || !event.length) return false;
+/*
+ * Replaces the constants SOURCE and TARGET with the IDs of the actors that
+ * triggered this rule
+ */
+function populateRuleType(eventTemplate, eventTrigger) {
+  if (!eventTemplate || !eventTemplate.length) return false;
 
-  function swap(val, source) {
-    if (val === c.source) {
-      return source[0];
-    } else if (val === c.target) {
-      return source[2];
+  return eventTemplate.map(value => {
+    if (value === c.source) {
+      return eventTrigger[0];
+    } else if (value === c.target) {
+      return eventTrigger[2];
     }
-    return val;
-  }
-
-  event[0] = swap(event[0], sourceEvent);
-  event[2] = swap(event[2], sourceEvent);
-  return event;
+    return value;
+  })
 }
 
 function processElementValue(world, element) {
@@ -87,9 +87,9 @@ function applyConsequent(world, typeExpression) {
 }
 
 function processEvent(world, rule, storyEvent) {
-  const causeType = populateRuleType(world, rule.cause.value.slice(), storyEvent);
-  const consequentType = populateRuleType(world, rule.consequent.value.slice(), storyEvent);
-  const tertiaryType = populateRuleType(world, rule.consequent.type.slice(), storyEvent);
+  const causeType = populateRuleType(rule.cause.template, storyEvent);
+  const consequentType = populateRuleType(rule.consequent.template, storyEvent);
+  const tertiaryType = populateRuleType(rule.consequent.type, storyEvent);
   const cause = processElementValue(world, causeType);
   const consequent = processElementValue(world, consequentType);
   const tertiary = !!tertiaryType ? applyConsequent(world, tertiaryType) : '';

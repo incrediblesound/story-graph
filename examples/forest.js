@@ -86,11 +86,11 @@ world.addActor([whisper, reeds, river, shadow, duck, snow, sunlight, bluejay, ic
 world.addRule({
   cause: {
     type: [inflowing(spirit), c.encounter, outpouring(spirit)],
-    value: [c.source, 'joins with', c.target, 'for a moment'],
+    template: [c.source, 'joins with', c.target, 'for a moment'],
   },
   consequent: {
     type: [],
-    value: [c.source, 'does a whirling dance with', c.target],
+    template: [c.source, 'does a whirling dance with', c.target],
   },
   isDirectional: false,
   consequentActor: {
@@ -105,11 +105,11 @@ world.addRule({
 world.addRule({
   cause: {
     type: [dark(entity), c.encounter, bright(entity)],
-    value: [c.source, 'passes through', c.target],
+    template: [c.source, 'passes through', c.target],
   },
   consequent: {
     type: [],
-    value: [c.source, 'is illuminated by', c.target],
+    template: [c.source, 'is illuminated by', c.target],
   },
   isDirectional: true,
   mutations: source => {
@@ -120,11 +120,11 @@ world.addRule({
 world.addRule({
   cause: {
     type: [loud(entity), c.encounter, loud(entity)],
-    value: [],
+    template: [],
   },
   consequent: {
     type: [],
-    value: [c.source, 'and', c.target, 'call out to each other'],
+    template: [c.source, 'and', c.target, 'call out to each other'],
   },
   isDirectional: false,
   consequentActor: {
@@ -139,11 +139,11 @@ world.addRule({
 world.addRule({
   cause: {
     type: [life, c.encounter, quiet(spirit)],
-    value: [c.source, 'approaches', c.target],
+    template: [c.source, 'approaches', c.target],
   },
   consequent: {
     type: [],
-    value: [c.source, 'and', c.target, 'pass eachother quietly'],
+    template: [c.source, 'and', c.target, 'pass eachother quietly'],
   },
   isDirectional: true,
   consequentActor: {
@@ -158,11 +158,11 @@ world.addRule({
 world.addRule({
   cause: {
     type: [simple(hot(entity)), c.encounter, simple(cold(entity))],
-    value: [c.source, 'radiates upon', c.target],
+    template: [c.source, 'radiates upon', c.target],
   },
   consequent: {
     type: [],
-    value: [c.target, 'begins to crack and melt'],
+    template: [c.target, 'begins to crack and melt'],
   },
   isDirectional: true,
   consequentActor: {
@@ -178,11 +178,11 @@ world.addRule({
 world.addRule({
   cause: {
     type: [entity, c.encounter, complex(connection)],
-    value: [c.source, 'discovers', c.target],
+    template: [c.source, 'discovers', c.target],
   },
   consequent: {
     type: [c.source, c.move_in, c.target],
-    value: [c.source, 'observes the patterns of', c.target],
+    template: [c.source, 'observes the patterns of', c.target],
   },
   isDirectional: true,
 });
@@ -190,22 +190,22 @@ world.addRule({
 world.addRule({
   cause: {
     type: [entity, c.move_in, complex(connection)],
-    value: [c.source, 'dwells in the stillness of life'],
+    template: [c.source, 'dwells in the stillness of life'],
   },
   consequent: {
     type: [c.source, c.stay],
-    value: [],
+    template: [],
   },
 });
 
 world.addRule({
   cause: {
     type: [jolting(entity), c.encounter, outpouring(entity)],
-    value: [c.source, 'glances', c.target],
+    template: [c.source, 'glances', c.target],
   },
   consequent: {
     type: [c.source, c.vanish],
-    value: [c.source, 'flickers away'],
+    template: [c.source, 'flickers away'],
   },
   isDirectional: true,
 });

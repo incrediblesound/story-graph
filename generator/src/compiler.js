@@ -36,17 +36,20 @@ function compileLocations(data, result) {
 function compileTransitions(data, result) {
   let newResult = result;
   _.each(data, transition => {
-    newResult += 'world.addRule({\n';
-    newResult += '  cause: {\n';
-    newResult += `    type: [${transition.typeOrActor}, c.move_out, \'${transition.from}\'],\n`;
-    newResult += '    value: [\'\']\n  },\n';
-    newResult += '  consequent: {\n';
-    newResult += `    type: [c.source, c.move_in, \'${transition.to}\'],\n`;
-    newResult += `    value: [c.source, \'${transition.text}\', \'${transition.to}\']\n  },\n`;
-    newResult += '  isDirectional: true,\n';
-    newResult += '  mutations: null,\n';
-    newResult += '  consequentActor: null\n';
-    newResult += '})\n\n';
+    newResult +=
+`
+world.addRule({
+cause: {
+  type: [${transition.typeOrActor}, c.move_out, \'${transition.from}\'],
+  template: [\'\']\n  },
+consequent: {
+  type: [c.source, c.move_in, \'${transition.to}\'],
+  template: [c.source, \'${transition.text}\', \'${transition.to}\']\n  },
+isDirectional: true,
+mutations: null,
+consequentActor: null
+});
+`
   });
   return newResult;
 }
@@ -74,15 +77,18 @@ function isEqual(a, b) {
 
 // compile all the actors
 function compileActors(actors, result) {
-  let newResult = result;
   _.each(actors, data => {
-    newResult += `const ${data.name} = world.addActor(`;
-    newResult += `new Actor({\n  type: ${processTypes(data.types)}`;
-    newResult += `,\n  name: \'${data.name}\'`;
-    newResult += `,\n  locations: ${JSON.stringify(data.locations)}`;
-    newResult += '\n}));\n\n';
+    result +=
+`
+const ${data.name} = world.addActor(
+  new Actor({
+    type: ${processTypes(data.types)},
+    name: '${data.name}',
+    locations: ['${data.locations.join('\', \'')}']
+ }));
+ `
   });
-  return newResult;
+  return result;
 }
 
 // compile all the rules
@@ -109,21 +115,24 @@ function compileRules(rules, result) {
   let newResult = result;
 
   _.each(rules, rule => {
-    newResult += 'world.addRule({\n';
-    newResult += '  cause: {\n';
-    newResult += `    type: [${processTypes(rule.source.slice())}, c.encounter, `;
-    newResult += `${processTypes(rule.target.slice())}],\n`;
-    newResult += `    value: [c.source, \'${rule.encounterText}\', c.target]\n  },\n`;
-    newResult += '  consequent: {\n';
-    newResult += '    type: [],\n';
     const source = matchEntity(rule.consequentA, rule, 'c.source');
     const target = matchEntity(rule.consequentB, rule, 'c.target');
-    newResult += `    value: [${source}, \'${rule.consequenceText}\'${target}]\n  },\n`;
-    newResult += '  isDirectional: true,\n';
-    newResult += '  mutations: null,\n';
-    newResult += '  consequentActor: null/*{ type:\'\', name:\'\', members:[c.source,c.target],';
-    newResult += 'lifeTime: 1, initialize: function(world){}}*/\n';
-    newResult += '});\n\n';
+    newResult +=
+`
+world.addRule({
+cause: {
+  type: [${processTypes(rule.source.slice())}, c.encounter, ${processTypes(rule.target.slice())}],
+  template: [c.source, '${rule.encounterText}', c.target]
+},
+consequent: {
+  type: [],
+  template: [${source}, \'${rule.consequenceText}\'${target}]
+},
+  isDirectional: true,
+  mutations: null,
+  consequentActor: null/*{ type:\'\', name:\'\', members:[c.source,c.target],lifeTime: 1, initialize: function(world){}}*/
+});
+`
   });
 
   return newResult;
@@ -144,11 +153,14 @@ function compileTypes(types, result) {
 }
 
 module.exports = structure => {
-  let result = 'const SG = require(\'./src/main.js\');\n'
-    + 'const world = new SG.World();\n'
-    + 'const Actor = SG.Actor;\n'
-    + 'const Type = SG.Type;\n'
-    + 'const c = SG.constants;\n\n';
+  let result =
+`
+const SG = require(\'./src/main.js\');
+const world = new SG.World();
+const Actor = SG.Actor;
+const Type = SG.Type;
+const c = SG.constants;
+`
 
   result = compileTypes(structure.types, result);
   result = compileLocations(structure.locations, result);
