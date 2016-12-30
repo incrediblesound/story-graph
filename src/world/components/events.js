@@ -9,7 +9,7 @@ const _ = require('lodash');
  * Replaces the constants SOURCE and TARGET with the IDs of the actors that
  * triggered this rule
  */
-function populateRuleType(eventTemplate, eventTrigger) {
+function populateTemplate(eventTemplate, eventTrigger) {
   if (!eventTemplate || !eventTemplate.length) return false;
 
   return eventTemplate.map(value => {
@@ -22,7 +22,7 @@ function populateRuleType(eventTemplate, eventTrigger) {
   });
 }
 
-function processElementValue(world, element) {
+function renderTemplate(world, element) {
   let result = [];
   _.each(element, (el) => {
     let actor = utility.getPiece(world, el);
@@ -87,12 +87,12 @@ function applyConsequent(world, typeExpression) {
 }
 
 function processEvent(world, rule, storyEvent) {
-  const causeType = populateRuleType(rule.cause.template, storyEvent);
-  const consequentType = populateRuleType(rule.consequent.template, storyEvent);
-  const tertiaryType = populateRuleType(rule.consequent.type, storyEvent);
-  const cause = processElementValue(world, causeType);
-  const consequent = processElementValue(world, consequentType);
-  const tertiary = !!tertiaryType ? applyConsequent(world, tertiaryType) : '';
+  const causeTemplate = populateTemplate(rule.cause.template, storyEvent);
+  const consequentTemplate = populateTemplate(rule.consequent.template, storyEvent);
+  const tertiaryTemplate = populateTemplate(rule.consequent.type, storyEvent);
+  const causeText = renderTemplate(world, causeTemplate);
+  const consequentText = renderTemplate(world, consequentTemplate);
+  const tertiary = !!tertiaryTemplate ? applyConsequent(world, tertiaryTemplate) : '';
 
   if (!!rule.consequentActor) {
     addConsequentActor(world, rule, storyEvent);
@@ -100,7 +100,7 @@ function processEvent(world, rule, storyEvent) {
   if (!!rule.mutations) {
     runMutations(world, rule, storyEvent);
   }
-  const result = cause + consequent + tertiary;
+  const result = causeText + consequentText + tertiary;
   return result;
 }
 
@@ -109,6 +109,6 @@ module.exports = {
   addConsequentActor,
   runMutations,
   applyConsequent,
-  populateRuleType,
-  processElementValue,
+  populateTemplate,
+  renderTemplate,
 };
