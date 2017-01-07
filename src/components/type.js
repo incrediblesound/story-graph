@@ -9,8 +9,8 @@ export default class Type {
     return this.types.slice();
   }
   replace(oldType, newType) {
-    let index = this.types.indexOf(oldType)
-    if(index < 0){
+    const index = this.types.indexOf(oldType)
+    if (index < 0) {
       throw new Error(`Tried to replace "${oldType}" in type set not containing ${oldType}.`)
     }
     this.types[index] = newType;
@@ -21,4 +21,4 @@ export default class Type {
   remove(type) {
     this.types.splice(this.types.indexOf(type), 1);
   }
-};
+}

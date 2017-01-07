@@ -6,9 +6,7 @@ import { find, includes } from 'lodash'
 /* HELPERS */
 
 function isSubset(set, subset) {
-  return subset.reduce((acc, curr) => {
-    return acc && (set.indexOf(curr) !== -1)
-  }, true)
+  return subset.reduce((acc, curr) => acc && (set.indexOf(curr) !== -1), true)
 }
 
 function rollDie() {
@@ -76,7 +74,7 @@ export function matchRuleFor(world, one, two, action) {
     return one.location && (!hasLocation || includes(rule.locations, one.location));
   });
   for (let i = 0; i < localRules.length; i++) {
-    let currentRule = localRules[i];
+    const currentRule = localRules[i];
     const isMatch = checkMatch(currentRule, one, two, action);
     if (isMatch) {
       matchedRules.push(currentRule);
@@ -97,7 +95,7 @@ export function randomMatch(world) {
   }
   const pair = twoActors(world);
   if (!pair) return false;
-  const [ one, two ] = pair;
+  const [one, two] = pair;
 
   const rule = matchRuleFor(world, one, two, ENCOUNTER);
   if (!rule) {

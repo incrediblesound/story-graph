@@ -70,10 +70,10 @@ export default class World {
       nextEvent = randomMatch(this);
     }
     if (nextEvent.length === 2) {
-      const [ rule, actor ] = nextEvent;
+      const [rule, actor] = nextEvent;
       output += processEvent(this, rule, [actor.id, rule.cause.type[1]]);
     } else {
-      const [ rule, one, two ] = nextEvent;
+      const [rule, one, two] = nextEvent;
       output += processEvent(this, rule, [one.id, rule.cause.type[1], two.id]);
     }
     this.output = `${this.output}${output}`;

@@ -4,3 +4,4 @@ extends: airbnb-base
 rules:
   no-param-reassign: [2, { props: false }]
   comma-dangle: 0
+  semi: 0

@@ -23,4 +23,4 @@ export default class Rule {
   getActionType() {
     return this.cause.type[1];
   }
-};
+}

@@ -1,5 +1,5 @@
 export function addPeriod(text) {
-  return text + '. '
+  return `${text}. `
 }
 
 export function capitalizeFirst(text) {

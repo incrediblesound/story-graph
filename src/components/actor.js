@@ -16,7 +16,7 @@ export default class Actor {
     this.members = data.members;
     this.lifeTime = data.lifeTime || 999;
     this.callback = data.callback || null;
-    if(storyEvent && world) {
+    if (storyEvent && world) {
       this.fetchMembers(storyEvent, world);
     }
     if (data.initializeName) {
@@ -38,4 +38,4 @@ export default class Actor {
   setEntryTime(time) {
     this.entryTime = time;
   }
-};
+}

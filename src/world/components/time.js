@@ -10,7 +10,7 @@ export function advanceTime(world) {
     if (idx >= world.size) return;
     const age = world.timeIndex - actor.entryTime;
     if (age > actor.lifeTime) {
-      utility.removeActor(world, actor.id);
+      removeActor(world, actor.id);
     } else if (actor.callback !== null) {
       world.processTimeTrigger(world, actor.callback(world.timeIndex));
     }

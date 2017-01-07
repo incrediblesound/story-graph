@@ -22,12 +22,12 @@ export function populateTemplate(eventTemplate, eventTrigger) {
 }
 
 export function renderTemplate(world, template) {
-  let result = template.map(piece => {
-    let actor = utility.getPiece(world, piece);
-    let text = actor.name || actor;
+  const result = template.map(piece => {
+    const actor = utility.getPiece(world, piece);
+    const text = actor.name || actor;
     return text;
   });
-  let body = result.join(' ');
+  const body = result.join(' ');
   if (!body.length) {
     return '';
   }
