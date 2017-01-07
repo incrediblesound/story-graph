@@ -40,11 +40,11 @@ function compileTransitions(data, result) {
 `
 world.addRule({
 cause: {
-  type: [${transition.typeOrActor}, c.move_out, \'${transition.from}\'],
+  type: [${transition.typeOrActor}, c.MOVE_OUT, \'${transition.from}\'],
   template: [\'\']\n  },
 consequent: {
-  type: [c.source, c.move_in, \'${transition.to}\'],
-  template: [c.source, \'${transition.text}\', \'${transition.to}\']\n  },
+  type: [c.SOURCE, c.MOVE_IN, \'${transition.to}\'],
+  template: [c.SOURCE, \'${transition.text}\', \'${transition.to}\']\n  },
 isDirectional: true,
 mutations: null,
 consequentActor: null
@@ -101,12 +101,12 @@ function compileRules(rules, result) {
     if (isEqual(data, rule.source) && isEqual(data, rule.target)) {
       newResult = position;
     } else if (isEqual(data, rule.source)) {
-      newResult = 'c.source';
+      newResult = 'c.SOURCE';
     } else {
-      newResult = 'c.target';
+      newResult = 'c.TARGET';
     }
 
-    if (position === 'c.target') {
+    if (position === 'c.TARGET') {
       newResult = `, ${newResult}`;
     }
     return newResult;
@@ -115,14 +115,14 @@ function compileRules(rules, result) {
   let newResult = result;
 
   _.each(rules, rule => {
-    const source = matchEntity(rule.consequentA, rule, 'c.source');
-    const target = matchEntity(rule.consequentB, rule, 'c.target');
+    const source = matchEntity(rule.consequentA, rule, 'c.SOURCE');
+    const target = matchEntity(rule.consequentB, rule, 'c.TARGET');
     newResult +=
 `
 world.addRule({
 cause: {
-  type: [${processTypes(rule.source.slice())}, c.encounter, ${processTypes(rule.target.slice())}],
-  template: [c.source, '${rule.encounterText}', c.target]
+  type: [${processTypes(rule.source.slice())}, c.ENCOUNTER, ${processTypes(rule.target.slice())}],
+  template: [c.SOURCE, '${rule.encounterText}', c.TARGET]
 },
 consequent: {
   type: [],
@@ -130,7 +130,7 @@ consequent: {
 },
   isDirectional: true,
   mutations: null,
-  consequentActor: null/*{ type:\'\', name:\'\', members:[c.source,c.target],lifeTime: 1, initialize: function(world){}}*/
+  consequentActor: null/*{ type:\'\', name:\'\', members:[c.SOURCE,c.TARGET],lifeTime: 1, initialize: function(world){}}*/
 });
 `
   });
@@ -155,7 +155,7 @@ function compileTypes(types, result) {
 module.exports = structure => {
   let result =
 `
-const SG = require(\'./src/main.js\');
+const SG = require(\'./dist/story.js\');
 const world = new SG.World();
 const Actor = SG.Actor;
 const Type = SG.Type;

@@ -1,6 +1,6 @@
-const utility = require('./utility.js');
+import { removeActor } from './utility.js';
 
-function advance(world) {
+export function advanceTime(world) {
   if (world.timedEvents[world.timeIndex] !== undefined) {
     world.renderEvent([world.timedEvents[world.timeIndex]]);
   } else {
@@ -17,10 +17,3 @@ function advance(world) {
   });
   world.timeIndex++;
 }
-
-// function processTimeTrigger(world, timeEvent) {}
-
-module.exports = {
-  advance,
-  // processTimeTrigger,
-};

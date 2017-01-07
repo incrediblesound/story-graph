@@ -1,13 +1,12 @@
-const _ = require('lodash');
-const Rule = require('../components/rule.js');
-const Location = require('../components/location.js');
+import Rule from '../components/rule'
+import Location from '../components/location'
 
-const story = require('./components/story.js');
-const events = require('./components/events.js');
-const time = require('./components/time.js');
-const utility = require('./components/utility.js');
+import { randomMatch, checkMatch } from './components/story'
+import { processEvent } from './components/events'
+import { advanceTime } from './components/time'
+import utility from './components/utility'
 
-class World {
+export default class World {
   constructor() {
     this.size = 0;
     this.lastId = -1;
@@ -47,7 +46,7 @@ class World {
     }
 
     if (Array.isArray(actor)) {
-      _.each(actor, item => add.apply(this, [item]), this);
+      actor.forEach(item => add.apply(this, [item]));
       return false;
     }
     const id = add.apply(this, [actor]);
@@ -57,7 +56,7 @@ class World {
     let output = '';
     theStory.forEach(storyEvent => {
       const rule = this.findRule(storyEvent);
-      output += events.processEvent(this, rule, storyEvent);
+      output += processEvent(this, rule, storyEvent);
     });
     this.output = `${this.output}${output}`;
   }
@@ -68,24 +67,21 @@ class World {
     while (!nextEvent) {
       counter++;
       if (counter > 100) { throw new Error('Couldn\'t find match'); }
-      nextEvent = story.randomMatch(this);
+      nextEvent = randomMatch(this);
     }
     if (nextEvent.length === 2) {
-      const rule = nextEvent[0];
-      const actor = nextEvent[1];
-      output += events.processEvent(this, rule, [actor.id, rule.cause.type[1]]);
+      const [ rule, actor ] = nextEvent;
+      output += processEvent(this, rule, [actor.id, rule.cause.type[1]]);
     } else {
-      const rule = nextEvent[0];
-      const one = nextEvent[1];
-      const two = nextEvent[2];
-      output += events.processEvent(this, rule, [one.id, rule.cause.type[1], two.id]);
+      const [ rule, one, two ] = nextEvent;
+      output += processEvent(this, rule, [one.id, rule.cause.type[1], two.id]);
     }
     this.output = `${this.output}${output}`;
   }
   runStory(steps, theEvents = []) {
     this.registerTimedEvents(theEvents);
     while (this.timeIndex < steps) {
-      time.advance(this);
+      advanceTime(this);
     }
   }
   registerTimedEvents(theEvents) {
@@ -99,7 +95,7 @@ class World {
     const target = utility.getPiece(this, piece[2]);
     for (let i = 0; i < this.numRules; i++) {
       const current = this.rules[i];
-      if (story.checkMatch(current, source, target, action)) {
+      if (checkMatch(current, source, target, action)) {
         return current;
       }
     }
@@ -130,5 +126,3 @@ class World {
     return false;
   }
 }
-
-module.exports = World;

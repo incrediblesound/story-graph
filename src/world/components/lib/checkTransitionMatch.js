@@ -1,5 +1,5 @@
-const includes = require('lodash/includes');
-const Type = require('../../../components/type.js');
+import { includes } from 'lodash'
+import Type from '../../../components/type.js'
 
 function isSubset(set, valueOrSet) {
   if (!Array.isArray(valueOrSet)) {
@@ -25,7 +25,7 @@ function isSubset(set, valueOrSet) {
  * @return {Boolean}
  *   Whether or not the transition is valid.
  */
-module.exports = function checkTransitionMatch(rule, actor, locations, action) {
+const checkTransitionMatch = (rule, actor, locations, action) => {
   if (!includes(locations, rule.getConsequentTarget())) {
     return false;
   } else if (!(rule.getActionType() === action)) {
@@ -36,3 +36,5 @@ module.exports = function checkTransitionMatch(rule, actor, locations, action) {
     ? isSubset(actor.getTypes(), ruleSource.get())
     : ruleSource === actor.id;
 };
+
+export default checkTransitionMatch

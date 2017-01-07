@@ -1,6 +1,6 @@
-const without = require('lodash/without');
-const c = require('../../../components/constants.js');
-const checkTransitionMatch = require('./checkTransitionMatch');
+import { without } from 'lodash'
+import { MOVE_OUT } from '../../../components/constants.js'
+import checkTransitionMatch from './checkTransitionMatch'
 
 /**
  * matchTransitionFor
@@ -16,9 +16,11 @@ const checkTransitionMatch = require('./checkTransitionMatch');
  * @return {Rule|false}
  *   A random matching Rule or false if none is found.
  */
-module.exports = function matchTransitionFor(actor, numRules, rules) {
+const matchTransitionFor = (actor, rules) => {
   const potentialLocations = without(actor.locations, actor.location);
   const matchedRules =
-    rules.filter(rule => checkTransitionMatch(rule, actor, potentialLocations, c.move_out));
-  return !!matchedRules.length && matchedRules[Math.floor(Math.random() * matchedRules.length)];
+    rules.filter(rule => checkTransitionMatch(rule, actor, potentialLocations, MOVE_OUT));
+  return matchedRules.length && matchedRules[Math.floor(Math.random() * matchedRules.length)];
 };
+
+export default matchTransitionFor

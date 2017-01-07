@@ -1,15 +1,15 @@
-const constants = require('./components/constants.js');
-const Actor = require('./components/actor.js');
-const Rule = require('./components/rule.js');
-const Type = require('./components/type.js');
-const Location = require('./components/location.js');
-const World = require('./world/world.js');
+import * as constants from './components/constants.js'
+import Actor from './components/actor.js'
+import Rule from './components/rule.js'
+import Type from './components/type.js'
+import Location from './components/location.js'
+import World from './world/world.js'
 
-module.exports = {
-  constants,
+export {
   Actor,
   Rule,
   Type,
   Location,
   World,
+  constants
 };

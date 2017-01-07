@@ -1,9 +1,8 @@
-const World = require('../src/world/world.js');
-const world = new World();
-
-const Actor = require('../src/components/actor.js');
-const Type = require('../src/components/type.js');
-const c = require('../src/components/constants.js');
+const SG = require('../dist/story.js');
+const world = new SG.World();
+const Actor = SG.Actor;
+const Type = SG.Type;
+const c = SG.constants;
 
 const entity = new Type('entity');
 const vapor = entity.extend('vapor');
@@ -71,12 +70,12 @@ const clouds = world.addActor(new Actor({
 
 world.addRule({
   cause: {
-    type: [slow(vapor), c.encounter, entity],
-    template: [c.source, 'drifts across', c.target],
+    type: [slow(vapor), c.ENCOUNTER, entity],
+    template: [c.SOURCE, 'drifts across', c.TARGET],
   },
   consequent: {
     type: [],
-    template: [c.target, 'is hidden in', c.source,
+    template: [c.TARGET, 'is hidden in', c.SOURCE,
     ],
   },
   isDirectional: true,
@@ -86,12 +85,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [crab, c.encounter, hermitcrabs],
-    template: [c.source, 'stumbles over', c.target],
+    type: [crab, c.ENCOUNTER, hermitcrabs],
+    template: [c.SOURCE, 'stumbles over', c.TARGET],
   },
   consequent: {
     type: [],
-    template: [c.target, 'rolls around'],
+    template: [c.TARGET, 'rolls around'],
   },
   isDirectional: true,
   mutations: null,
@@ -100,12 +99,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [crab, c.encounter, minnows],
-    template: [c.source, 'startles', c.target],
+    type: [crab, c.ENCOUNTER, minnows],
+    template: [c.SOURCE, 'startles', c.TARGET],
   },
   consequent: {
     type: [],
-    template: [c.target, 'dart away'],
+    template: [c.TARGET, 'dart away'],
   },
   isDirectional: true,
   mutations: null,
@@ -114,12 +113,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [bird, c.encounter, expansive(entity)],
-    template: [c.source, 'swoops across', c.target],
+    type: [bird, c.ENCOUNTER, expansive(entity)],
+    template: [c.SOURCE, 'swoops across', c.TARGET],
   },
   consequent: {
     type: [],
-    template: [c.source, 'soars high above', c.target],
+    template: [c.SOURCE, 'soars high above', c.TARGET],
   },
   isDirectional: true,
   mutations: null,
@@ -128,12 +127,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [bird, c.encounter, small(solid)],
-    template: [c.source, 'discovers', c.target],
+    type: [bird, c.ENCOUNTER, small(solid)],
+    template: [c.SOURCE, 'discovers', c.TARGET],
   },
   consequent: {
     type: [],
-    template: [c.source, 'settles upon', c.target],
+    template: [c.SOURCE, 'settles upon', c.TARGET],
   },
   isDirectional: true,
   mutations: null,
@@ -142,12 +141,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [bird, c.move_out, 'the grey sky'],
+    type: [bird, c.MOVE_OUT, 'the grey sky'],
     template: [''],
   },
   consequent: {
-    type: [c.source, c.move_in, 'the seashore'],
-    template: [c.source, 'swoops down onto', 'the seashore'],
+    type: [c.SOURCE, c.MOVE_IN, 'the seashore'],
+    template: [c.SOURCE, 'swoops down onto', 'the seashore'],
   },
   isDirectional: true,
   mutations: null,
@@ -156,12 +155,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [bird, c.move_out, 'the grey sky'],
+    type: [bird, c.MOVE_OUT, 'the grey sky'],
     template: [''],
   },
   consequent: {
-    type: [c.source, c.move_in, 'the painted cliffs'],
-    template: [c.source, 'swoops down onto', 'the painted cliffs'],
+    type: [c.SOURCE, c.MOVE_IN, 'the painted cliffs'],
+    template: [c.SOURCE, 'swoops down onto', 'the painted cliffs'],
   },
   isDirectional: true,
   mutations: null,
@@ -170,12 +169,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [bird, c.move_out, 'the seashore'],
+    type: [bird, c.MOVE_OUT, 'the seashore'],
     template: [''],
   },
   consequent: {
-    type: [c.source, c.move_in, 'the grey sky'],
-    template: [c.source, 'soars up into', 'the grey sky'],
+    type: [c.SOURCE, c.MOVE_IN, 'the grey sky'],
+    template: [c.SOURCE, 'soars up into', 'the grey sky'],
   },
   isDirectional: true,
   mutations: null,
@@ -184,12 +183,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [bird, c.move_out, 'the seashore'],
+    type: [bird, c.MOVE_OUT, 'the seashore'],
     template: [''],
   },
   consequent: {
-    type: [c.source, c.move_in, 'the painted cliffs'],
-    template: [c.source, 'flies over to', 'the painted cliffs'],
+    type: [c.SOURCE, c.MOVE_IN, 'the painted cliffs'],
+    template: [c.SOURCE, 'flies over to', 'the painted cliffs'],
   },
   isDirectional: true,
   mutations: null,
@@ -198,12 +197,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [bird, c.move_out, 'the painted cliffs'],
+    type: [bird, c.MOVE_OUT, 'the painted cliffs'],
     template: [''],
   },
   consequent: {
-    type: [c.source, c.move_in, 'the granite boulder'],
-    template: [c.source, 'settles on', 'the granite boulder'],
+    type: [c.SOURCE, c.MOVE_IN, 'the granite boulder'],
+    template: [c.SOURCE, 'settles on', 'the granite boulder'],
   },
   isDirectional: true,
   mutations: null,
@@ -212,12 +211,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [crab, c.move_out, 'the ocean'],
+    type: [crab, c.MOVE_OUT, 'the ocean'],
     template: [''],
   },
   consequent: {
-    type: [c.source, c.move_in, 'the seashore'],
-    template: [c.source, 'crawls slowly up onto', 'the seashore'],
+    type: [c.SOURCE, c.MOVE_IN, 'the seashore'],
+    template: [c.SOURCE, 'crawls slowly up onto', 'the seashore'],
   },
   isDirectional: true,
   mutations: null,
@@ -226,12 +225,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [crab, c.move_out, 'the seashore'],
+    type: [crab, c.MOVE_OUT, 'the seashore'],
     template: [''],
   },
   consequent: {
-    type: [c.source, c.move_in, 'the ocean'],
-    template: [c.source, 'is swept down into', 'the ocean'],
+    type: [c.SOURCE, c.MOVE_IN, 'the ocean'],
+    template: [c.SOURCE, 'is swept down into', 'the ocean'],
   },
   isDirectional: true,
   mutations: null,
@@ -240,12 +239,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [clouds, c.move_out, 'the grey sky'],
+    type: [clouds, c.MOVE_OUT, 'the grey sky'],
     template: [''],
   },
   consequent: {
-    type: [c.source, c.vanish, 'the ocean'],
-    template: [c.source, 'drift down onto', 'the ocean'],
+    type: [c.SOURCE, c.VANISH, 'the ocean'],
+    template: [c.SOURCE, 'drift down onto', 'the ocean'],
   },
   isDirectional: true,
   mutations: null,
@@ -260,12 +259,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [clouds, c.move_out, 'the grey sky'],
+    type: [clouds, c.MOVE_OUT, 'the grey sky'],
     template: [''],
   },
   consequent: {
-    type: [c.source, c.vanish, 'the painted cliffs'],
-    template: [c.source, 'cling to', 'the painted cliffs'],
+    type: [c.SOURCE, c.VANISH, 'the painted cliffs'],
+    template: [c.SOURCE, 'cling to', 'the painted cliffs'],
   },
   isDirectional: true,
   mutations: null,
@@ -280,7 +279,7 @@ world.addRule({
 
 /* eslint-disable no-console */
 world.runStory(4, [
-  { step: 1, event: [clouds, c.encounter, cliffs] },
-  { step: 3, event: [clouds, c.encounter, ocean] }
+  { step: 1, event: [clouds, c.ENCOUNTER, cliffs] },
+  { step: 3, event: [clouds, c.ENCOUNTER, ocean] }
 ]);
 console.log(world.output);

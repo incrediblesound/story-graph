@@ -1,4 +1,4 @@
-module.exports = class Rule {
+export default class Rule {
   constructor(data, id) {
     this.id = id;
     this.isDirectional = data.isDirectional;

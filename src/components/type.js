@@ -1,15 +1,19 @@
-module.exports = class Type {
-  constructor(name) {
-    this.types = Array.isArray(name) ? name : [name];
+export default class Type {
+  constructor(types) {
+    this.types = Array.isArray(types) ? types : [types];
   }
-  extend(name) {
-    return new Type(this.get().concat(name instanceof Type ? name.get() : [name]));
+  extend(type) {
+    return new Type(this.get().concat(type instanceof Type ? type.get() : [type]));
   }
   get() {
     return this.types.slice();
   }
   replace(oldType, newType) {
-    this.types[this.types.indexOf(oldType)] = newType;
+    let index = this.types.indexOf(oldType)
+    if(index < 0){
+      throw new Error(`Tried to replace "${oldType}" in type set not containing ${oldType}.`)
+    }
+    this.types[index] = newType;
   }
   add(type) {
     this.types.push(type);

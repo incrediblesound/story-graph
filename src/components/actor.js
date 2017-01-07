@@ -1,12 +1,11 @@
-const _ = require('lodash');
-const c = require('./constants.js');
+import { SOURCE, TARGET } from './constants'
 
-module.exports = class Thing {
+export default class Actor {
   constructor(data, storyEvent, world) {
     this.id = null;
     this.type = data.type;
     this.name = data.name;
-    if (!!data.locations) {
+    if (data.locations) {
       this.location = data.location || data.locations[0];
       this.locations = data.locations;
     } else {
@@ -17,19 +16,21 @@ module.exports = class Thing {
     this.members = data.members;
     this.lifeTime = data.lifeTime || 999;
     this.callback = data.callback || null;
-    this.fetchMembers(storyEvent, world);
-    if (!!data.initializeName) {
+    if(storyEvent && world) {
+      this.fetchMembers(storyEvent, world);
+    }
+    if (data.initializeName) {
       this.name = data.initializeName(this, world);
     }
   }
   fetchMembers(storyEvent, world) {
-    _.each(this.members, (member, idx) => {
-      if (member === c.source) {
+    this.members.forEach((member, idx) => {
+      if (member === SOURCE) {
         this.members[idx] = world.getActorById(storyEvent[0]);
-      } else if (member === c.target) {
+      } else if (member === TARGET) {
         this.members[idx] = world.getActorById(storyEvent[2]);
       }
-    }, this);
+    });
   }
   getTypes() {
     return this.type.get();

@@ -1,7 +1,8 @@
-const World = require('../src/world/world.js');
-const Actor = require('../src/components/actor.js');
-const c = require('../src/components/constants.js');
-const Type = require('../src/components/type.js');
+const SG = require('../dist/story.js');
+const world = new SG.World();
+const Actor = SG.Actor;
+const Type = SG.Type;
+const c = SG.constants;
 
 const entity = new Type('entity');
 
@@ -33,8 +34,6 @@ const simple = extendType('simple');
 const quiet = extendType('quiet');
 const loud = extendType('loud');
 const inflowing = extendType('inflowing');
-
-const world = new World();
 
 const whisper = new Actor({
   type: bumbling(quiet(dark(spirit))),
@@ -85,18 +84,18 @@ world.addActor([whisper, reeds, river, shadow, duck, snow, sunlight, bluejay, ic
 
 world.addRule({
   cause: {
-    type: [inflowing(spirit), c.encounter, outpouring(spirit)],
-    template: [c.source, 'joins with', c.target, 'for a moment'],
+    type: [inflowing(spirit), c.ENCOUNTER, outpouring(spirit)],
+    template: [c.SOURCE, 'joins with', c.TARGET, 'for a moment'],
   },
   consequent: {
     type: [],
-    template: [c.source, 'does a whirling dance with', c.target],
+    template: [c.SOURCE, 'does a whirling dance with', c.TARGET],
   },
   isDirectional: false,
   consequentActor: {
     type: complex(connection),
     name: 'dancing with',
-    members: [c.source, c.target],
+    members: [c.SOURCE, c.TARGET],
     lifeTime: 2,
     initializeName: (actor) => `${actor.members[0].name} ${actor.name} ${actor.members[1].name}`
   },
@@ -104,12 +103,12 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [dark(entity), c.encounter, bright(entity)],
-    template: [c.source, 'passes through', c.target],
+    type: [dark(entity), c.ENCOUNTER, bright(entity)],
+    template: [c.SOURCE, 'passes through', c.TARGET],
   },
   consequent: {
     type: [],
-    template: [c.source, 'is illuminated by', c.target],
+    template: [c.SOURCE, 'is illuminated by', c.TARGET],
   },
   isDirectional: true,
   mutations: source => {
@@ -119,18 +118,18 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [loud(entity), c.encounter, loud(entity)],
+    type: [loud(entity), c.ENCOUNTER, loud(entity)],
     template: [],
   },
   consequent: {
     type: [],
-    template: [c.source, 'and', c.target, 'call out to each other'],
+    template: [c.SOURCE, 'and', c.TARGET, 'call out to each other'],
   },
   isDirectional: false,
   consequentActor: {
     type: complex(connection),
     name: 'calling out to',
-    members: [c.source, c.target],
+    members: [c.SOURCE, c.TARGET],
     lifeTime: 2,
     initializeName: (actor) => `${actor.members[0].name} ${actor.name} ${actor.members[1].name}`
   },
@@ -138,18 +137,18 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [life, c.encounter, quiet(spirit)],
-    template: [c.source, 'approaches', c.target],
+    type: [life, c.ENCOUNTER, quiet(spirit)],
+    template: [c.SOURCE, 'approaches', c.TARGET],
   },
   consequent: {
     type: [],
-    template: [c.source, 'and', c.target, 'pass eachother quietly'],
+    template: [c.SOURCE, 'and', c.TARGET, 'pass eachother quietly'],
   },
   isDirectional: true,
   consequentActor: {
     type: complex(connection),
     name: 'conversing silently with',
-    members: [c.source, c.target],
+    members: [c.SOURCE, c.TARGET],
     lifeTime: 2,
     initializeName: (actor) => `${actor.members[0].name} ${actor.name} ${actor.members[1].name}`
   },
@@ -157,18 +156,18 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [simple(hot(entity)), c.encounter, simple(cold(entity))],
-    template: [c.source, 'radiates upon', c.target],
+    type: [simple(hot(entity)), c.ENCOUNTER, simple(cold(entity))],
+    template: [c.SOURCE, 'radiates upon', c.TARGET],
   },
   consequent: {
     type: [],
-    template: [c.target, 'begins to crack and melt'],
+    template: [c.TARGET, 'begins to crack and melt'],
   },
   isDirectional: true,
   consequentActor: {
     type: loud(complex(entity)),
     name: 'cracking and melting',
-    members: [c.source, c.target],
+    members: [c.SOURCE, c.TARGET],
     lifeTime: 2,
     initializeName: (actor) => `${actor.members[1].name} ${actor.name}`
   }
@@ -177,35 +176,35 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [entity, c.encounter, complex(connection)],
-    template: [c.source, 'discovers', c.target],
+    type: [entity, c.ENCOUNTER, complex(connection)],
+    template: [c.SOURCE, 'discovers', c.TARGET],
   },
   consequent: {
-    type: [c.source, c.move_in, c.target],
-    template: [c.source, 'observes the patterns of', c.target],
+    type: [c.SOURCE, c.MOVE_IN, c.TARGET],
+    template: [c.SOURCE, 'observes the patterns of', c.TARGET],
   },
   isDirectional: true,
 });
 
 world.addRule({
   cause: {
-    type: [entity, c.move_in, complex(connection)],
-    template: [c.source, 'dwells in the stillness of life'],
+    type: [entity, c.MOVE_IN, complex(connection)],
+    template: [c.SOURCE, 'dwells in the stillness of life'],
   },
   consequent: {
-    type: [c.source, c.stay],
+    type: [c.SOURCE, c.stay],
     template: [],
   },
 });
 
 world.addRule({
   cause: {
-    type: [jolting(entity), c.encounter, outpouring(entity)],
-    template: [c.source, 'glances', c.target],
+    type: [jolting(entity), c.ENCOUNTER, outpouring(entity)],
+    template: [c.SOURCE, 'glances', c.TARGET],
   },
   consequent: {
-    type: [c.source, c.vanish],
-    template: [c.source, 'flickers away'],
+    type: [c.SOURCE, c.vanish],
+    template: [c.SOURCE, 'flickers away'],
   },
   isDirectional: true,
 });

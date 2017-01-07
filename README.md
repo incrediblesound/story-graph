@@ -192,8 +192,8 @@ The cause value is an array that can be any mix of strings and references to the
 var c = require('src/constants.js');
 
 var cause = {
-  type: [ dancer, c.encounter, dancer ],
-  value: [ c.source, 'dances with', c.target]
+  type: [ dancer, c.ENCOUNTER, dancer ],
+  value: [ c.SOURCE, 'dances with', c.TARGET]
 }
 ```
 **consequent**  
@@ -203,13 +203,13 @@ This distinction is important: The consequent type describes an event that will 
 
 ```javascript
 consequent: {
-    type: [], // this rule doesn't trigger anyactor else
+    type: [], // this rule doesn't trigger anything else
     value: ['The crowd watches the skilled dancers performance.']
 }
 
 consequent: {
-  type: [ c.source, c.vanish ], // this rule removes the source from the graph
-  value: [ c.source, 'disappears into thin air' ]
+  type: [ c.SOURCE, c.VANISH ], // this rule removes the source from the graph
+  value: [ c.SOURCE, 'disappears into thin air' ]
 }
 ```
 
@@ -221,7 +221,7 @@ If you want to mutate the actors involved in an event you can add a mutations fu
 ```javascript
 {
   cause: [ handsome(boy), meets, pretty(girl) ],
-  consequent: [ c.source, 'starts dating', c.target ],
+  consequent: [ c.SOURCE, 'starts dating', c.TARGET ],
   isDirectional: false,
   mutations: function(source, target){
     source.type.replace('single', 'dating');
@@ -235,18 +235,18 @@ We've already seen how a rule can trigger another event, but a rule can also cre
 ```javascript
 world.addRule({
   cause: {
-    type: [smart(person), c.encounter, smart(person)],
-    value: [c.source, 'meets', c.target]
+    type: [smart(person), c.ENCOUNTER, smart(person)],
+    value: [c.SOURCE, 'meets', c.TARGET]
   },
   consequent: {
     type: [],
-    value: [c.source, 'and', c.target, 'start chatting']
+    value: [c.SOURCE, 'and', c.TARGET, 'start chatting']
   },
   isDirectional: false,
   consequentActor: {
     type: casual(discussion(gathering)),
     name: 'having a discussion with',
-    members: [c.source, c.target],
+    members: [c.SOURCE, c.TARGET],
     lifeTime: Math.floor(Math.random()*3),
     initializeName: (actor, world) => `${this.members[0]} ${this.name} ${this.members[1]}`
     }
@@ -285,22 +285,22 @@ There are two ways to use locations in your StoryGraph rules. First of all, if y
 ```javascript
 world.addRule({
   cause: {
-    type: [human, c.move_out, 'the house'],
+    type: [human, c.MOVE_OUT, 'the house'],
     value: ['']
   },
   consequent: {
-    type: [c.source, c.move_in, 'the garden'],
-    value: [c.source, 'walks out into the garden']
+    type: [c.SOURCE, c.MOVE_IN, 'the garden'],
+    value: [c.SOURCE, 'walks out into the garden']
   },
 })
 world.addRule({
   cause: {
-    type: [human, c.move_out, 'the garden'],
+    type: [human, c.MOVE_OUT, 'the garden'],
     value: ['']
   },
   consequent: {
-    type: [c.source, c.move_in, 'the house'],
-    value: [c.source, 'enters the house']
+    type: [c.SOURCE, c.MOVE_IN, 'the house'],
+    value: [c.SOURCE, 'enters the house']
   },
 })
 ```
@@ -310,12 +310,12 @@ The second way to use locations in your rules is to localize them. Some rules mi
 ```javascript
 world.addRule({
   cause: {
-    type: [human, c.encounter, ghoul],
-    value: [c.source, 'sees', c.target]
+    type: [human, c.ENCOUNTER, ghoul],
+    value: [c.SOURCE, 'sees', c.TARGET]
   },
   consequent: {
     type: [],
-    value: [c.source, 'turns pale and runs away']
+    value: [c.SOURCE, 'turns pale and runs away']
   },
   locations: ['the graveyard'],
   isDirectional: true,
@@ -334,8 +334,8 @@ To generate a narrative use the runStory method on the world object. This method
  At each time step the runStory method will check to see if there is an event set for that step, and if not it will generate a random event. The result will be stored on the output property of the world object.
 ```javascript
 world.runStory(4, [
-    { step: 1, event: [ bob, c.encounter, tom ]},
-    { step: 4, event: [ bob, c.move_out, cafe ]}
+    { step: 1, event: [ bob, c.ENCOUNTER, tom ]},
+    { step: 4, event: [ bob, c.MOVE_OUT, cafe ]}
 ]);
 console.log(world.output); // "Bob meets Tom..."
 ```

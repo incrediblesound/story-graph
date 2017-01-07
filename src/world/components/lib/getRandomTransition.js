@@ -1,4 +1,4 @@
-const matchTransitionFor = require('./matchTransitionFor');
+import matchTransitionFor from './matchTransitionFor'
 
 /**
  * getRandomTransition
@@ -9,7 +9,7 @@ const matchTransitionFor = require('./matchTransitionFor');
  * @return {Boolean | [Transition, Actor]}
  *   A Transition and matching Actor that has more than one location.
  */
-module.exports = function getRandomTransition(world) {
+const getRandomTransition = (world) => {
   const moveableSet = world.actors.filter(actor => actor.locations.length > 1);
   if (!moveableSet.length) {
     throw new Error(
@@ -17,6 +17,8 @@ module.exports = function getRandomTransition(world) {
     );
   }
   const randomActor = moveableSet[Math.floor(Math.random() * moveableSet.length)];
-  const transition = matchTransitionFor(randomActor, world.numRules, world.rules);
+  const transition = matchTransitionFor(randomActor, world.rules);
   return transition && [transition, randomActor];
 };
+
+export default getRandomTransition

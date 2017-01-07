@@ -1,6 +1,4 @@
-const _ = require('lodash');
-
-function removeActor(world, id) {
+export function removeActor(world, id) {
   let index = null;
   for (let i = 0; i < world.actors.length; i++) {
     if (world.actors[i].id === id) {
@@ -14,12 +12,12 @@ function removeActor(world, id) {
   }
 }
 
-function getLocalSet(world, location) {
-  return _.filter(world.actors, (actor) => actor.location === location.name);
+export function getLocalSet(world, location) {
+  return world.actors.filter(actor => actor.location === location.name);
 }
 
-function getPiece(world, piece) {
-  if (piece === undefined) return false;
+export function getPiece(world, piece) {
+  if (piece === undefined) throw new Error('Undefined value in template.');
 
   if (typeof piece === 'number') {
     return world.getActorById(piece);
