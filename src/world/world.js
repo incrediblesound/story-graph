@@ -4,7 +4,7 @@ import Location from '../components/location'
 import { randomMatch, checkMatch } from './components/story'
 import { processEvent } from './components/events'
 import { advanceTime } from './components/time'
-import utility from './components/utility'
+import { getPiece } from './components/utility'
 
 export default class World {
   constructor() {
@@ -23,10 +23,8 @@ export default class World {
     this.output = '';
   }
   addRule(data) {
-    const id = this.numRules;
-    const rule = new Rule(data, id);
-    this.rules.push(rule);
-    this.numRules++;
+    const id = this.numRules++;
+    this.rules.push(new Rule(data, id));
     return id;
   }
   addLocation(data) {
@@ -90,9 +88,9 @@ export default class World {
     });
   }
   findRule(piece) {
-    const source = utility.getPiece(this, piece[0]);
+    const source = getPiece(this, piece[0]);
     const action = piece[1];
-    const target = utility.getPiece(this, piece[2]);
+    const target = getPiece(this, piece[2]);
     for (let i = 0; i < this.numRules; i++) {
       const current = this.rules[i];
       if (checkMatch(current, source, target, action)) {
