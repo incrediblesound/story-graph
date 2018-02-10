@@ -1,8 +1,0 @@
-export const MOVE_IN = 'MOVE_IN'
-export const MOVE_OUT = 'MOVE_OUT'
-export const STAY = 'STAY'
-export const APPEAR = 'APPEAR'
-export const VANISH = 'VANISH'
-export const ENCOUNTER = 'ENCOUNTER'
-export const TARGET = 'TARGET'
-export const SOURCE = 'SOURCE'

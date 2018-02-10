@@ -2,7 +2,9 @@ import Actor from '../../components/actor'
 import { matchRuleFor } from './story'
 import { addPeriod, capitalizeFirst } from './lib/grammar'
 import { SOURCE, TARGET, VANISH, MOVE_IN } from '../../components/constants'
-import utility from './utility'
+import World from '../world'
+import Rule from 'src/components/rule'
+import * as utility from './utility'
 
 /*
  * Replaces the constants SOURCE and TARGET with the IDs of the actors that
@@ -21,12 +23,8 @@ export function populateTemplate(eventTemplate, eventTrigger) {
   });
 }
 
-export function renderTemplate(world, template) {
-  const result = template.map(piece => {
-    const actor = utility.getPiece(world, piece);
-    const text = actor.name || actor;
-    return text;
-  });
+export function renderTemplate(world: World, template) {
+  const result = template.map(piece => utility.fetchElement(world, piece));
   const body = result.join(' ');
   if (!body.length) {
     return '';
@@ -35,7 +33,7 @@ export function renderTemplate(world, template) {
   return addPeriod(capitalizeFirst(body))
 }
 
-export function addConsequentActor(world, rule, storyEvent) {
+export function addConsequentActor(world: World, rule, storyEvent) {
   const consequentActor = new Actor(rule.consequentActor, storyEvent, world);
   consequentActor.parentId = rule.id;
   world.addActor(consequentActor);
@@ -47,7 +45,7 @@ export function runMutations(world, rule, storyEvent) {
   rule.mutations(source, target);
 }
 
-export function applyConsequent(world, typeExpression) {
+export function applyConsequent(world: World, typeExpression) {
   if (!typeExpression.length || typeExpression[0] === undefined) return false;
   const typeExpressionArray = Array.isArray(typeExpression[0]) ? typeExpression : [typeExpression];
   let result = '';
@@ -60,16 +58,18 @@ export function applyConsequent(world, typeExpression) {
       }
       case MOVE_IN: {
         const actor = world.getActorById(expr[0]);
-        actor.location = expr[2];
+        if (actor) {
+          actor.location = expr[2];
+        }
         break;
       }
       default: {
-        const source = utility.getPiece(expr[0]);
-        const target = utility.getPiece(expr[2]);
-        const rule = matchRuleFor(world, source, target, expr[1]);
-        if (rule !== undefined) {
+        const source = utility.getActor(world, expr[0]);
+        const target = utility.getActor(world, expr[2]);
+        const rule = source && target && matchRuleFor(world, source, target, expr[1]);
+        if (rule) {
           /* eslint-disable no-use-before-define */
-          result = processEvent(rule, expr);
+          result = processEvent(world, rule, expr);
         }
       }
     }
@@ -77,7 +77,7 @@ export function applyConsequent(world, typeExpression) {
   return result;
 }
 
-export function processEvent(world, rule, storyEvent) {
+export function processEvent(world: World, rule: Rule, storyEvent) {
   const causeTemplate = populateTemplate(rule.cause.template, storyEvent);
   const consequentTemplate = populateTemplate(rule.consequent.template, storyEvent);
   const tertiaryTemplate = populateTemplate(rule.consequent.type, storyEvent);

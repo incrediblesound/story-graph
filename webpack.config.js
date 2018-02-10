@@ -1,6 +1,9 @@
+const path = require('path');
+
 const webpackConfig = {
+
   entry: {
-    story: './src/main.js'
+    story: './src/main.ts'
   },
 
   output: {
@@ -10,14 +13,19 @@ const webpackConfig = {
     umdNamedDefine: true
   },
 
+  resolve: {
+    extensions: ['.js', '.json', '.ts', '.d.ts'],
+    modules: [
+      'node_modules',
+      path.resolve('./'),
+    ]
+  },
+
   module: {
     loaders: [
-      { test: /\.js?$/,
-        loader: 'babel',
+      { test: /\.ts?$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
-        query: {
-          presets: ['es2015', 'stage-2'],
-        }
       }
     ]
   }

@@ -1,6 +1,5 @@
-import { without } from 'lodash'
-import { MOVE_OUT } from '../../../components/constants.js'
-import checkTransitionMatch from './checkTransitionMatch'
+import { MOVE_OUT } from '../../../components/constants'
+import checkTransitionMatch from 'src/world/components/lib/checkTransitionMatch'
 
 /**
  * matchTransitionFor
@@ -17,7 +16,7 @@ import checkTransitionMatch from './checkTransitionMatch'
  *   A random matching Rule or false if none is found.
  */
 const matchTransitionFor = (actor, rules) => {
-  const potentialLocations = without(actor.locations, actor.location);
+  const potentialLocations = actor.locations.filter(l => l !== actor.location);
   const matchedRules =
     rules.filter(rule => checkTransitionMatch(rule, actor, potentialLocations, MOVE_OUT));
   return matchedRules.length && matchedRules[Math.floor(Math.random() * matchedRules.length)];

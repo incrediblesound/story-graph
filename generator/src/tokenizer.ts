@@ -1,4 +1,10 @@
-const _ = require('lodash');
+function includes(arr: string[], item: string) {
+  return arr.indexOf(item) !== -1
+}
+
+function compact(arr: any[]) {
+  return arr.filter(n => !!n)
+}
 
 function isATypeOrActor(line) {
   return (
@@ -11,7 +17,7 @@ function isATypeOrActor(line) {
 function isATransition(line) {
   return (
     line[0] === 'From' &&
-    _.includes(line, 'to')
+    includes(line, 'to')
   );
 }
 
@@ -34,7 +40,7 @@ function isARuleDefinition(line) {
   return (
     line[0] === 'If' &&
     (line[1] === 'a' || line[1] === 'an') &&
-    _.includes(line, 'then')
+    includes(line, 'then')
   );
 }
 
@@ -53,8 +59,8 @@ function isAPlaceDefinition(line) {
 function tokenizer(body) {
   const tokens = [];
   const theBody = body.split('.');
-  _.each(theBody, line => {
-    const theLine = _.compact(line.split(/\s/));
+  theBody.forEach(line => {
+    const theLine = compact(line.split(/\s/));
     if (!theLine.length) return;
     if (isATypeOrActor(theLine)) {
       if (isATypeDefinition(theLine)) {
@@ -79,10 +85,10 @@ function tokenizer(body) {
     } else if (isARuleDefinition(theLine)) {
       tokens.push({ type: 'rule', line: theLine });
     } else {
-      process.stdout.write(`Error: no match for line \"${line}\".\n`);
+      throw new Error(`Error: no match for line \"${line}\".\n`);
     }
   });
   return tokens;
 }
 
-module.exports = tokenizer;
+export default tokenizer;

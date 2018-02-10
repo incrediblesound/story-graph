@@ -1,4 +1,3 @@
-const _ = require('lodash');
 
 function writeSimpleType(data, result) {
   return `${result}const ${data.name} = new Type(\'${data.name}\');\n\n`;
@@ -16,7 +15,7 @@ function writeCompoundType(data, result) {
 
 function writeTypeDecorator(data, result) {
   let newResult = result;
-  _.each(data.addition, value => {
+  data.addition.forEach(value => {
     newResult += `const ${value} = function(type) {\n`;
     newResult += ` return type.extend(\'${value}\');\n}\n\n`;
   });
@@ -26,7 +25,7 @@ function writeTypeDecorator(data, result) {
 // compile locations
 function compileLocations(data, result) {
   let newResult = result;
-  _.each(data, location => {
+  data.forEach(location => {
     newResult += `world.addLocation({ name: \'${location.name}\' });\n\n`;
   });
   return newResult;
@@ -35,21 +34,21 @@ function compileLocations(data, result) {
 // compile transitions
 function compileTransitions(data, result) {
   let newResult = result;
-  _.each(data, transition => {
+  data.forEach(transition => {
     newResult +=
-`
-world.addRule({
-cause: {
-  type: [${transition.typeOrActor}, c.MOVE_OUT, \'${transition.from}\'],
-  template: [\'\']\n  },
-consequent: {
-  type: [c.SOURCE, c.MOVE_IN, \'${transition.to}\'],
-  template: [c.SOURCE, \'${transition.text}\', \'${transition.to}\']\n  },
-isDirectional: true,
-mutations: null,
-consequentActor: null
-});
-`
+      `
+      world.addRule({
+      cause: {
+        type: [${transition.typeOrActor}, c.MOVE_OUT, \'${transition.from}\'],
+        template: [\'\']\n  },
+      consequent: {
+        type: [c.SOURCE, c.MOVE_IN, \'${transition.to}\'],
+        template: [c.SOURCE, \'${transition.text}\', \'${transition.to}\']\n  },
+      isDirectional: true,
+      mutations: null,
+      consequentActor: null
+      });
+      `
   });
   return newResult;
 }
@@ -69,24 +68,24 @@ function processTypes(types) {
 
 function isEqual(a, b) {
   let result = true;
-  _.each(a, (val, i) => {
+  a.forEach((val, i) => {
     result = result && (val === b[i]);
   });
   return result;
 }
 
 // compile all the actors
-function compileActors(actors, result) {
-  _.each(actors, data => {
+function compileActors(actors, result: string) {
+  actors.forEach(data => {
     result +=
-`
-const ${data.name} = world.addActor(
-  new Actor({
-    type: ${processTypes(data.types)},
-    name: '${data.name}',
-    locations: ['${data.locations.join('\', \'')}']
- }));
- `
+      `
+      const ${data.name} = world.addActor(
+        new Actor({
+          type: ${processTypes(data.types)},
+          name: '${data.name}',
+          locations: ['${data.locations.join('\', \'')}']
+      }));
+      `
   });
   return result;
 }
@@ -114,25 +113,25 @@ function compileRules(rules, result) {
 
   let newResult = result;
 
-  _.each(rules, rule => {
+  rules.forEach(rule => {
     const source = matchEntity(rule.consequentA, rule, 'c.SOURCE');
     const target = matchEntity(rule.consequentB, rule, 'c.TARGET');
     newResult +=
-`
-world.addRule({
-cause: {
-  type: [${processTypes(rule.source.slice())}, c.ENCOUNTER, ${processTypes(rule.target.slice())}],
-  template: [c.SOURCE, '${rule.encounterText}', c.TARGET]
-},
-consequent: {
-  type: [],
-  template: [${source}, \'${rule.consequenceText}\'${target}]
-},
-  isDirectional: true,
-  mutations: null,
-  consequentActor: null/*{ type:\'\', name:\'\', members:[c.SOURCE,c.TARGET],lifeTime: 1, initialize: function(world){}}*/
-});
-`
+      `
+      world.addRule({
+      cause: {
+        type: [${processTypes(rule.source.slice())}, c.ENCOUNTER, ${processTypes(rule.target.slice())}],
+        template: [c.SOURCE, '${rule.encounterText}', c.TARGET]
+      },
+      consequent: {
+        type: [],
+        template: [${source}, \'${rule.consequenceText}\'${target}]
+      },
+        isDirectional: true,
+        mutations: null,
+        consequentActor: null/*{ type:\'\', name:\'\', members:[c.SOURCE,c.TARGET],lifeTime: 1, initialize: function(world){}}*/
+      });
+      `
   });
 
   return newResult;
@@ -146,21 +145,21 @@ function compileTypes(types, result) {
     compound: writeCompoundType,
     decorator: writeTypeDecorator,
   };
-  _.each(types, data => {
+  types.forEach(data => {
     newResult = funcMap[data.type](data, newResult);
   });
-  return newResult;
+  return newResult
 }
 
-module.exports = structure => {
+const compiler = structure => {
   let result =
-`
-const SG = require(\'./dist/story.js\');
-const world = new SG.World();
-const Actor = SG.Actor;
-const Type = SG.Type;
-const c = SG.constants;
-`
+    `
+    const SG = require(\'./dist/story.js\');
+    const world = new SG.World();
+    const Actor = SG.Actor;
+    const Type = SG.Type;
+    const c = SG.constants;
+    `
 
   result = compileTypes(structure.types, result);
   result = compileLocations(structure.locations, result);
@@ -172,3 +171,5 @@ const c = SG.constants;
 
   return result;
 };
+
+export default compiler

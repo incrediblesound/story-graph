@@ -1,4 +1,6 @@
 import matchTransitionFor from './matchTransitionFor'
+import Actor from 'src/components/actor'
+import Rule from 'src/components/rule'
 
 /**
  * getRandomTransition
@@ -9,7 +11,7 @@ import matchTransitionFor from './matchTransitionFor'
  * @return {Boolean | [Transition, Actor]}
  *   A Transition and matching Actor that has more than one location.
  */
-const getRandomTransition = (world) => {
+const getRandomTransition = (world): false | [ Rule, Actor ] => {
   const moveableSet = world.actors.filter(actor => actor.locations.length > 1);
   if (!moveableSet.length) {
     throw new Error(

@@ -1,4 +1,6 @@
-const _ = require('lodash');
+function includes(arr, item) {
+  return arr.indexOf(item) !== -1
+}
 
 function simpleType(line, result) {
   const calledIdx = line.indexOf('called');
@@ -19,13 +21,14 @@ function actor(line, result) {
   let current;
   let theLocation;
   const locations = [];
+  
   while (remainder.length) {
     current = remainder.shift();
     theLocation = [];
-    while (!_.includes(current, '<')) {
+    while (!includes(current, '<')) {
       current = remainder.shift();
     }
-    while (!_.includes(current, '>')) {
+    while (!includes(current, '>')) {
       theLocation.push(current);
       current = remainder.shift();
     }
@@ -42,7 +45,7 @@ function transition(line, result) {
   const text = [];
 
   let current = line.shift();
-  while (!_.includes(current, '>')) {
+  while (!includes(current, '>')) {
     first.push(current);
     current = line.shift();
   }
@@ -50,7 +53,7 @@ function transition(line, result) {
   line.shift(); // remove the 'to'
 
   current = line.shift();
-  while (!_.includes(current, '>')) {
+  while (!includes(current, '>')) {
     second.push(current);
     current = line.shift();
   }
@@ -61,7 +64,7 @@ function transition(line, result) {
   const typeOrActor = line.shift();
 
   current = line.shift();
-  while (!_.includes(current, '>')) {
+  while (!includes(current, '>')) {
     text.push(current);
     current = line.shift();
   }
@@ -106,12 +109,12 @@ function decorator(line, result) {
 
 function location(line, result) {
   let current = line.shift();
-  while (!_.includes(current, '<')) {
+  while (!includes(current, '<')) {
     current = line.shift();
   }
 
   const name = [];
-  while (!_.includes(current, '>')) {
+  while (!includes(current, '>')) {
     name.push(current);
     current = line.shift();
   }
@@ -129,11 +132,11 @@ function rule(line, result) {
   const encounterText = [];
   const consequenceText = [];
 
-  while (!_.includes(theLine[0], '<')) {
+  while (!includes(theLine[0], '<')) {
     source.push(theLine.shift());
   }
 
-  while (!_.includes(theLine[0], '>')) {
+  while (!includes(theLine[0], '>')) {
     encounterText.push(theLine.shift());
   }
   encounterText.push(theLine.shift());
@@ -147,11 +150,11 @@ function rule(line, result) {
   }
   theLine = theLine.slice(2);
 
-  while (!_.includes(theLine[0], '<')) {
+  while (!includes(theLine[0], '<')) {
     consequentA.push(theLine.shift());
   }
 
-  while (!_.includes(theLine[0], '>')) {
+  while (!includes(theLine[0], '>')) {
     consequenceText.push(theLine.shift());
   }
   consequenceText.push(theLine.shift());
@@ -172,7 +175,7 @@ function rule(line, result) {
   });
 }
 
-function tokenizer(tokens) {
+function parser(tokens) {
   const result = {
     types: [],
     actors: [],
@@ -190,11 +193,11 @@ function tokenizer(tokens) {
     rule,
     transition,
   };
-  _.each(tokens, tok => {
+  tokens.forEach(tok => {
     parserMap[tok.type](tok.line, result);
   });
 
   return result;
 }
 
-module.exports = tokenizer;
+export default parser;

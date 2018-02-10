@@ -1,9 +1,14 @@
 export default class Type {
+  types: string[];
+
   constructor(types) {
     this.types = Array.isArray(types) ? types : [types];
   }
   extend(type) {
-    return new Type(this.get().concat(type instanceof Type ? type.get() : [type]));
+    const newType = type instanceof Type ? type.get() : [type];
+    const currentTypes = this.get();
+    const nextTypes = [ ...currentTypes, ...newType ];
+    return new Type(nextTypes);
   }
   get() {
     return this.types.slice();

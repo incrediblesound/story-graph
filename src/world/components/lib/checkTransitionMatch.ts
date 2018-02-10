@@ -1,7 +1,17 @@
-import { includes } from 'lodash'
-import Type from '../../../components/type.js'
+import Type from 'src/components/type'
+import Rule from 'src/components/rule'
+import Actor from 'src/components/actor'
 
-function isSubset(set, valueOrSet) {
+const includes = (set: any[], item: any): boolean => {
+  for (let i = 0; i < set.length; i++) {
+    if (set[i] === item) {
+      return true
+    }
+  }
+  return false
+}
+
+const isSubset = (set, valueOrSet) => {
   if (!Array.isArray(valueOrSet)) {
     return includes(set, valueOrSet);
   }
@@ -25,7 +35,7 @@ function isSubset(set, valueOrSet) {
  * @return {Boolean}
  *   Whether or not the transition is valid.
  */
-const checkTransitionMatch = (rule, actor, locations, action) => {
+const checkTransitionMatch = (rule: Rule, actor: Actor, locations: string[], action) => {
   if (!includes(locations, rule.getConsequentTarget())) {
     return false;
   } else if (!(rule.getActionType() === action)) {
