@@ -1,8 +1,8 @@
-function includes(arr: string[], item: string) {
+function includes(arr, item) {
   return arr.indexOf(item) !== -1
 }
 
-function compact(arr: any[]) {
+function compact(arr) {
   return arr.filter(n => !!n)
 }
 

@@ -1,6 +1,7 @@
 import { Event, ActorReference } from './constants';
 import Type from './type';
 import Location from './location';
+import Actor from './actor';
 
 export type CauseTypeElement = [ Type | number, Event, Type | number ];
 export type ConsequentTypeElement = [ ActorReference, Event, string ];
@@ -17,18 +18,20 @@ interface ConsequentPattern {
 }
 
 export default class Rule {
+  cause: CausePattern;
+  consequent: null | ConsequentPattern;
+  consequentActor: undefined | Actor;
   id: number;
   isDirectional: boolean;
-  cause: CausePattern;
-  consequent: ConsequentPattern;
-  consequentActor: any;
-  mutations: () => void;
   locations: Location[];
+  mutations: (actorOne: Actor, actorTwo?: Actor) => void;
+  name?: string;
   
   constructor(data, id) {
     this.id = id;
-    this.isDirectional = data.isDirectional;
+    this.name = data.name;
 
+    this.isDirectional = data.isDirectional;
     this.cause = data.cause;
     this.consequent = data.consequent;
 
@@ -44,7 +47,7 @@ export default class Rule {
     return this.cause.type[2];
   }
   getConsequentTarget() {
-    return this.consequent.type[2];
+    return this.consequent && this.consequent.type[2];
   }
   getActionType() {
     return this.cause.type[1];

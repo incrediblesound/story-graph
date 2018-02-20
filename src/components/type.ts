@@ -1,10 +1,10 @@
 export default class Type {
   types: string[];
 
-  constructor(types) {
+  constructor(types: string[] | string) {
     this.types = Array.isArray(types) ? types : [types];
   }
-  extend(type) {
+  extend(type: Type | string) {
     const newType = type instanceof Type ? type.get() : [type];
     const currentTypes = this.get();
     const nextTypes = [ ...currentTypes, ...newType ];

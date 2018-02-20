@@ -1,6 +1,6 @@
 import matchTransitionFor from './matchTransitionFor'
-import Actor from 'src/components/actor'
-import Rule from 'src/components/rule'
+import Actor from '../../../components/actor'
+import Rule from '../../../components/rule'
 
 /**
  * getRandomTransition

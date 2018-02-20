@@ -75,7 +75,7 @@ function isEqual(a, b) {
 }
 
 // compile all the actors
-function compileActors(actors, result: string) {
+function compileActors(actors, result) {
   actors.forEach(data => {
     result +=
       `

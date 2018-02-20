@@ -1,6 +1,5 @@
 import { SOURCE, TARGET } from './constants'
 import Type from './type'
-import Location from './location'
 
 export default class Actor {
   id: number
@@ -14,7 +13,7 @@ export default class Actor {
   members: Actor[]
   parentId?: number;
 
-  constructor(data, storyEvent, world) {
+  constructor(data, world, actorOne?: Actor, actorTwo?: Actor) {
     this.type = data.type;
     this.name = data.name;
     this.members = [];
@@ -28,19 +27,19 @@ export default class Actor {
 
     this.lifeTime = data.lifeTime || 999;
     // this.callback = data.callback || null;
-    if (storyEvent && world) {
-      this.fetchMembers(storyEvent, world, data.members);
+    if (data.members) {
+      this.fetchMembers(world, data.members, actorTwo, actorTwo);
     }
     if (data.initializeName) {
       this.name = data.initializeName(this, world);
     }
   }
-  fetchMembers(storyEvent, world, members) {
+  fetchMembers(world, members, actorOne, actorTwo) {
     members.forEach((member, idx) => {
       if (member === SOURCE) {
-        this.members[idx] = world.getActorById(storyEvent[0]);
+        this.members[idx] = actorOne
       } else if (member === TARGET) {
-        this.members[idx] = world.getActorById(storyEvent[2]);
+        this.members[idx] = actorTwo
       }
     });
   }

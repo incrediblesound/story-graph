@@ -1,9 +1,9 @@
-import { ENCOUNTER, Event } from '../../components/constants'
+import { ENCOUNTER, REST, Event } from '../../components/constants'
 import Type from '../../components/type'
 import getRandomTransition from './lib/getRandomTransition'
-import Actor from 'src/components/actor'
-import Rule from 'src/components/rule'
-import World from 'src/world/world'
+import Actor from '../../components/actor'
+import Rule from '../../components/rule'
+import World from '../../world/world'
 
 /* HELPERS */
 
@@ -24,13 +24,16 @@ function includes(arr: any[], item: any) {
 const sameLocation = (one: Actor, two: Actor): boolean => one.location === two.location;
 const sameName = (one: Actor, two: Actor): boolean => one.name === two.name;
 
-export function twoActors(world: World): Actor[] | false {
+export function twoActors(world: World): Actor[] {
   const actorOne: Actor = world.actors[Math.floor(Math.random() * world.actors.length)];
-  const localActors: Actor[] = world.actors.filter((actor) => 
-    sameLocation(actor, actorOne) && !sameName(actor, actorOne)
-  )
+  let localActors: Actor[];
+  if (actorOne.location) {
+    localActors = world.actors.filter(actor => sameLocation(actor, actorOne) && !sameName(actor, actorOne))
+  } else {
+    localActors = world.actors.filter(actor => !sameName(actor, actorOne));
+  }
   if (!localActors.length) {
-    return false;
+    return [ actorOne ];
   }
   const actorTwo: Actor = localActors[Math.floor(Math.random() * localActors.length)];
   return [ actorOne, actorTwo ];
@@ -39,14 +42,14 @@ export function twoActors(world: World): Actor[] | false {
 export function checkMatch(
     rule: Rule, 
     source: Actor, 
-    target: Actor, 
-    action: Event
+    target: Actor | undefined, 
+    action?: Event
 ) {
   let match;
   const ruleSource = rule.getSource();
   const ruleTarget = rule.getTarget();
 
-  const sourceMatch = ruleSource instanceof Type && source instanceof Actor
+  const sourceMatch = ruleSource instanceof Type
     ? isSubset(source.getTypes(), ruleSource.get())
     : ruleSource === source.id;
 
@@ -76,7 +79,7 @@ export function checkMatch(
   return match && !(sourceInTarget || targetInSource);
 }
 
-export function matchRuleFor(world: World, actorOne: Actor, actorTwo: Actor, action: Event) {
+export function matchRuleFor(world: World, actorOne: Actor, actorTwo: Actor | undefined, action?: Event) {
   const matchedRules: Rule[] = [];
 
   // create a list of rules that either have no location limitation or whose location
@@ -110,14 +113,16 @@ export function randomMatch(world: World): false | [ Rule, Actor, Actor ] | [ Ru
     return randomTransition;
   }
   const pair = twoActors(world);
-  if (!pair) return false;
+
   const [ actorOne, actorTwo ] = pair;
 
-  const rule = matchRuleFor(world, actorOne, actorTwo, ENCOUNTER);
+  const rule = matchRuleFor(world, actorOne, actorTwo)
 
   if (!rule) {
     return false;
+  } else if (!actorTwo) {
+    return [ rule, actorOne ]
+  } else {
+    return [ rule, actorOne, actorTwo ];    
   }
-
-  return [ rule, actorOne, actorTwo ];
 }

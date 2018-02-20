@@ -1,21 +1,23 @@
 export type Event =
-  'MOVE_IN' |
-  'MOVE_OUT' |
-  'STAY' |
-  'APPEAR' |
-  'VANISH' |
-  'ENCOUNTER';
+  'EVENT__REST' |
+  'EVENT__MOVE_IN' |
+  'EVENT__MOVE_OUT' |
+  'EVENT__STAY' |
+  'EVENT__APPEAR' |
+  'EVENT__VANISH' |
+  'EVENT__ENCOUNTER';
 
 export type ActorReference =
-  'TARGET' |
-  'SOURCE'
+  'ACTOR_REFERENCE__TARGET' |
+  'ACTOR_REFERENCE__SOURCE'
 
-export const MOVE_IN: Event = 'MOVE_IN'
-export const MOVE_OUT: Event = 'MOVE_OUT'
-export const STAY: Event = 'STAY'
-export const APPEAR: Event = 'APPEAR'
-export const VANISH: Event = 'VANISH'
-export const ENCOUNTER: Event = 'ENCOUNTER'
+export const MOVE_IN: Event = 'EVENT__MOVE_IN'
+export const MOVE_OUT: Event = 'EVENT__MOVE_OUT'
+export const STAY: Event = 'EVENT__STAY'
+export const APPEAR: Event = 'EVENT__APPEAR'
+export const VANISH: Event = 'EVENT__VANISH'
+export const ENCOUNTER: Event = 'EVENT__ENCOUNTER'
+export const REST: Event = 'EVENT__REST'
 
-export const TARGET: ActorReference = 'TARGET'
-export const SOURCE: ActorReference = 'SOURCE'
+export const TARGET: ActorReference = 'ACTOR_REFERENCE__TARGET'
+export const SOURCE: ActorReference = 'ACTOR_REFERENCE__SOURCE'

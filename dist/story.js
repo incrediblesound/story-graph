@@ -75,31 +75,48 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+const MOVE_IN = 'EVENT__MOVE_IN';
+/* harmony export (immutable) */ __webpack_exports__["MOVE_IN"] = MOVE_IN;
 
-exports.__esModule = true;
-exports.MOVE_IN = 'MOVE_IN';
-exports.MOVE_OUT = 'MOVE_OUT';
-exports.STAY = 'STAY';
-exports.APPEAR = 'APPEAR';
-exports.VANISH = 'VANISH';
-exports.ENCOUNTER = 'ENCOUNTER';
-exports.TARGET = 'TARGET';
-exports.SOURCE = 'SOURCE';
+const MOVE_OUT = 'EVENT__MOVE_OUT';
+/* harmony export (immutable) */ __webpack_exports__["MOVE_OUT"] = MOVE_OUT;
+
+const STAY = 'EVENT__STAY';
+/* harmony export (immutable) */ __webpack_exports__["STAY"] = STAY;
+
+const APPEAR = 'EVENT__APPEAR';
+/* harmony export (immutable) */ __webpack_exports__["APPEAR"] = APPEAR;
+
+const VANISH = 'EVENT__VANISH';
+/* harmony export (immutable) */ __webpack_exports__["VANISH"] = VANISH;
+
+const ENCOUNTER = 'EVENT__ENCOUNTER';
+/* harmony export (immutable) */ __webpack_exports__["ENCOUNTER"] = ENCOUNTER;
+
+const REST = 'EVENT__REST';
+/* harmony export (immutable) */ __webpack_exports__["REST"] = REST;
+
+const TARGET = 'ACTOR_REFERENCE__TARGET';
+/* harmony export (immutable) */ __webpack_exports__["TARGET"] = TARGET;
+
+const SOURCE = 'ACTOR_REFERENCE__SOURCE';
+/* harmony export (immutable) */ __webpack_exports__["SOURCE"] = SOURCE;
+
 
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(0);
 
-exports.__esModule = true;
-var constants_1 = __webpack_require__(0);
-var Actor = /** @class */ (function () {
-    function Actor(data, storyEvent, world) {
+class Actor {
+    constructor(data, world, actorOne, actorTwo) {
         this.type = data.type;
         this.name = data.name;
         this.members = [];
@@ -113,93 +130,92 @@ var Actor = /** @class */ (function () {
         }
         this.lifeTime = data.lifeTime || 999;
         // this.callback = data.callback || null;
-        if (storyEvent && world) {
-            this.fetchMembers(storyEvent, world, data.members);
+        if (data.members) {
+            this.fetchMembers(world, data.members, actorTwo, actorTwo);
         }
         if (data.initializeName) {
             this.name = data.initializeName(this, world);
         }
     }
-    Actor.prototype.fetchMembers = function (storyEvent, world, members) {
-        var _this = this;
-        members.forEach(function (member, idx) {
-            if (member === constants_1.SOURCE) {
-                _this.members[idx] = world.getActorById(storyEvent[0]);
+    fetchMembers(world, members, actorOne, actorTwo) {
+        members.forEach((member, idx) => {
+            if (member === __WEBPACK_IMPORTED_MODULE_0__constants__["SOURCE"]) {
+                this.members[idx] = actorOne;
             }
-            else if (member === constants_1.TARGET) {
-                _this.members[idx] = world.getActorById(storyEvent[2]);
+            else if (member === __WEBPACK_IMPORTED_MODULE_0__constants__["TARGET"]) {
+                this.members[idx] = actorTwo;
             }
         });
-    };
-    Actor.prototype.hasMember = function (id) {
-        var found = false;
-        for (var i = 0; i < this.members.length; i++) {
+    }
+    hasMember(id) {
+        let found = false;
+        for (let i = 0; i < this.members.length; i++) {
             if (this.members[i].id === id) {
                 found = true;
                 break;
             }
         }
         return found;
-    };
-    Actor.prototype.getTypes = function () {
+    }
+    getTypes() {
         return this.type.get();
-    };
-    Actor.prototype.setEntryTime = function (time) {
+    }
+    setEntryTime(time) {
         this.entryTime = time;
-    };
-    return Actor;
-}());
-exports["default"] = Actor;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Actor;
+
 
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-exports.__esModule = true;
-var Type = /** @class */ (function () {
-    function Type(types) {
+class Type {
+    constructor(types) {
         this.types = Array.isArray(types) ? types : [types];
     }
-    Type.prototype.extend = function (type) {
-        var newType = type instanceof Type ? type.get() : [type];
-        var currentTypes = this.get();
-        var nextTypes = currentTypes.concat(newType);
+    extend(type) {
+        const newType = type instanceof Type ? type.get() : [type];
+        const currentTypes = this.get();
+        const nextTypes = [...currentTypes, ...newType];
         return new Type(nextTypes);
-    };
-    Type.prototype.get = function () {
+    }
+    get() {
         return this.types.slice();
-    };
-    Type.prototype.replace = function (oldType, newType) {
-        var index = this.types.indexOf(oldType);
+    }
+    replace(oldType, newType) {
+        const index = this.types.indexOf(oldType);
         if (index < 0) {
-            throw new Error("Tried to replace \"" + oldType + "\" in type set not containing " + oldType + ".");
+            throw new Error(`Tried to replace "${oldType}" in type set not containing ${oldType}.`);
         }
         this.types[index] = newType;
-    };
-    Type.prototype.add = function (type) {
+    }
+    add(type) {
         this.types.push(type);
-    };
-    Type.prototype.remove = function (type) {
+    }
+    remove(type) {
         this.types.splice(this.types.indexOf(type), 1);
-    };
-    return Type;
-}());
-exports["default"] = Type;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Type;
+
 
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-exports.__esModule = true;
+/* harmony export (immutable) */ __webpack_exports__["c"] = removeActor;
+/* unused harmony export getLocalSet */
+/* harmony export (immutable) */ __webpack_exports__["b"] = getActor;
+/* harmony export (immutable) */ __webpack_exports__["a"] = fetchElement;
 function removeActor(world, id) {
-    var index = null;
-    for (var i = 0; i < world.actors.length; i++) {
+    let index = null;
+    for (let i = 0; i < world.actors.length; i++) {
         if (world.actors[i].id === id) {
             index = i;
             break;
@@ -210,11 +226,9 @@ function removeActor(world, id) {
         world.size--;
     }
 }
-exports.removeActor = removeActor;
 function getLocalSet(world, location) {
-    return world.actors.filter(function (actor) { return actor.location === location.name; });
+    return world.actors.filter(actor => actor.location === location.name);
 }
-exports.getLocalSet = getLocalSet;
 function getActor(world, reference) {
     if (reference === undefined)
         throw new Error('Undefined value in template.');
@@ -233,10 +247,9 @@ function getActor(world, reference) {
     // }
     return false;
 }
-exports.getActor = getActor;
 function fetchElement(world, element) {
     if (typeof element === 'number') {
-        var actor = getActor(world, element);
+        const actor = getActor(world, element);
         if (actor) {
             return actor.name;
         }
@@ -246,19 +259,17 @@ function fetchElement(world, element) {
     }
     return '';
 }
-exports.fetchElement = fetchElement;
 
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-exports.__esModule = true;
-var Rule = /** @class */ (function () {
-    function Rule(data, id) {
+class Rule {
+    constructor(data, id) {
         this.id = id;
+        this.name = data.name;
         this.isDirectional = data.isDirectional;
         this.cause = data.cause;
         this.consequent = data.consequent;
@@ -266,54 +277,54 @@ var Rule = /** @class */ (function () {
         this.mutations = data.mutations;
         this.locations = data.locations || [];
     }
-    Rule.prototype.getSource = function () {
+    getSource() {
         return this.cause.type[0];
-    };
-    Rule.prototype.getTarget = function () {
+    }
+    getTarget() {
         return this.cause.type[2];
-    };
-    Rule.prototype.getConsequentTarget = function () {
-        return this.consequent.type[2];
-    };
-    Rule.prototype.getActionType = function () {
+    }
+    getConsequentTarget() {
+        return this.consequent && this.consequent.type[2];
+    }
+    getActionType() {
         return this.cause.type[1];
-    };
-    return Rule;
-}());
-exports["default"] = Rule;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Rule;
+
 
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-exports.__esModule = true;
-var Location = /** @class */ (function () {
-    function Location(data) {
+class Location {
+    constructor(data) {
         this.name = data.name;
         this.id = data.id;
     }
-    return Location;
-}());
-exports["default"] = Location;
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Location;
+
 
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* unused harmony export twoActors */
+/* harmony export (immutable) */ __webpack_exports__["a"] = checkMatch;
+/* harmony export (immutable) */ __webpack_exports__["b"] = matchRuleFor;
+/* harmony export (immutable) */ __webpack_exports__["c"] = randomMatch;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_type__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_getRandomTransition__ = __webpack_require__(9);
 
-exports.__esModule = true;
-var constants_1 = __webpack_require__(0);
-var type_1 = __webpack_require__(2);
-var getRandomTransition_1 = __webpack_require__(9);
-var actor_1 = __webpack_require__(1);
+
 /* HELPERS */
 function isSubset(set, subset) {
-    return subset.reduce(function (acc, curr) { return acc && (set.indexOf(curr) !== -1); }, true);
+    return subset.reduce((acc, curr) => acc && (set.indexOf(curr) !== -1), true);
 }
 function rollDie() {
     return Math.floor(Math.random() * 7);
@@ -322,36 +333,39 @@ function includes(arr, item) {
     return arr.indexOf(item) !== -1;
 }
 /* MAIN FUNCTIONS */
-var sameLocation = function (one, two) { return one.location === two.location; };
-var sameName = function (one, two) { return one.name === two.name; };
+const sameLocation = (one, two) => one.location === two.location;
+const sameName = (one, two) => one.name === two.name;
 function twoActors(world) {
-    var actorOne = world.actors[Math.floor(Math.random() * world.actors.length)];
-    var localActors = world.actors.filter(function (actor) {
-        return sameLocation(actor, actorOne) && !sameName(actor, actorOne);
-    });
-    if (!localActors.length) {
-        return false;
+    const actorOne = world.actors[Math.floor(Math.random() * world.actors.length)];
+    let localActors;
+    if (actorOne.location) {
+        localActors = world.actors.filter(actor => sameLocation(actor, actorOne) && !sameName(actor, actorOne));
     }
-    var actorTwo = localActors[Math.floor(Math.random() * localActors.length)];
+    else {
+        localActors = world.actors.filter(actor => !sameName(actor, actorOne));
+    }
+    if (!localActors.length) {
+        return [actorOne];
+    }
+    const actorTwo = localActors[Math.floor(Math.random() * localActors.length)];
     return [actorOne, actorTwo];
 }
-exports.twoActors = twoActors;
 function checkMatch(rule, source, target, action) {
-    var match;
-    var ruleSource = rule.getSource();
-    var ruleTarget = rule.getTarget();
-    var sourceMatch = ruleSource instanceof type_1["default"] && source instanceof actor_1["default"]
+    let match;
+    const ruleSource = rule.getSource();
+    const ruleTarget = rule.getTarget();
+    const sourceMatch = ruleSource instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
         ? isSubset(source.getTypes(), ruleSource.get())
         : ruleSource === source.id;
-    var targetMatch = (target === undefined)
-        || (ruleTarget instanceof type_1["default"]
+    const targetMatch = (target === undefined)
+        || (ruleTarget instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
             ? isSubset(target.getTypes(), ruleTarget.get())
             : ruleTarget === target.id);
     if (!rule.isDirectional && target !== undefined) {
-        var flippedSourceMatch = ruleSource instanceof type_1["default"]
+        const flippedSourceMatch = ruleSource instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
             ? isSubset(target.getTypes(), ruleSource.get())
             : ruleSource === target.id;
-        var flippedTargetMatch = ruleTarget instanceof type_1["default"]
+        const flippedTargetMatch = ruleTarget instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
             ? isSubset(source.getTypes(), ruleTarget.get())
             : ruleTarget === source.id;
         match = (sourceMatch && targetMatch) || (flippedTargetMatch && flippedSourceMatch);
@@ -359,8 +373,8 @@ function checkMatch(rule, source, target, action) {
     else {
         match = (sourceMatch && targetMatch);
     }
-    var sourceInTarget = !!target && target.members && target.hasMember(source.id);
-    var targetInSource = !!target && source.members && source.hasMember(target.id);
+    const sourceInTarget = !!target && target.members && target.hasMember(source.id);
+    const targetInSource = !!target && source.members && source.hasMember(target.id);
     if (action !== undefined) {
         return match
             && (rule.getActionType() === action)
@@ -368,21 +382,20 @@ function checkMatch(rule, source, target, action) {
     }
     return match && !(sourceInTarget || targetInSource);
 }
-exports.checkMatch = checkMatch;
 function matchRuleFor(world, actorOne, actorTwo, action) {
-    var matchedRules = [];
+    const matchedRules = [];
     // create a list of rules that either have no location limitation or whose location
     // limitations contain the location of the two actors
-    var localRules = world.rules.filter(function (rule) {
-        var hasLocation = !!rule.locations.length;
+    const localRules = world.rules.filter((rule) => {
+        const hasLocation = !!rule.locations.length;
         // rule is universal or actorOne is omnipresent
         if (!hasLocation || !actorOne.location)
             return true;
         return actorOne.location && (!hasLocation || includes(rule.locations, actorOne.location));
     });
-    for (var i = 0; i < localRules.length; i++) {
-        var currentRule = localRules[i];
-        var isMatch = checkMatch(currentRule, actorOne, actorTwo, action);
+    for (let i = 0; i < localRules.length; i++) {
+        const currentRule = localRules[i];
+        const isMatch = checkMatch(currentRule, actorOne, actorTwo, action);
         if (isMatch) {
             matchedRules.push(currentRule);
         }
@@ -392,64 +405,76 @@ function matchRuleFor(world, actorOne, actorTwo, action) {
     }
     return matchedRules[Math.floor(Math.random() * matchedRules.length)];
 }
-exports.matchRuleFor = matchRuleFor;
 function randomMatch(world) {
     // this function checks the random result of rollDie()
     // to occasionally render a location transition
     if (world.numLocations && rollDie() < 2) {
-        var randomTransition = getRandomTransition_1["default"](world);
+        const randomTransition = Object(__WEBPACK_IMPORTED_MODULE_1__lib_getRandomTransition__["a" /* default */])(world);
         return randomTransition;
     }
-    var pair = twoActors(world);
-    if (!pair)
-        return false;
-    var actorOne = pair[0], actorTwo = pair[1];
-    var rule = matchRuleFor(world, actorOne, actorTwo, constants_1.ENCOUNTER);
+    const pair = twoActors(world);
+    const [actorOne, actorTwo] = pair;
+    const rule = matchRuleFor(world, actorOne, actorTwo);
     if (!rule) {
         return false;
     }
-    return [rule, actorOne, actorTwo];
+    else if (!actorTwo) {
+        return [rule, actorOne];
+    }
+    else {
+        return [rule, actorOne, actorTwo];
+    }
 }
-exports.randomMatch = randomMatch;
 
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_constants__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_actor__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_rule__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_type__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_location__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__world_world__ = __webpack_require__(8);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Actor", function() { return __WEBPACK_IMPORTED_MODULE_1__components_actor__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Rule", function() { return __WEBPACK_IMPORTED_MODULE_2__components_rule__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Type", function() { return __WEBPACK_IMPORTED_MODULE_3__components_type__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Location", function() { return __WEBPACK_IMPORTED_MODULE_4__components_location__["a"]; });
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "World", function() { return __WEBPACK_IMPORTED_MODULE_5__world_world__["a"]; });
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "constants", function() { return __WEBPACK_IMPORTED_MODULE_0__components_constants__; });
 
-exports.__esModule = true;
-var constants = __webpack_require__(0);
-exports.constants = constants;
-var actor_1 = __webpack_require__(1);
-exports.Actor = actor_1["default"];
-var rule_1 = __webpack_require__(4);
-exports.Rule = rule_1["default"];
-var type_1 = __webpack_require__(2);
-exports.Type = type_1["default"];
-var location_1 = __webpack_require__(5);
-exports.Location = location_1["default"];
-var world_1 = __webpack_require__(8);
-exports.World = world_1["default"];
+
+
+
+
+
+
 
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_rule__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_src_components_location__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_src_components_actor__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_story__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_events__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_time__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_utility__ = __webpack_require__(3);
 
-exports.__esModule = true;
-var rule_1 = __webpack_require__(4);
-var location_1 = __webpack_require__(5);
-var actor_1 = __webpack_require__(1);
-var story_1 = __webpack_require__(6);
-var events_1 = __webpack_require__(12);
-var time_1 = __webpack_require__(14);
-var utility_1 = __webpack_require__(3);
-var World = /** @class */ (function () {
-    function World() {
+
+
+
+
+
+
+class World {
+    constructor(options) {
         this.size = 0;
         this.lastId = -1;
         this.actors = [];
@@ -457,134 +482,133 @@ var World = /** @class */ (function () {
         this.locations = [];
         this.numRules = 0;
         this.rules = [];
+        this.logEvents = options && options.logEvents;
         this.timeIndex = 1;
         this.timedEvents = {};
         this.output = '';
     }
-    World.prototype.addRule = function (data) {
-        var id = this.numRules++;
-        this.rules.push(new rule_1["default"](data, id));
+    addRule(data) {
+        const id = this.numRules++;
+        this.rules.push(new __WEBPACK_IMPORTED_MODULE_0__components_rule__["a" /* default */](data, id));
         return id;
-    };
-    World.prototype.addLocation = function (data) {
+    }
+    addLocation(data) {
         data.id = this.numLocations;
-        this.locations.push(new location_1["default"](data));
+        this.locations.push(new __WEBPACK_IMPORTED_MODULE_1_src_components_location__["a" /* default */](data));
         this.numLocations++;
-    };
-    World.prototype.addActor = function (actor) {
-        var _this = this;
-        function add(actorToAdd) {
-            var id = this.lastId + 1;
+    }
+    addActor(actor) {
+        const add = (actorToAdd) => {
+            const id = this.lastId + 1;
             this.lastId = id;
             actorToAdd.id = id;
             actorToAdd.setEntryTime(this.timeIndex);
             this.actors.push(actorToAdd);
             this.size++;
             return id;
-        }
+        };
         if (Array.isArray(actor)) {
-            actor.forEach(function (item) { return add.apply(_this, [item]); });
+            actor.forEach(item => add.apply(this, [item]));
             return false;
         }
-        var id = add.apply(this, [actor]);
+        const id = add.apply(this, [actor]);
         return id;
-    };
-    World.prototype.renderEvent = function (theStory) {
-        var _this = this;
-        var output = '';
-        theStory.forEach(function (storyEvent) {
-            var rule = _this.findRule(storyEvent);
+    }
+    renderEvent(theStory) {
+        let output = '';
+        theStory.forEach(storyEvent => {
+            const rule = this.findRule(storyEvent);
             if (rule) {
-                output += events_1.processEvent(_this, rule, storyEvent);
+                output += Object(__WEBPACK_IMPORTED_MODULE_4__components_events__["a" /* processEvent */])(this, rule, storyEvent);
             }
         });
-        this.output = "" + this.output + output;
-    };
-    World.prototype.randomEvent = function () {
-        var output = '';
-        var nextEvent = false;
-        var counter = 0;
+        this.output = `${this.output}${output}`;
+    }
+    randomEvent() {
+        let output = '';
+        let nextEvent = false;
+        let counter = 0;
         while (!nextEvent) {
             counter++;
             if (counter > 100) {
                 throw new Error('Couldn\'t find match');
             }
-            nextEvent = story_1.randomMatch(this);
+            nextEvent = Object(__WEBPACK_IMPORTED_MODULE_3__components_story__["c" /* randomMatch */])(this);
+        }
+        if (this.logEvents && nextEvent[0].name) {
+            console.log(`Match on rule "${nextEvent[0].name}"`);
         }
         if (nextEvent.length === 2) {
-            var rule = nextEvent[0], actor = nextEvent[1];
-            output += events_1.processEvent(this, rule, [actor.id, rule.cause.type[1]]);
+            const [rule, actor] = nextEvent;
+            output += Object(__WEBPACK_IMPORTED_MODULE_4__components_events__["a" /* processEvent */])(this, rule, actor);
         }
-        else if (nextEvent[2] instanceof actor_1["default"]) {
-            var rule = nextEvent[0], one = nextEvent[1], two = nextEvent[2];
-            output += events_1.processEvent(this, rule, [one.id, rule.cause.type[1], two.id]);
+        else if (nextEvent[2] instanceof __WEBPACK_IMPORTED_MODULE_2_src_components_actor__["a" /* default */]) {
+            const [rule, one, two] = nextEvent;
+            output += Object(__WEBPACK_IMPORTED_MODULE_4__components_events__["a" /* processEvent */])(this, rule, one, two);
         }
-        this.output = "" + this.output + output;
-    };
-    World.prototype.runStory = function (steps, theEvents) {
-        if (theEvents === void 0) { theEvents = []; }
+        this.output = `${this.output}${output}`;
+    }
+    runStory(steps, theEvents = []) {
         this.registerTimedEvents(theEvents);
         while (this.timeIndex < steps) {
-            time_1.advanceTime(this);
+            Object(__WEBPACK_IMPORTED_MODULE_5__components_time__["a" /* advanceTime */])(this);
         }
-    };
-    World.prototype.registerTimedEvents = function (theEvents) {
-        var _this = this;
-        theEvents.forEach(function (event) {
-            _this.timedEvents[event.step] = event.event;
+    }
+    registerTimedEvents(theEvents) {
+        theEvents.forEach(event => {
+            this.timedEvents[event.step] = event.event;
         });
-    };
-    World.prototype.findRule = function (piece) {
-        var source = utility_1.getActor(this, piece[0]);
-        var action = piece[1];
-        var target = utility_1.getActor(this, piece[2]);
+    }
+    findRule(piece) {
+        const source = Object(__WEBPACK_IMPORTED_MODULE_6__components_utility__["b" /* getActor */])(this, piece[0]);
+        const action = piece[1];
+        const target = Object(__WEBPACK_IMPORTED_MODULE_6__components_utility__["b" /* getActor */])(this, piece[2]);
         if (source && target) {
-            for (var i = 0; i < this.numRules; i++) {
-                var current = this.rules[i];
-                if (story_1.checkMatch(current, source, target, action)) {
+            for (let i = 0; i < this.numRules; i++) {
+                const current = this.rules[i];
+                if (Object(__WEBPACK_IMPORTED_MODULE_3__components_story__["a" /* checkMatch */])(current, source, target, action)) {
                     return current;
                 }
             }
         }
         return false;
-    };
-    World.prototype.getLocationByName = function (name) {
-        for (var i = 0; i < this.locations.length; i++) {
+    }
+    getLocationByName(name) {
+        for (let i = 0; i < this.locations.length; i++) {
             if (this.locations[i].name === name) {
                 return this.locations[i].id;
             }
         }
         return false;
-    };
-    World.prototype.getLocationById = function (id) {
-        for (var i = 0; i < this.locations.length; i++) {
+    }
+    getLocationById(id) {
+        for (let i = 0; i < this.locations.length; i++) {
             if (this.locations[i].id === id) {
                 return this.locations[i];
             }
         }
         return false;
-    };
-    World.prototype.getActorById = function (id) {
-        for (var i = 0; i < this.size; i++) {
+    }
+    getActorById(id) {
+        for (let i = 0; i < this.size; i++) {
             if (this.actors[i].id === id) {
                 return this.actors[i];
             }
         }
         return false;
-    };
-    return World;
-}());
-exports["default"] = World;
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = World;
+
 
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__matchTransitionFor__ = __webpack_require__(10);
 
-exports.__esModule = true;
-var matchTransitionFor_1 = __webpack_require__(10);
 /**
  * getRandomTransition
  *   Gets a random Actor from a list of all the Actors with multiple possible locations.
@@ -594,16 +618,16 @@ var matchTransitionFor_1 = __webpack_require__(10);
  * @return {Boolean | [Transition, Actor]}
  *   A Transition and matching Actor that has more than one location.
  */
-var getRandomTransition = function (world) {
-    var moveableSet = world.actors.filter(function (actor) { return actor.locations.length > 1; });
+const getRandomTransition = (world) => {
+    const moveableSet = world.actors.filter(actor => actor.locations.length > 1);
     if (!moveableSet.length) {
         throw new Error('You have defined transitions but none of your actors have multiple possible locations.');
     }
-    var randomActor = moveableSet[Math.floor(Math.random() * moveableSet.length)];
-    var transition = matchTransitionFor_1["default"](randomActor, world.rules);
+    const randomActor = moveableSet[Math.floor(Math.random() * moveableSet.length)];
+    const transition = Object(__WEBPACK_IMPORTED_MODULE_0__matchTransitionFor__["a" /* default */])(randomActor, world.rules);
     return transition && [transition, randomActor];
 };
-exports["default"] = getRandomTransition;
+/* harmony default export */ __webpack_exports__["a"] = (getRandomTransition);
 
 
 /***/ }),
@@ -611,11 +635,8 @@ exports["default"] = getRandomTransition;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_constants__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_constants___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__components_constants__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_src_world_components_lib_checkTransitionMatch__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_src_world_components_lib_checkTransitionMatch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_src_world_components_lib_checkTransitionMatch__);
 
 
 
@@ -636,34 +657,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 const matchTransitionFor = (actor, rules) => {
   const potentialLocations = actor.locations.filter(l => l !== actor.location);
   const matchedRules =
-    rules.filter(rule => __WEBPACK_IMPORTED_MODULE_1_src_world_components_lib_checkTransitionMatch___default()(rule, actor, potentialLocations, __WEBPACK_IMPORTED_MODULE_0__components_constants__["MOVE_OUT"]));
+    rules.filter(rule => Object(__WEBPACK_IMPORTED_MODULE_1_src_world_components_lib_checkTransitionMatch__["a" /* default */])(rule, actor, potentialLocations, __WEBPACK_IMPORTED_MODULE_0__components_constants__["MOVE_OUT"]));
   return matchedRules.length && matchedRules[Math.floor(Math.random() * matchedRules.length)];
 };
 
-/* harmony default export */ __webpack_exports__["default"] = (matchTransitionFor);
+/* harmony default export */ __webpack_exports__["a"] = (matchTransitionFor);
 
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_src_components_type__ = __webpack_require__(2);
 
-exports.__esModule = true;
-var type_1 = __webpack_require__(2);
-var includes = function (set, item) {
-    for (var i = 0; i < set.length; i++) {
+const includes = (set, item) => {
+    for (let i = 0; i < set.length; i++) {
         if (set[i] === item) {
             return true;
         }
     }
     return false;
 };
-var isSubset = function (set, valueOrSet) {
+const isSubset = (set, valueOrSet) => {
     if (!Array.isArray(valueOrSet)) {
         return includes(set, valueOrSet);
     }
-    return set.reduce(function (acc, curr) { return acc && includes(valueOrSet, curr); }, true);
+    return set.reduce((acc, curr) => acc && includes(valueOrSet, curr), true);
 };
 /**
  * checkTransitionMatch
@@ -682,122 +702,125 @@ var isSubset = function (set, valueOrSet) {
  * @return {Boolean}
  *   Whether or not the transition is valid.
  */
-var checkTransitionMatch = function (rule, actor, locations, action) {
+const checkTransitionMatch = (rule, actor, locations, action) => {
     if (!includes(locations, rule.getConsequentTarget())) {
         return false;
     }
     else if (!(rule.getActionType() === action)) {
         return false;
     }
-    var ruleSource = rule.getSource();
-    return ruleSource instanceof type_1["default"]
+    const ruleSource = rule.getSource();
+    return ruleSource instanceof __WEBPACK_IMPORTED_MODULE_0_src_components_type__["a" /* default */]
         ? isSubset(actor.getTypes(), ruleSource.get())
         : ruleSource === actor.id;
 };
-exports["default"] = checkTransitionMatch;
+/* harmony default export */ __webpack_exports__["a"] = (checkTransitionMatch);
 
 
 /***/ }),
 /* 12 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* unused harmony export populateTemplate */
+/* unused harmony export renderTemplate */
+/* unused harmony export addConsequentActor */
+/* unused harmony export applyConsequent */
+/* harmony export (immutable) */ __webpack_exports__["a"] = processEvent;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_actor__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__story__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_grammar__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_constants__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utility__ = __webpack_require__(3);
 
-exports.__esModule = true;
-var actor_1 = __webpack_require__(1);
-var story_1 = __webpack_require__(6);
-var grammar_1 = __webpack_require__(13);
-var constants_1 = __webpack_require__(0);
-var utility = __webpack_require__(3);
+
+
+
+
 /*
  * Replaces the constants SOURCE and TARGET with the IDs of the actors that
  * triggered this rule
  */
-function populateTemplate(eventTemplate, eventTrigger) {
+function populateTemplate(eventTemplate, actorOne, actorTwo) {
     if (!eventTemplate || !eventTemplate.length)
         return false;
-    return eventTemplate.map(function (value) {
-        if (value === constants_1.SOURCE) {
-            return eventTrigger[0];
+    return eventTemplate.map(value => {
+        if (value === __WEBPACK_IMPORTED_MODULE_3__components_constants__["SOURCE"]) {
+            return actorOne.id;
         }
-        else if (value === constants_1.TARGET) {
-            return eventTrigger[2];
+        else if (value === __WEBPACK_IMPORTED_MODULE_3__components_constants__["TARGET"] && actorTwo) {
+            return actorTwo.id;
         }
-        return value;
+        else {
+            return value;
+        }
     });
 }
-exports.populateTemplate = populateTemplate;
 function renderTemplate(world, template) {
-    var result = template.map(function (piece) { return utility.fetchElement(world, piece); });
-    var body = result.join(' ');
+    const result = template.map(piece => __WEBPACK_IMPORTED_MODULE_4__utility__["a" /* fetchElement */](world, piece));
+    const body = result.join(' ');
     if (!body.length) {
         return '';
     }
-    return grammar_1.addPeriod(grammar_1.capitalizeFirst(body));
+    return Object(__WEBPACK_IMPORTED_MODULE_2__lib_grammar__["a" /* addPeriod */])(Object(__WEBPACK_IMPORTED_MODULE_2__lib_grammar__["b" /* capitalizeFirst */])(body));
 }
-exports.renderTemplate = renderTemplate;
-function addConsequentActor(world, rule, storyEvent) {
-    var consequentActor = new actor_1["default"](rule.consequentActor, storyEvent, world);
+function addConsequentActor(world, rule, actorOne, actorTwo) {
+    const consequentActor = new __WEBPACK_IMPORTED_MODULE_0__components_actor__["a" /* default */](rule.consequentActor, world, actorOne, actorTwo);
     consequentActor.parentId = rule.id;
     world.addActor(consequentActor);
 }
-exports.addConsequentActor = addConsequentActor;
-function runMutations(world, rule, storyEvent) {
-    var source = world.getActorById(storyEvent[0]);
-    var target = world.getActorById(storyEvent[2]);
-    rule.mutations(source, target);
-}
-exports.runMutations = runMutations;
 function applyConsequent(world, typeExpression) {
     if (!typeExpression.length || typeExpression[0] === undefined)
         return false;
-    var typeExpressionArray = Array.isArray(typeExpression[0]) ? typeExpression : [typeExpression];
-    var result = '';
-    typeExpressionArray.forEach(function (expr) {
+    const typeExpressionArray = Array.isArray(typeExpression[0]) ? typeExpression : [typeExpression];
+    let result = '';
+    typeExpressionArray.forEach((expr) => {
         switch (expr[1]) {
-            case constants_1.VANISH: {
-                var actor = expr[0];
-                utility.removeActor(world, actor);
+            case __WEBPACK_IMPORTED_MODULE_3__components_constants__["VANISH"]: {
+                const actor = expr[0];
+                __WEBPACK_IMPORTED_MODULE_4__utility__["c" /* removeActor */](world, actor);
                 break;
             }
-            case constants_1.MOVE_IN: {
-                var actor = world.getActorById(expr[0]);
+            case __WEBPACK_IMPORTED_MODULE_3__components_constants__["MOVE_IN"]: {
+                const actor = world.getActorById(expr[0]);
                 if (actor) {
                     actor.location = expr[2];
                 }
                 break;
             }
             default: {
-                var source = utility.getActor(world, expr[0]);
-                var target = utility.getActor(world, expr[2]);
-                var rule = source && target && story_1.matchRuleFor(world, source, target, expr[1]);
+                const source = __WEBPACK_IMPORTED_MODULE_4__utility__["b" /* getActor */](world, expr[0]);
+                const target = __WEBPACK_IMPORTED_MODULE_4__utility__["b" /* getActor */](world, expr[2]);
+                const rule = source && target && Object(__WEBPACK_IMPORTED_MODULE_1__story__["b" /* matchRuleFor */])(world, source, target, expr[1]);
                 if (rule) {
                     /* eslint-disable no-use-before-define */
-                    result = processEvent(world, rule, expr);
+                    result = processEvent(world, rule, source, target);
                 }
             }
         }
-    }, this);
+    });
     return result;
 }
-exports.applyConsequent = applyConsequent;
-function processEvent(world, rule, storyEvent) {
-    var causeTemplate = populateTemplate(rule.cause.template, storyEvent);
-    var consequentTemplate = populateTemplate(rule.consequent.template, storyEvent);
-    var tertiaryTemplate = populateTemplate(rule.consequent.type, storyEvent);
-    var causeText = renderTemplate(world, causeTemplate);
-    var consequentText = renderTemplate(world, consequentTemplate);
-    var tertiary = !!tertiaryTemplate ? applyConsequent(world, tertiaryTemplate) : '';
-    if (!!rule.consequentActor) {
-        addConsequentActor(world, rule, storyEvent);
+function processEvent(world, rule, actorOne, actorTwo) {
+    const causeTemplate = populateTemplate(rule.cause.template, actorOne, actorTwo);
+    let consequentTemplate = [];
+    let tertiaryTemplate = false;
+    if (rule.consequent) {
+        consequentTemplate = populateTemplate(rule.consequent.template, actorOne, actorTwo);
+        tertiaryTemplate = populateTemplate(rule.consequent.type, actorOne, actorTwo);
     }
-    if (!!rule.mutations) {
-        runMutations(world, rule, storyEvent);
+    const causeText = causeTemplate ? renderTemplate(world, causeTemplate) : '';
+    const consequentText = consequentTemplate ? renderTemplate(world, consequentTemplate) : '';
+    const tertiary = tertiaryTemplate ? applyConsequent(world, tertiaryTemplate) : '';
+    if (rule.consequentActor) {
+        addConsequentActor(world, rule, actorOne, actorTwo);
     }
-    var result = causeText + consequentText + tertiary;
+    if (rule.mutations) {
+        rule.mutations(actorOne, actorTwo);
+    }
+    const result = causeText + consequentText + tertiary;
     return result;
 }
-exports.processEvent = processEvent;
 
 
 /***/ }),
@@ -805,9 +828,8 @@ exports.processEvent = processEvent;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (immutable) */ __webpack_exports__["addPeriod"] = addPeriod;
-/* harmony export (immutable) */ __webpack_exports__["capitalizeFirst"] = capitalizeFirst;
+/* harmony export (immutable) */ __webpack_exports__["a"] = addPeriod;
+/* harmony export (immutable) */ __webpack_exports__["b"] = capitalizeFirst;
 function addPeriod(text) {
   return `${text}. `
 }
@@ -821,12 +843,12 @@ function capitalizeFirst(text) {
 
 /***/ }),
 /* 14 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = advanceTime;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utility__ = __webpack_require__(3);
 
-exports.__esModule = true;
-var utility_1 = __webpack_require__(3);
 function advanceTime(world) {
     if (world.timedEvents[world.timeIndex] !== undefined) {
         world.renderEvent([world.timedEvents[world.timeIndex]]);
@@ -834,12 +856,12 @@ function advanceTime(world) {
     else {
         world.randomEvent();
     }
-    world.actors.forEach(function (actor, idx) {
+    world.actors.forEach((actor, idx) => {
         if (idx >= world.size)
             return;
-        var age = world.timeIndex - actor.entryTime;
+        const age = world.timeIndex - actor.entryTime;
         if (age > actor.lifeTime) {
-            utility_1.removeActor(world, actor.id);
+            Object(__WEBPACK_IMPORTED_MODULE_0__utility__["c" /* removeActor */])(world, actor.id);
         }
         // } else if (actor.callback !== null) {
         // world.processTimeTrigger(world, actor.callback(world.timeIndex));
@@ -847,7 +869,6 @@ function advanceTime(world) {
     });
     world.timeIndex++;
 }
-exports.advanceTime = advanceTime;
 
 
 /***/ })

@@ -8,18 +8,19 @@ import { advanceTime } from './components/time'
 import { getActor } from './components/utility'
 
 export default class World {
-  size: number;
-  lastId: number;
   actors: Actor[];
-  numLocations: number;
+  lastId: number;
   locations: Location[];
+  logEvents: boolean;
+  numLocations: number;
   numRules: number;
-  rules: Rule[];
-  timeIndex: number;
-  timedEvents: any;
   output: string;
+  rules: Rule[];
+  size: number;
+  timedEvents: any;
+  timeIndex: number;
 
-  constructor() {
+  constructor(options) {
     this.size = 0;
     this.lastId = -1;
     this.actors = [];
@@ -30,6 +31,7 @@ export default class World {
     this.numRules = 0;
     this.rules = [];
 
+    this.logEvents = options && options.logEvents
     this.timeIndex = 1;
     this.timedEvents = {};
     this.output = '';
@@ -47,8 +49,8 @@ export default class World {
     this.numLocations++;
   }
 
-  addActor(actor) {
-    function add(actorToAdd) {
+  addActor(actor: Actor | Actor[]) {
+    const add = (actorToAdd: Actor) => {
       const id = this.lastId + 1;
       this.lastId = id;
       actorToAdd.id = id;
@@ -86,12 +88,15 @@ export default class World {
       if (counter > 100) { throw new Error('Couldn\'t find match'); }
       nextEvent = randomMatch(this);
     }
+    if (this.logEvents && nextEvent[0].name) {
+      console.log(`Match on rule "${nextEvent[0].name}"`)
+    }
     if (nextEvent.length === 2) {
       const [rule, actor] = nextEvent;
-      output += processEvent(this, rule, [actor.id, rule.cause.type[1]]);
+      output += processEvent(this, rule, actor);
     } else if (nextEvent[2] instanceof Actor) {
       const [rule, one, two] = nextEvent;
-      output += processEvent(this, rule, [one.id, rule.cause.type[1], two.id]);
+      output += processEvent(this, rule, one, two);
     }
     this.output = `${this.output}${output}`;
   }
