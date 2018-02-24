@@ -2,7 +2,6 @@ export type Event =
   'EVENT__REST' |
   'EVENT__MOVE_IN' |
   'EVENT__MOVE_OUT' |
-  'EVENT__STAY' |
   'EVENT__APPEAR' |
   'EVENT__VANISH' |
   'EVENT__ENCOUNTER';
@@ -13,7 +12,6 @@ export type ActorReference =
 
 export const MOVE_IN: Event = 'EVENT__MOVE_IN'
 export const MOVE_OUT: Event = 'EVENT__MOVE_OUT'
-export const STAY: Event = 'EVENT__STAY'
 export const APPEAR: Event = 'EVENT__APPEAR'
 export const VANISH: Event = 'EVENT__VANISH'
 export const ENCOUNTER: Event = 'EVENT__ENCOUNTER'

@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -84,9 +84,6 @@ const MOVE_IN = 'EVENT__MOVE_IN';
 
 const MOVE_OUT = 'EVENT__MOVE_OUT';
 /* harmony export (immutable) */ __webpack_exports__["MOVE_OUT"] = MOVE_OUT;
-
-const STAY = 'EVENT__STAY';
-/* harmony export (immutable) */ __webpack_exports__["STAY"] = STAY;
 
 const APPEAR = 'EVENT__APPEAR';
 /* harmony export (immutable) */ __webpack_exports__["APPEAR"] = APPEAR;
@@ -173,42 +170,6 @@ class Actor {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-class Type {
-    constructor(types) {
-        this.types = Array.isArray(types) ? types : [types];
-    }
-    extend(type) {
-        const newType = type instanceof Type ? type.get() : [type];
-        const currentTypes = this.get();
-        const nextTypes = [...currentTypes, ...newType];
-        return new Type(nextTypes);
-    }
-    get() {
-        return this.types.slice();
-    }
-    replace(oldType, newType) {
-        const index = this.types.indexOf(oldType);
-        if (index < 0) {
-            throw new Error(`Tried to replace "${oldType}" in type set not containing ${oldType}.`);
-        }
-        this.types[index] = newType;
-    }
-    add(type) {
-        this.types.push(type);
-    }
-    remove(type) {
-        this.types.splice(this.types.indexOf(type), 1);
-    }
-}
-/* harmony export (immutable) */ __webpack_exports__["a"] = Type;
-
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony export (immutable) */ __webpack_exports__["c"] = removeActor;
 /* unused harmony export getLocalSet */
 /* harmony export (immutable) */ __webpack_exports__["b"] = getActor;
@@ -262,7 +223,7 @@ function fetchElement(world, element) {
 
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -295,6 +256,42 @@ class Rule {
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+class Type {
+    constructor(types) {
+        this.types = Array.isArray(types) ? types : [types];
+    }
+    extend(type) {
+        const newType = type instanceof Type ? type.get() : [type];
+        const currentTypes = this.get();
+        const nextTypes = [...currentTypes, ...newType];
+        return new Type(nextTypes);
+    }
+    get() {
+        return this.types.slice();
+    }
+    replace(oldType, newType) {
+        const index = this.types.indexOf(oldType);
+        if (index < 0) {
+            throw new Error(`Tried to replace "${oldType}" in type set not containing ${oldType}.`);
+        }
+        this.types[index] = newType;
+    }
+    add(type) {
+        this.types.push(type);
+    }
+    remove(type) {
+        this.types.splice(this.types.indexOf(type), 1);
+    }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = Type;
+
+
+
+/***/ }),
 /* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -318,25 +315,21 @@ class Location {
 /* harmony export (immutable) */ __webpack_exports__["a"] = checkMatch;
 /* harmony export (immutable) */ __webpack_exports__["b"] = matchRuleFor;
 /* harmony export (immutable) */ __webpack_exports__["c"] = randomMatch;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_type__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_getRandomTransition__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__lib_getRandomTransition__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_getLocalRules__ = __webpack_require__(9);
+
 
 
 /* HELPERS */
-function isSubset(set, subset) {
-    return subset.reduce((acc, curr) => acc && (set.indexOf(curr) !== -1), true);
-}
 function rollDie() {
     return Math.floor(Math.random() * 7);
-}
-function includes(arr, item) {
-    return arr.indexOf(item) !== -1;
 }
 /* MAIN FUNCTIONS */
 const sameLocation = (one, two) => one.location === two.location;
 const sameName = (one, two) => one.name === two.name;
-function twoActors(world) {
-    const actorOne = world.actors[Math.floor(Math.random() * world.actors.length)];
+function twoActors(world, actor) {
+    const actorOne = actor || world.actors[Math.floor(Math.random() * world.actors.length)];
     let localActors;
     if (actorOne.location) {
         localActors = world.actors.filter(actor => sameLocation(actor, actorOne) && !sameName(actor, actorOne));
@@ -352,47 +345,31 @@ function twoActors(world) {
 }
 function checkMatch(rule, source, target, action) {
     let match;
-    const ruleSource = rule.getSource();
-    const ruleTarget = rule.getTarget();
-    const sourceMatch = ruleSource instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
-        ? isSubset(source.getTypes(), ruleSource.get())
-        : ruleSource === source.id;
-    const targetMatch = (target === undefined)
-        || (ruleTarget instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
-            ? isSubset(target.getTypes(), ruleTarget.get())
-            : ruleTarget === target.id);
+    const sourceMatch = Object(__WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__["a" /* default */])(rule, source, 'source');
+    const targetMatch = !target || Object(__WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__["a" /* default */])(rule, target, 'target');
     if (!rule.isDirectional && target !== undefined) {
-        const flippedSourceMatch = ruleSource instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
-            ? isSubset(target.getTypes(), ruleSource.get())
-            : ruleSource === target.id;
-        const flippedTargetMatch = ruleTarget instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
-            ? isSubset(source.getTypes(), ruleTarget.get())
-            : ruleTarget === source.id;
+        const flippedSourceMatch = Object(__WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__["a" /* default */])(rule, target, 'source');
+        const flippedTargetMatch = Object(__WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__["a" /* default */])(rule, source, 'target');
         match = (sourceMatch && targetMatch) || (flippedTargetMatch && flippedSourceMatch);
     }
     else {
         match = (sourceMatch && targetMatch);
     }
+    /* this code assumes that actors cannot interact with rule that they are a member of.
+    I think this may be incorrect so I am commenting it out for now
+  
     const sourceInTarget = !!target && target.members && target.hasMember(source.id);
     const targetInSource = !!target && source.members && source.hasMember(target.id);
+    */
     if (action !== undefined) {
-        return match
-            && (rule.getActionType() === action)
-            && !(sourceInTarget || targetInSource);
+        return match && rule.getActionType() === action;
+        /* && !(sourceInTarget || targetInSource); */
     }
-    return match && !(sourceInTarget || targetInSource);
+    return match; /* && !(sourceInTarget || targetInSource); */
 }
 function matchRuleFor(world, actorOne, actorTwo, action) {
     const matchedRules = [];
-    // create a list of rules that either have no location limitation or whose location
-    // limitations contain the location of the two actors
-    const localRules = world.rules.filter((rule) => {
-        const hasLocation = !!rule.locations.length;
-        // rule is universal or actorOne is omnipresent
-        if (!hasLocation || !actorOne.location)
-            return true;
-        return actorOne.location && (!hasLocation || includes(rule.locations, actorOne.location));
-    });
+    const localRules = Object(__WEBPACK_IMPORTED_MODULE_2__lib_getLocalRules__["a" /* default */])(world, actorOne);
     for (let i = 0; i < localRules.length; i++) {
         const currentRule = localRules[i];
         const isMatch = checkMatch(currentRule, actorOne, actorTwo, action);
@@ -409,7 +386,7 @@ function randomMatch(world) {
     // this function checks the random result of rollDie()
     // to occasionally render a location transition
     if (world.numLocations && rollDie() < 2) {
-        const randomTransition = Object(__WEBPACK_IMPORTED_MODULE_1__lib_getRandomTransition__["a" /* default */])(world);
+        const randomTransition = Object(__WEBPACK_IMPORTED_MODULE_0__lib_getRandomTransition__["a" /* default */])(world);
         return randomTransition;
     }
     const pair = twoActors(world);
@@ -432,13 +409,103 @@ function randomMatch(world) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_constants__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ruleMatchesActor__ = __webpack_require__(8);
+
+
+/**
+ * checkTransitionMatch
+ *   Checks that a Rule can be caused by an Actor, an Actor is in the correct
+ *   origin Location, an Actor is moving to a valid destination Location,
+ *   and the Action is "move_out".
+ *
+ * @param  {Rule} rule
+ *   The Rule to validate.
+ * @param  {Actor} actor
+ *   The Actor to validate.
+ * @param  {Location[]} locations
+ *   All possible Locations.
+ * @param  {Action} action
+ *   The type of Action.
+ * @return {Boolean}
+ *   Whether or not the transition is valid.
+ */
+const checkTransitionMatch = (rule, actor) => {
+    if (rule.getActionType() === __WEBPACK_IMPORTED_MODULE_0__components_constants__["MOVE_OUT"] && rule.getTarget() === actor.location) {
+        return Object(__WEBPACK_IMPORTED_MODULE_1__ruleMatchesActor__["a" /* default */])(rule, actor, 'source');
+    }
+    else {
+        return false;
+    }
+};
+/* harmony default export */ __webpack_exports__["a"] = (checkTransitionMatch);
+// rule.getActionType === MOVE_OUT && rule.getTarget === actor.location
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_type__ = __webpack_require__(4);
+
+const includes = (set, item) => {
+    for (let i = 0; i < set.length; i++) {
+        if (set[i] === item) {
+            return true;
+        }
+    }
+    return false;
+};
+const isSubset = (set, valueOrSet) => {
+    if (!Array.isArray(valueOrSet)) {
+        return includes(set, valueOrSet);
+    }
+    return set.reduce((acc, curr) => acc && includes(valueOrSet, curr), true);
+};
+const ruleMatchesActor = (rule, actor, position) => {
+    let ruleToken = position === 'source'
+        ? rule.getSource()
+        : rule.getTarget();
+    return ruleToken instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
+        ? isSubset(ruleToken.get(), actor.getTypes())
+        : ruleToken === actor.id;
+};
+/* harmony default export */ __webpack_exports__["a"] = (ruleMatchesActor);
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+function includes(arr, item) {
+    return arr.indexOf(item) !== -1;
+}
+const getLocalRules = (world, actor) => {
+    return world.rules.filter((rule) => {
+        const isLocalized = !!rule.locations.length;
+        // rule is universal or actorOne is omnipresent
+        if (!isLocalized || !actor.location)
+            return true;
+        return includes(rule.locations, actor.location);
+    });
+};
+/* harmony default export */ __webpack_exports__["a"] = (getLocalRules);
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_constants__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_actor__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_rule__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_type__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_rule__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_type__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_location__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__world_world__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__world_world__ = __webpack_require__(11);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Actor", function() { return __WEBPACK_IMPORTED_MODULE_1__components_actor__["a"]; });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Rule", function() { return __WEBPACK_IMPORTED_MODULE_2__components_rule__["a"]; });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Type", function() { return __WEBPACK_IMPORTED_MODULE_3__components_type__["a"]; });
@@ -455,17 +522,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /***/ }),
-/* 8 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_rule__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_src_components_location__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_src_components_actor__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_rule__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_location__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_actor__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_story__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_events__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_time__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_utility__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_events__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_time__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_utility__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_lib_getLocalRules__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_lib_checkTransitionMatch__ = __webpack_require__(7);
 
 
 
@@ -473,6 +542,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+
+
+const unique = (arr) => {
+    let box = {};
+    arr.forEach(item => box[item] = true);
+    return Object.keys(box);
+};
 class World {
     constructor(options) {
         this.size = 0;
@@ -494,7 +570,7 @@ class World {
     }
     addLocation(data) {
         data.id = this.numLocations;
-        this.locations.push(new __WEBPACK_IMPORTED_MODULE_1_src_components_location__["a" /* default */](data));
+        this.locations.push(new __WEBPACK_IMPORTED_MODULE_1__components_location__["a" /* default */](data));
         this.numLocations++;
     }
     addActor(actor) {
@@ -513,6 +589,30 @@ class World {
         }
         const id = add.apply(this, [actor]);
         return id;
+    }
+    getLocationByName(name) {
+        for (let i = 0; i < this.locations.length; i++) {
+            if (this.locations[i].name === name) {
+                return this.locations[i].id;
+            }
+        }
+        return false;
+    }
+    getLocationById(id) {
+        for (let i = 0; i < this.locations.length; i++) {
+            if (this.locations[i].id === id) {
+                return this.locations[i];
+            }
+        }
+        return false;
+    }
+    getActorById(id) {
+        for (let i = 0; i < this.size; i++) {
+            if (this.actors[i].id === id) {
+                return this.actors[i];
+            }
+        }
+        return false;
     }
     renderEvent(theStory) {
         let output = '';
@@ -542,7 +642,7 @@ class World {
             const [rule, actor] = nextEvent;
             output += Object(__WEBPACK_IMPORTED_MODULE_4__components_events__["a" /* processEvent */])(this, rule, actor);
         }
-        else if (nextEvent[2] instanceof __WEBPACK_IMPORTED_MODULE_2_src_components_actor__["a" /* default */]) {
+        else if (nextEvent[2] instanceof __WEBPACK_IMPORTED_MODULE_2__components_actor__["a" /* default */]) {
             const [rule, one, two] = nextEvent;
             output += Object(__WEBPACK_IMPORTED_MODULE_4__components_events__["a" /* processEvent */])(this, rule, one, two);
         }
@@ -573,29 +673,51 @@ class World {
         }
         return false;
     }
-    getLocationByName(name) {
-        for (let i = 0; i < this.locations.length; i++) {
-            if (this.locations[i].name === name) {
-                return this.locations[i].id;
+    testMatches() {
+        const results = {};
+        this.actors.forEach(actor => {
+            results[actor.name] = {};
+            if (actor.locations.length) {
+                actor.locations.forEach(location => {
+                    actor.location = location;
+                    this.populateMatchesForActor(actor, results);
+                });
             }
-        }
-        return false;
+            this.populateMatchesForActor(actor, results);
+        });
+        return results;
     }
-    getLocationById(id) {
-        for (let i = 0; i < this.locations.length; i++) {
-            if (this.locations[i].id === id) {
-                return this.locations[i];
-            }
+    populateMatchesForActor(actor, results) {
+        let localActors;
+        if (actor.location) {
+            localActors = this.actors.filter(actorTwo => actor.location === actorTwo.location && actor.name !== actorTwo.name);
         }
-        return false;
-    }
-    getActorById(id) {
-        for (let i = 0; i < this.size; i++) {
-            if (this.actors[i].id === id) {
-                return this.actors[i];
-            }
+        else {
+            localActors = this.actors.filter(actorTwo => actorTwo.name !== actor.name);
         }
-        return false;
+        let localRules = Object(__WEBPACK_IMPORTED_MODULE_7__components_lib_getLocalRules__["a" /* default */])(this, actor);
+        const transitionRules = this.rules.filter(rule => Object(__WEBPACK_IMPORTED_MODULE_8__components_lib_checkTransitionMatch__["a" /* default */])(rule, actor));
+        if (!localActors.length && !results[actor.name]) {
+            results[actor.name] = 'ERROR: no local actors';
+        }
+        else if (!localRules.length && !transitionRules.length && !results[actor.name]) {
+            results[actor.name] = 'ERROR: no matching rules';
+        }
+        else {
+            results[actor.name].TRANSITION_RULES = results[actor.name].TRANSITION_RULES
+                ? unique(results[actor.name].TRANSITION_RULES.concat(transitionRules.map(r => r.id)))
+                : transitionRules.map(r => r.id);
+            results[actor.name].INTERACTION_RULES = {};
+            localActors.forEach(actorTwo => {
+                results[actor.name].INTERACTION_RULES[actorTwo.name] = results[actor.name].INTERACTION_RULES[actorTwo.name] || [];
+                localRules.forEach(rule => {
+                    const isMatch = Object(__WEBPACK_IMPORTED_MODULE_3__components_story__["a" /* checkMatch */])(rule, actor, actorTwo);
+                    if (isMatch && results[actor.name].INTERACTION_RULES[actorTwo.name].indexOf(rule.id) === -1) {
+                        results[actor.name].INTERACTION_RULES[actorTwo.name].push(rule.name || rule.id);
+                    }
+                });
+            });
+        }
     }
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = World;
@@ -603,11 +725,11 @@ class World {
 
 
 /***/ }),
-/* 9 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__matchTransitionFor__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__matchTransitionFor__ = __webpack_require__(13);
 
 /**
  * getRandomTransition
@@ -631,12 +753,12 @@ const getRandomTransition = (world) => {
 
 
 /***/ }),
-/* 10 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_constants__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_src_world_components_lib_checkTransitionMatch__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_src_world_components_lib_checkTransitionMatch__ = __webpack_require__(7);
 
 
 
@@ -655,9 +777,7 @@ const getRandomTransition = (world) => {
  *   A random matching Rule or false if none is found.
  */
 const matchTransitionFor = (actor, rules) => {
-  const potentialLocations = actor.locations.filter(l => l !== actor.location);
-  const matchedRules =
-    rules.filter(rule => Object(__WEBPACK_IMPORTED_MODULE_1_src_world_components_lib_checkTransitionMatch__["a" /* default */])(rule, actor, potentialLocations, __WEBPACK_IMPORTED_MODULE_0__components_constants__["MOVE_OUT"]));
+  const matchedRules = rules.filter(rule => Object(__WEBPACK_IMPORTED_MODULE_1_src_world_components_lib_checkTransitionMatch__["a" /* default */])(rule, actor));
   return matchedRules.length && matchedRules[Math.floor(Math.random() * matchedRules.length)];
 };
 
@@ -665,60 +785,7 @@ const matchTransitionFor = (actor, rules) => {
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_src_components_type__ = __webpack_require__(2);
-
-const includes = (set, item) => {
-    for (let i = 0; i < set.length; i++) {
-        if (set[i] === item) {
-            return true;
-        }
-    }
-    return false;
-};
-const isSubset = (set, valueOrSet) => {
-    if (!Array.isArray(valueOrSet)) {
-        return includes(set, valueOrSet);
-    }
-    return set.reduce((acc, curr) => acc && includes(valueOrSet, curr), true);
-};
-/**
- * checkTransitionMatch
- *   Checks that a Rule can be caused by an Actor, an Actor is in the correct
- *   origin Location, an Actor is moving to a valid destination Location,
- *   and the Action is "move_out".
- *
- * @param  {Rule} rule
- *   The Rule to validate.
- * @param  {Actor} actor
- *   The Actor to validate.
- * @param  {Location[]} locations
- *   All possible Locations.
- * @param  {Action} action
- *   The type of Action.
- * @return {Boolean}
- *   Whether or not the transition is valid.
- */
-const checkTransitionMatch = (rule, actor, locations, action) => {
-    if (!includes(locations, rule.getConsequentTarget())) {
-        return false;
-    }
-    else if (!(rule.getActionType() === action)) {
-        return false;
-    }
-    const ruleSource = rule.getSource();
-    return ruleSource instanceof __WEBPACK_IMPORTED_MODULE_0_src_components_type__["a" /* default */]
-        ? isSubset(actor.getTypes(), ruleSource.get())
-        : ruleSource === actor.id;
-};
-/* harmony default export */ __webpack_exports__["a"] = (checkTransitionMatch);
-
-
-/***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -729,9 +796,9 @@ const checkTransitionMatch = (rule, actor, locations, action) => {
 /* harmony export (immutable) */ __webpack_exports__["a"] = processEvent;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_actor__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__story__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_grammar__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lib_grammar__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_constants__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utility__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__utility__ = __webpack_require__(2);
 
 
 
@@ -781,6 +848,7 @@ function applyConsequent(world, typeExpression) {
                 __WEBPACK_IMPORTED_MODULE_4__utility__["c" /* removeActor */](world, actor);
                 break;
             }
+            case __WEBPACK_IMPORTED_MODULE_3__components_constants__["MOVE_OUT"]:
             case __WEBPACK_IMPORTED_MODULE_3__components_constants__["MOVE_IN"]: {
                 const actor = world.getActorById(expr[0]);
                 if (actor) {
@@ -824,7 +892,7 @@ function processEvent(world, rule, actorOne, actorTwo) {
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -842,12 +910,12 @@ function capitalizeFirst(text) {
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = advanceTime;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utility__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utility__ = __webpack_require__(2);
 
 function advanceTime(world) {
     if (world.timedEvents[world.timeIndex] !== undefined) {

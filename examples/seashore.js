@@ -225,7 +225,7 @@ world.addRule({
 
 world.addRule({
   cause: {
-    type: [crab, c.MOVE_OUT, 'the seashore'],
+    type: [life, c.MOVE_OUT, 'the seashore'],
     template: [''],
   },
   consequent: {
@@ -278,8 +278,12 @@ world.addRule({
 });
 
 /* eslint-disable no-console */
-world.runStory(4, [
-  { step: 1, event: [clouds, c.ENCOUNTER, cliffs] },
-  { step: 3, event: [clouds, c.ENCOUNTER, ocean] }
-]);
-console.log(world.output);
+// world.runStory(10, [
+//   { step: 1, event: [clouds, c.ENCOUNTER, cliffs] },
+//   { step: 3, event: [clouds, c.ENCOUNTER, ocean] }
+// ]);
+
+// console.log(world.output);
+
+const test = world.testMatches()
+console.log(test)

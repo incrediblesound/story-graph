@@ -1,7 +1,7 @@
 import Actor from '../../components/actor'
 import { matchRuleFor } from './story'
 import { addPeriod, capitalizeFirst } from './lib/grammar'
-import { SOURCE, TARGET, VANISH, MOVE_IN, Event } from '../../components/constants'
+import { SOURCE, TARGET, VANISH, MOVE_IN, Event, MOVE_OUT } from '../../components/constants'
 import World from '../world'
 import Rule from '../../components/rule'
 import * as utility from './utility'
@@ -24,7 +24,7 @@ export function populateTemplate(eventTemplate, actorOne: Actor, actorTwo?: Acto
   });
 }
 
-type StoryEvent = [ number, Event, number] | [ number, Event ]
+type StoryEvent = [ number, Event, number] | [ number, Event ] | [ number, Event, string ]
 
 export function renderTemplate(world: World, template: any[]) {
   const result = template.map(piece => utility.fetchElement(world, piece));
@@ -53,6 +53,7 @@ export function applyConsequent(world: World, typeExpression) {
         utility.removeActor(world, actor);
         break;
       }
+      case MOVE_OUT:
       case MOVE_IN: { // [ id, MOVE_IN, 'location' ]
         const actor = world.getActorById(expr[0]);
         if (actor) {

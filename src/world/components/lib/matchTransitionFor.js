@@ -16,9 +16,7 @@ import checkTransitionMatch from 'src/world/components/lib/checkTransitionMatch'
  *   A random matching Rule or false if none is found.
  */
 const matchTransitionFor = (actor, rules) => {
-  const potentialLocations = actor.locations.filter(l => l !== actor.location);
-  const matchedRules =
-    rules.filter(rule => checkTransitionMatch(rule, actor, potentialLocations, MOVE_OUT));
+  const matchedRules = rules.filter(rule => checkTransitionMatch(rule, actor));
   return matchedRules.length && matchedRules[Math.floor(Math.random() * matchedRules.length)];
 };
 

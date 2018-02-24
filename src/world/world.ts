@@ -1,11 +1,19 @@
 import Rule, { CauseTypeElement } from '../components/rule'
-import Location from 'src/components/location'
-import Actor from 'src/components/actor'
+import Location from '../components/location'
+import Actor from '../components/actor'
 
 import { randomMatch, checkMatch } from './components/story'
 import { processEvent } from './components/events'
 import { advanceTime } from './components/time'
 import { getActor } from './components/utility'
+import getLocalRules from './components/lib/getLocalRules';
+import checkTransitionMatch from './components/lib/checkTransitionMatch';
+
+const unique = (arr: any[]) => {
+  let box = {}
+  arr.forEach(item => box[item] = true)
+  return Object.keys(box)
+}
 
 export default class World {
   actors: Actor[];
@@ -66,6 +74,33 @@ export default class World {
     }
     const id = add.apply(this, [actor]);
     return id;
+  }
+
+  getLocationByName(name) {
+    for (let i = 0; i < this.locations.length; i++) {
+      if (this.locations[i].name === name) {
+        return this.locations[i].id;
+      }
+    }
+    return false;
+  }
+
+  getLocationById(id) {
+    for (let i = 0; i < this.locations.length; i++) {
+      if (this.locations[i].id === id) {
+        return this.locations[i];
+      }
+    }
+    return false;
+  }
+
+  getActorById(id) {
+    for (let i = 0; i < this.size; i++) {
+      if (this.actors[i].id === id) {
+        return this.actors[i];
+      }
+    }
+    return false;
   }
 
   renderEvent(theStory) {
@@ -129,30 +164,53 @@ export default class World {
     return false;
   }
 
-  getLocationByName(name) {
-    for (let i = 0; i < this.locations.length; i++) {
-      if (this.locations[i].name === name) {
-        return this.locations[i].id;
+  testMatches() {
+    const results = {}
+    this.actors.forEach(actor => {
+      results[actor.name] = {}
+      if (actor.locations.length) {
+        actor.locations.forEach(location => {
+          actor.location = location
+          this.populateMatchesForActor(actor, results);
+        })
       }
-    }
-    return false;
+      this.populateMatchesForActor(actor, results);
+    })
+    return results
   }
 
-  getLocationById(id) {
-    for (let i = 0; i < this.locations.length; i++) {
-      if (this.locations[i].id === id) {
-        return this.locations[i];
-      }
+  populateMatchesForActor(actor, results) {
+    let localActors;
+    if (actor.location) {
+      localActors = this.actors.filter(actorTwo => actor.location === actorTwo.location && actor.name !== actorTwo.name)
+    } else {
+      localActors = this.actors.filter(actorTwo => actorTwo.name !== actor.name);
     }
-    return false;
-  }
+    let localRules = getLocalRules(this, actor)
+    const transitionRules = this.rules.filter(rule => checkTransitionMatch(rule, actor));
+    
+    if(!localActors.length && !results[actor.name]) {
+      results[actor.name] = 'ERROR: no local actors'
+    } else if (!localRules.length && !transitionRules.length && !results[actor.name]) {
+      results[actor.name] = 'ERROR: no matching rules'
+    } else {
 
-  getActorById(id) {
-    for (let i = 0; i < this.size; i++) {
-      if (this.actors[i].id === id) {
-        return this.actors[i];
-      }
+      results[actor.name].TRANSITION_RULES = results[actor.name].TRANSITION_RULES 
+        ? unique(results[actor.name].TRANSITION_RULES.concat(transitionRules.map(r => r.id)))
+        : transitionRules.map(r => r.id);
+
+      results[actor.name].INTERACTION_RULES = {}
+
+      localActors.forEach(actorTwo => {
+        results[actor.name].INTERACTION_RULES[actorTwo.name] = results[actor.name].INTERACTION_RULES[actorTwo.name] || []
+        localRules.forEach(rule => {
+          const isMatch = checkMatch(rule, actor, actorTwo)
+          if (isMatch && results[actor.name].INTERACTION_RULES[actorTwo.name].indexOf(rule.id) === -1) {
+            results[actor.name].INTERACTION_RULES[actorTwo.name].push(rule.name || rule.id)
+          }
+        })
+      })
+
     }
-    return false;
   }
 }

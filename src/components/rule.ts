@@ -3,9 +3,12 @@ import Type from './type';
 import Location from './location';
 import Actor from './actor';
 
-export type CauseTypeElement = [ Type | number, Event, Type | number ];
-export type ConsequentTypeElement = [ ActorReference, Event, string ];
 export type TemplateElement = ActorReference | string;
+export type RuleTypeElement = Type | number | string;
+
+export type CauseTypeElement = [ RuleTypeElement, Event, RuleTypeElement ];
+export type ConsequentTypeElement = [ ActorReference, Event, string ];
+
 
 interface CausePattern {
   type: CauseTypeElement,
@@ -40,10 +43,10 @@ export default class Rule {
 
     this.locations = data.locations || [];
   }
-  getSource(): Type | number {
+  getSource(): RuleTypeElement {
     return this.cause.type[0];
   }
-  getTarget(): Type | number {
+  getTarget(): RuleTypeElement {
     return this.cause.type[2];
   }
   getConsequentTarget() {

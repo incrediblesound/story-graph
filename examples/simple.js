@@ -27,7 +27,7 @@ world.addActor([dave, linda])
 world.addRule({
   cause: {
     type: [person, c.ENCOUNTER, person],
-    template: [c.SOURCE, 'says hello to', c.TARGET ],
+    template: [c.SOURCE, 'says hello to', c.TARGET],
   },
   consequent: null,
   isDirectional: false,
@@ -36,7 +36,7 @@ world.addRule({
 world.addRule({
   cause: {
     type: [man, c.ENCOUNTER, woman],
-    template: [c.SOURCE, 'smiles awkwardly at', c.TARGET ],
+    template: [c.SOURCE, 'smiles awkwardly at', c.TARGET],
   },
   consequent: null,
   isDirectional: true,
@@ -45,11 +45,13 @@ world.addRule({
 world.addRule({
   cause: {
     type: [man, c.ENCOUNTER, woman],
-    template: [c.SOURCE, 'waves to', c.TARGET ],
+    template: [c.SOURCE, 'waves to', c.TARGET],
   },
   consequent: null,
   isDirectional: true,
 });
 
-world.runStory(3);
-console.log(world.output);
+// world.runStory(3);
+// console.log(world.output);
+const test = world.testMatches()
+console.log(test)
