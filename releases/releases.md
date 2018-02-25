@@ -1,0 +1,30 @@
+Story Grapth 2.0
+================
+
+Story graph is one of my favorite side projects, but it has been seriously lacking in development activity for quite some time. To remedy this, I've made a number of significant improvements as part of a version bump for Story-Graph.
+
+Typescript
+----------
+
+One of the problems with the original implementation was that the code was hard to follow. I've converted the codebase to Typescript to help clarify the internal APIs and make development easier.
+
+Improved code
+-------------
+
+Many of the subroutines and APIs in Story-Graph were poorly designed, and the first version never really escaped the "proof of concept" phase. I've attempted to improve the entire system by simplifying functions and in general trying to adhere more closely to the single responsibility principle. The result is overall simpler, more readable code. 
+
+Match profile
+-------------
+I added a method `testMatches` that finds and records every possible match in a particular story graph. This is important to identify orphan actors or rules that will never produce output. Inspecting the output from `testMatches` gives you a picture of what is possible in your story so that you can make changes to improve the output.
+
+Rule names and logging
+----------------------
+I added a name property to rules and a simple logger so that rule matches can be logged to the console if desired.
+
+Basic examples
+-------------
+I added a couple basic examples to demonstrate as simply as possible how story graph works:
+- [Simple example](https://github.com/incrediblesound/story-graph/blob/master/examples/simple.js) demonstrates basic interactions
+- [Locations example](https://github.com/incrediblesound/story-graph/blob/master/examples/locations.js) demonstrates the use of locations
+
+Of course, as always there are many areas that can still be improved. If you have any ideas feel free to open issues or make a PR.
