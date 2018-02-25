@@ -103,12 +103,13 @@ export default class World {
     return false;
   }
 
-  renderEvent(theStory) {
+  renderEvent(events) {
     let output = '';
-    theStory.forEach(storyEvent => {
-      const rule = this.findRule(storyEvent);
-      if (rule) {
-        output += processEvent(this, rule, storyEvent);
+    events.forEach(storyEvent => {
+      const results = this.findRule(storyEvent);
+      if (results) {
+        const [ rule, actorOne, actorTwo ] = results
+        output += processEvent(this, rule, actorOne, actorTwo);
       }
     });
     this.output = `${this.output}${output}`;
@@ -149,15 +150,15 @@ export default class World {
     });
   }
 
-  findRule(piece: CauseTypeElement) {
+  findRule(piece: CauseTypeElement): [ Rule, Actor, Actor ] | false {
     const source = getActor(this, piece[0]);
     const action = piece[1];
     const target = getActor(this, piece[2]);
     if (source && target) {
       for (let i = 0; i < this.numRules; i++) {
-        const current = this.rules[i];
-        if (checkMatch(current, source, target, action)) {
-          return current;
+        const rule = this.rules[i];
+        if (checkMatch(rule, source, target, action)) {
+          return [ rule, source, target ];
         }
       }
     }
@@ -169,6 +170,7 @@ export default class World {
     this.actors.forEach(actor => {
       results[actor.name] = {}
       if (actor.locations.length) {
+        console.log(actor.locations)
         actor.locations.forEach(location => {
           actor.location = location
           this.populateMatchesForActor(actor, results);

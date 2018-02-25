@@ -42,7 +42,7 @@ export function checkMatch(
 ): boolean {
   let match;
   const sourceMatch = ruleMatchesActor(rule, source, 'source')
-  const targetMatch = !target || ruleMatchesActor(rule, target, 'target');
+  const targetMatch = ruleMatchesActor(rule, target, 'target');
 
   if (!rule.isDirectional && target !== undefined) {
 

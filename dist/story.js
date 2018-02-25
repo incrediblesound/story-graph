@@ -346,7 +346,7 @@ function twoActors(world, actor) {
 function checkMatch(rule, source, target, action) {
     let match;
     const sourceMatch = Object(__WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__["a" /* default */])(rule, source, 'source');
-    const targetMatch = !target || Object(__WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__["a" /* default */])(rule, target, 'target');
+    const targetMatch = Object(__WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__["a" /* default */])(rule, target, 'target');
     if (!rule.isDirectional && target !== undefined) {
         const flippedSourceMatch = Object(__WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__["a" /* default */])(rule, target, 'source');
         const flippedTargetMatch = Object(__WEBPACK_IMPORTED_MODULE_1__lib_ruleMatchesActor__["a" /* default */])(rule, source, 'target');
@@ -467,9 +467,14 @@ const ruleMatchesActor = (rule, actor, position) => {
     let ruleToken = position === 'source'
         ? rule.getSource()
         : rule.getTarget();
-    return ruleToken instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
-        ? isSubset(ruleToken.get(), actor.getTypes())
-        : ruleToken === actor.id;
+    if (!actor) {
+        return !ruleToken;
+    }
+    else {
+        return ruleToken instanceof __WEBPACK_IMPORTED_MODULE_0__components_type__["a" /* default */]
+            ? isSubset(ruleToken.get(), actor.getTypes())
+            : ruleToken === actor.id;
+    }
 };
 /* harmony default export */ __webpack_exports__["a"] = (ruleMatchesActor);
 
@@ -614,12 +619,13 @@ class World {
         }
         return false;
     }
-    renderEvent(theStory) {
+    renderEvent(events) {
         let output = '';
-        theStory.forEach(storyEvent => {
-            const rule = this.findRule(storyEvent);
-            if (rule) {
-                output += Object(__WEBPACK_IMPORTED_MODULE_4__components_events__["a" /* processEvent */])(this, rule, storyEvent);
+        events.forEach(storyEvent => {
+            const results = this.findRule(storyEvent);
+            if (results) {
+                const [rule, actorOne, actorTwo] = results;
+                output += Object(__WEBPACK_IMPORTED_MODULE_4__components_events__["a" /* processEvent */])(this, rule, actorOne, actorTwo);
             }
         });
         this.output = `${this.output}${output}`;
@@ -665,9 +671,9 @@ class World {
         const target = Object(__WEBPACK_IMPORTED_MODULE_6__components_utility__["b" /* getActor */])(this, piece[2]);
         if (source && target) {
             for (let i = 0; i < this.numRules; i++) {
-                const current = this.rules[i];
-                if (Object(__WEBPACK_IMPORTED_MODULE_3__components_story__["a" /* checkMatch */])(current, source, target, action)) {
-                    return current;
+                const rule = this.rules[i];
+                if (Object(__WEBPACK_IMPORTED_MODULE_3__components_story__["a" /* checkMatch */])(rule, source, target, action)) {
+                    return [rule, source, target];
                 }
             }
         }
@@ -678,6 +684,7 @@ class World {
         this.actors.forEach(actor => {
             results[actor.name] = {};
             if (actor.locations.length) {
+                console.log(actor.locations);
                 actor.locations.forEach(location => {
                     actor.location = location;
                     this.populateMatchesForActor(actor, results);

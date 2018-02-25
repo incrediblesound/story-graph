@@ -26,6 +26,7 @@ export function getActor(world: World, reference: number | Type): false | Actor 
   if (typeof reference === 'number') {
     return world.getActorById(reference);
   }
+
   // this is for adding query patterns to a story, probably unnecessary
   // } else if (piece.where !== undefined) {
   //   const property = piece.where[0];

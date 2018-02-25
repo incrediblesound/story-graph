@@ -32,6 +32,12 @@ world.addLocation({ name: 'the seashore' });
 world.addLocation({ name: 'the painted cliffs' });
 world.addLocation({ name: 'the granite boulder' });
 
+const gull = world.addActor(new Actor({
+  type: bird,
+  name: 'the seagull',
+  locations: ['the grey sky']
+}))
+
 const cliffs = world.addActor(new Actor({
   type: dark(expansive(entity)),
   name: 'the cliffs',
@@ -278,12 +284,12 @@ world.addRule({
 });
 
 /* eslint-disable no-console */
-// world.runStory(10, [
-//   { step: 1, event: [clouds, c.ENCOUNTER, cliffs] },
-//   { step: 3, event: [clouds, c.ENCOUNTER, ocean] }
-// ]);
+world.runStory(10, [
+  { step: 1, event: [clouds, c.ENCOUNTER, cliffs] },
+  { step: 3, event: [clouds, c.ENCOUNTER, ocean] }
+]);
 
-// console.log(world.output);
+console.log(world.output);
 
-const test = world.testMatches()
-console.log(test)
+// const test = world.testMatches()
+// console.log(test)

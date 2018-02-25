@@ -20,13 +20,17 @@ const isSubset = (set, valueOrSet) => {
 
 type Position = 'source' | 'target'
 
-const ruleMatchesActor = (rule: Rule, actor: Actor, position: Position): boolean => {
+const ruleMatchesActor = (rule: Rule, actor: Actor | undefined, position: Position): boolean => {
   let ruleToken = position === 'source'
     ? rule.getSource()
     : rule.getTarget();
-  return ruleToken instanceof Type
+  if (!actor) {
+    return !ruleToken
+  } else {
+    return ruleToken instanceof Type
     ? isSubset(ruleToken.get(), actor.getTypes())
     : ruleToken === actor.id;
+  }
 }
 
 export default ruleMatchesActor

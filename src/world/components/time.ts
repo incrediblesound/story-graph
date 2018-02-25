@@ -3,7 +3,7 @@ import World from '../world'
 
 export function advanceTime(world: World) {
   if (world.timedEvents[world.timeIndex] !== undefined) {
-    world.renderEvent([world.timedEvents[world.timeIndex]]);
+    world.renderEvent([ world.timedEvents[world.timeIndex] ]);
   } else {
     world.randomEvent();
   }
