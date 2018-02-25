@@ -51,7 +51,7 @@ world.addRule({
   isDirectional: true,
 });
 
-// world.runStory(3);
-// console.log(world.output);
-const test = world.testMatches()
-console.log(test)
+world.runStory(3);
+console.log(world.output);
+// const test = world.testMatches()
+// console.log(test)
