@@ -2,7 +2,7 @@ import Rule, { CauseTypeElement } from '../components/rule'
 import Location from '../components/location'
 import Actor from '../components/actor'
 
-import { randomMatch, checkMatch } from './components/story'
+import { randomMatch, checkMatch, twoActors } from './components/story'
 import { processEvent } from './components/events'
 import { advanceTime } from './components/time'
 import { getActor } from './components/utility'
@@ -13,6 +13,10 @@ const unique = (arr: any[]) => {
   let box = {}
   arr.forEach(item => box[item] = true)
   return Object.keys(box)
+}
+
+const selectAtRandom = (arr: any[]) => {
+  return arr[Math.floor(Math.random() * arr.length)]
 }
 
 export default class World {
@@ -117,23 +121,26 @@ export default class World {
 
   randomEvent() {
     let output: string = '';
-    let nextEvent: false | [ Rule, Actor, Actor ] | [ Rule, Actor ] = false; 
-    let counter: number = 0;
-    while (!nextEvent) {
-      counter++;
-      if (counter > 100) { throw new Error('Couldn\'t find match'); }
-      nextEvent = randomMatch(this);
+    let count = 0;
+    let rules: false | Rule[] = false;
+    let actorOne, actorTwo;
+    while (count < 100 && !rules) {
+      [ actorOne, actorTwo ] = twoActors(this)
+      rules = randomMatch(this, actorOne, actorTwo)
+      count ++
     }
-    if (this.logEvents && nextEvent[0].name) {
-      console.log(`Match on rule "${nextEvent[0].name}"`)
+    if (!rules) {
+      throw new Error('No matches found! Suggest run testMatches() to evaluate possible matches')
+    }  
+
+    const rule = selectAtRandom(rules);
+    
+    if (this.logEvents && rule.name) {
+      console.log(`Match on rule "${rule.name}"`)
     }
-    if (nextEvent.length === 2) {
-      const [rule, actor] = nextEvent;
-      output += processEvent(this, rule, actor);
-    } else if (nextEvent[2] instanceof Actor) {
-      const [rule, one, two] = nextEvent;
-      output += processEvent(this, rule, one, two);
-    }
+
+    output += processEvent(this, rule, actorOne, actorTwo);
+
     this.output = `${this.output}${output}`;
   }
 

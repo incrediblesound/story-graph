@@ -1,20 +1,11 @@
 import { Event } from '../../components/constants'
-import getRandomTransition from './lib/getRandomTransition'
+import checkTransitionMatch from './lib/checkTransitionMatch'
 import Actor from '../../components/actor'
 import Rule from '../../components/rule'
 import World from '../../world/world'
-import Type from '../../components/type'
 
 import ruleMatchesActor from './lib/ruleMatchesActor'
 import getLocalRules from './lib/getLocalRules';
-
-/* HELPERS */
-
-function rollDie(): number {
-  return Math.floor(Math.random() * 7)
-}
-
-/* MAIN FUNCTIONS */
 
 const sameLocation = (one: Actor, two: Actor): boolean => one.location === two.location;
 const sameName = (one: Actor, two: Actor): boolean => one.name === two.name;
@@ -68,7 +59,7 @@ export function checkMatch(
   return match /* && !(sourceInTarget || targetInSource); */
 }
 
-export function matchRuleFor(
+export function matchRulesFor(
   world: World, 
   actorOne: Actor, 
   actorTwo: Actor | undefined, 
@@ -91,27 +82,18 @@ export function matchRuleFor(
     return false;
   }
 
-  return matchedRules[Math.floor(Math.random() * matchedRules.length)];
+  return matchedRules;
 }
 
-export function randomMatch(world: World): false | [ Rule, Actor, Actor ] | [ Rule, Actor ] {
-  // this function checks the random result of rollDie()
-  // to occasionally render a location transition
-  if (world.numLocations && rollDie() < 2) {
-    const randomTransition = getRandomTransition(world);
-    return randomTransition;
-  }
-  const pair = twoActors(world);
+export function randomMatch(
+  world: World, 
+  actorOne: Actor, 
+  actorTwo: Actor
+): false | Rule[] {
 
-  const [ actorOne, actorTwo ] = pair;
+  const transitions = world.rules.filter(rule => checkTransitionMatch(rule, actorOne));
+  const interactions = matchRulesFor(world, actorOne, actorTwo) || []
+  const rules = interactions.concat(transitions)
 
-  const rule = matchRuleFor(world, actorOne, actorTwo)
-
-  if (!rule) {
-    return false;
-  } else if (!actorTwo) {
-    return [ rule, actorOne ]
-  } else {
-    return [ rule, actorOne, actorTwo ];    
-  }
+  return rules.length ? rules : false
 }

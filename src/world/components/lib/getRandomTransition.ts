@@ -1,4 +1,5 @@
-import matchTransitionFor from './matchTransitionFor'
+// import matchTransitionFor from './matchTransitionFor'
+import checkTransitionMatch from './checkTransitionMatch'
 import Actor from '../../../components/actor'
 import Rule from '../../../components/rule'
 
@@ -11,16 +12,15 @@ import Rule from '../../../components/rule'
  * @return {Boolean | [Transition, Actor]}
  *   A Transition and matching Actor that has more than one location.
  */
-const getRandomTransition = (world): false | [ Rule, Actor ] => {
+const getRandomTransition = (world, actor: Actor): false | [ Rule, Actor ] => {
   const moveableSet = world.actors.filter(actor => actor.locations.length > 1);
   if (!moveableSet.length) {
     throw new Error(
       'You have defined transitions but none of your actors have multiple possible locations.'
     );
   }
-  const randomActor = moveableSet[Math.floor(Math.random() * moveableSet.length)];
-  const transition = matchTransitionFor(randomActor, world.rules);
-  return transition && [transition, randomActor];
+  const matchedRules = world.rules.filter(rule => checkTransitionMatch(rule, actor));
+  return matchedRules;
 };
 
 export default getRandomTransition

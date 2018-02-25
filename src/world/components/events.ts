@@ -1,10 +1,14 @@
 import Actor from '../../components/actor'
-import { matchRuleFor } from './story'
+import { matchRulesFor } from './story'
 import { addPeriod, capitalizeFirst } from './lib/grammar'
 import { SOURCE, TARGET, VANISH, MOVE_IN, Event, MOVE_OUT } from '../../components/constants'
 import World from '../world'
 import Rule from '../../components/rule'
 import * as utility from './utility'
+
+const selectAtRandom = (arr: any[]) => {
+  return arr[ Math.floor(Math.random() * arr.length) ]
+}
 
 /*
  * Replaces the constants SOURCE and TARGET with the IDs of the actors that
@@ -64,9 +68,10 @@ export function applyConsequent(world: World, typeExpression) {
       default: { // [ id, SOME_EVENT, id ]
         const source = utility.getActor(world, expr[0]);
         const target = utility.getActor(world, expr[2]);
-        const rule = source && target && matchRuleFor(world, source, target, expr[1]);
-        if (rule) {
+        const rules = matchRulesFor(world, source, target, expr[1]);
+        if (rules && rules.length) {
           /* eslint-disable no-use-before-define */
+          const rule = selectAtRandom(rules);
           result = processEvent(world, rule, source, target);
         }
       }
