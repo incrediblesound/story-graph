@@ -88,12 +88,16 @@ export function matchRulesFor(
 export function randomMatch(
   world: World, 
   actorOne: Actor, 
-  actorTwo: Actor
+  actorTwo: Actor,
+  exclude?: null | number,
 ): false | Rule[] {
 
   const transitions = world.rules.filter(rule => checkTransitionMatch(rule, actorOne));
   const interactions = matchRulesFor(world, actorOne, actorTwo) || []
-  const rules = interactions.concat(transitions)
+  let rules = interactions.concat(transitions)
+  if (exclude !== null) {
+    rules = rules.filter(r => r.id !== exclude)
+  }
 
   return rules.length ? rules : false
 }

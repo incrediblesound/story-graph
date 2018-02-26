@@ -21,12 +21,14 @@ const selectAtRandom = (arr: any[]) => {
 
 export default class World {
   actors: Actor[];
+  excludePrevious: boolean;
   lastId: number;
   locations: Location[];
   logEvents: boolean;
   numLocations: number;
   numRules: number;
   output: string;
+  previousMatch: null | number;
   rules: Rule[];
   size: number;
   timedEvents: any;
@@ -44,6 +46,9 @@ export default class World {
     this.rules = [];
 
     this.logEvents = options && options.logEvents
+    this.excludePrevious = options && options.excludePrevious
+    this.previousMatch = null;
+
     this.timeIndex = 1;
     this.timedEvents = {};
     this.output = '';
@@ -126,7 +131,8 @@ export default class World {
     let actorOne, actorTwo;
     while (count < 100 && !rules) {
       [ actorOne, actorTwo ] = twoActors(this)
-      rules = randomMatch(this, actorOne, actorTwo)
+      const exclude = this.excludePrevious ? this.previousMatch : null
+      rules = randomMatch(this, actorOne, actorTwo, exclude)
       count ++
     }
     if (!rules) {
@@ -134,6 +140,7 @@ export default class World {
     }  
 
     const rule = selectAtRandom(rules);
+    this.previousMatch = rule.id;
     
     if (this.logEvents && rule.name) {
       console.log(`Match on rule "${rule.name}"`)

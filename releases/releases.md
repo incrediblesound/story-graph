@@ -21,6 +21,10 @@ Rule names and logging
 ----------------------
 I added a name property to rules and a simple logger so that rule matches can be logged to the console if desired.
 
+Exclude Previous Match
+----------------------
+A new options can be passed into the world object to prevent matching the same rule twice in a row.
+
 Basic examples
 -------------
 I added a couple basic examples to demonstrate as simply as possible how story graph works:
