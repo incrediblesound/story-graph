@@ -1,4 +1,4 @@
-Story Grapth 2.0
+Story Graph 2.0
 ================
 
 Story graph is one of my favorite side projects but it has been lacking in development activity for quite some time. To remedy this, I've made a number of significant improvements as part of the first version bump for Story-Graph.
