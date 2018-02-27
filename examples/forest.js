@@ -191,10 +191,7 @@ world.addRule({
     type: [entity, c.MOVE_IN, complex(connection)],
     template: [c.SOURCE, 'dwells in the stillness of life'],
   },
-  consequent: {
-    type: [c.SOURCE, c.stay],
-    template: [],
-  },
+  consequent: null,
 });
 
 world.addRule({
@@ -211,4 +208,5 @@ world.addRule({
 
 /* eslint-disable no-console */
 world.runStory(3);
+console.log('\n*** This story contains some deprecated features and may throw errors. Try examples/seashore.js for an up-to-date example ***\n')
 console.log(world.output);

@@ -292,9 +292,9 @@ And it would create a new actor with the name:
 
 
 **locations**
-Locations are an optional feature of StoryGraph that add a lot of complexity and narrative possibilities. I think of locations as named graphs. When you add a location to your StoryGraph world, you are saying that there is a specific named place where actors can reside and where specific rules may apply.
+Locations are an optional feature of StoryGraph that add complexity and narrative possibilities. I think of locations as named graphs. When you add a location to your StoryGraph world, you are saying that there is a specific named place where actors can reside and where specific rules may apply.
 
-Adding a location to a world is as simple as this:
+Add locations like this:
 ```javascript
 const world = new StoryGraph.World();
 world.addLocation({ name: 'the house'});
@@ -306,35 +306,35 @@ const Bob = world.addActor(new Actor({
   type: human,
   name: 'Robert',
   locations: ['the house', 'the garden'],
-  location: 'the house' // optional; defaults to first location in the locations array
+  location: 'the house' // defaults to first location in the locations array
 }));
 ```
-There are two ways to use locations in your StoryGraph rules. First of all, if you have an actor that can exist in multiple different locations you have to create rules to model the transitions between those locations.
+There are three ways to use locations in your StoryGraph rules. First of all, if you have an actor that can exist in multiple different locations you can create rules to model movement between those locations.
 ```javascript
 world.addRule({
   cause: {
     type: [human, c.MOVE_OUT, 'the house'],
-    value: ['']
+    template: ['']
   },
   consequent: {
     type: [c.SOURCE, c.MOVE_IN, 'the garden'],
-    value: [c.SOURCE, 'walks out into the garden']
+    template: [c.SOURCE, 'walks out into the garden']
   },
 })
 world.addRule({
   cause: {
     type: [human, c.MOVE_OUT, 'the garden'],
-    value: ['']
+    template: ['']
   },
   consequent: {
     type: [c.SOURCE, c.MOVE_IN, 'the house'],
-    value: [c.SOURCE, 'enters the house']
+    template: [c.SOURCE, 'enters the house']
   },
 })
 ```
-As you can see from these examples we have special constants move_out and move_in for modeling location transitions. An actor will only match a location transition if it is currently in the location indicated in the rule type with move_out, and if the location indicated in the type with move_in is contained in the possible locations of that actor. So, for the first example above, an actor will match the rule if its current location is "the house" and if "the garden" is contained in its potential locations.
+As you can see from these examples we have special constants `MOVE_OUT` and `MOVE_IN` for modeling location transitions. An actor will only match a location transition if it is currently in the location indicated in the rule type with `MOVE_OUT`, and if the location indicated in the type with `MOVE_IN` is contained in the possible locations of that actor. So, for the first example above, an actor will match the rule if its current location is "the house" and if "the garden" is contained in its potential locations.
 
-The second way to use locations in your rules is to localize them. Some rules might describe events that make sense if they happen in one location but not in another. To configure this, simply add a locations property to the rule with an array of locations where that rule can occur. Here is an example of a rule I wrote that is localized:
+The second way to use locations is to localize your rules. Some rules might describe events that make sense if they happen in one location but not in another. To configure this, simply add a locations property to the rule with an array of locations where that rule can occur. Here is an example of a rule I wrote that is localized:
 ```javascript
 world.addRule({
   cause: {
@@ -350,13 +350,27 @@ world.addRule({
   mutations: null,
 });
 ```
+
+Finally, the event constant `REST` can be used to make rules to render an actor's response to being in a location. Below is an example of a `REST` rule, notice how there is no target in the cause type because the source is interacting with their location in this instance. There is also no consequent, which is optional:
+```javascript
+world.addRule({
+  name: 'rest:house',
+  cause: {
+    type: [person, c.REST],
+    template: [c.SOURCE, 'paces around the house anxiously'],
+  },
+  locations: ['house'],
+  consequent: null,
+  isDirectional: true,
+});
+```
 ## Generate Stories
 
 To generate a narrative use the `runStory` method on the world object. This method takes a number which determines how many time steps the graph will run for and an optional array of events that happen at specific time steps. Events have the following structure:
 ```javascript
 {
     step: 1 // this is the time step when this event will be rendered
-    event: [ (id || type), action, (id || type) ] //this is the type of the rule to be rendered
+    event: [ (id || Type), Event, (id || Type) ] //this is the type of the rule to be rendered
 }
 ```
  At each time step the runStory method will check to see if there is an event set for that step, and if not it will generate a random event. The result will be stored on the output property of the world object.

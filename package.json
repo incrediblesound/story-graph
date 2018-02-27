@@ -1,6 +1,6 @@
 {
   "name": "story-graph",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Define a world and generate stories.",
   "main": "dist/story.js",
   "scripts": {

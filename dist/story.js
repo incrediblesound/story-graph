@@ -377,10 +377,13 @@ function matchRulesFor(world, actorOne, actorTwo, action) {
     }
     return matchedRules;
 }
-function randomMatch(world, actorOne, actorTwo) {
+function randomMatch(world, actorOne, actorTwo, exclude) {
     const transitions = world.rules.filter(rule => Object(__WEBPACK_IMPORTED_MODULE_0__lib_checkTransitionMatch__["a" /* default */])(rule, actorOne));
     const interactions = matchRulesFor(world, actorOne, actorTwo) || [];
-    const rules = interactions.concat(transitions);
+    let rules = interactions.concat(transitions);
+    if (exclude !== null) {
+        rules = rules.filter(r => r.id !== exclude);
+    }
     return rules.length ? rules : false;
 }
 
@@ -546,6 +549,8 @@ class World {
         this.numRules = 0;
         this.rules = [];
         this.logEvents = options && options.logEvents;
+        this.excludePrevious = options && options.excludePrevious;
+        this.previousMatch = null;
         this.timeIndex = 1;
         this.timedEvents = {};
         this.output = '';
@@ -619,13 +624,15 @@ class World {
         let actorOne, actorTwo;
         while (count < 100 && !rules) {
             [actorOne, actorTwo] = Object(__WEBPACK_IMPORTED_MODULE_2__components_story__["d" /* twoActors */])(this);
-            rules = Object(__WEBPACK_IMPORTED_MODULE_2__components_story__["c" /* randomMatch */])(this, actorOne, actorTwo);
+            const exclude = this.excludePrevious ? this.previousMatch : null;
+            rules = Object(__WEBPACK_IMPORTED_MODULE_2__components_story__["c" /* randomMatch */])(this, actorOne, actorTwo, exclude);
             count++;
         }
         if (!rules) {
             throw new Error('No matches found! Suggest run testMatches() to evaluate possible matches');
         }
         const rule = selectAtRandom(rules);
+        this.previousMatch = rule.id;
         if (this.logEvents && rule.name) {
             console.log(`Match on rule "${rule.name}"`);
         }
