@@ -1,7 +1,7 @@
 Story Graph 2.0
 ================
 
-Story graph is one of my favorite side projects but it has been lacking in development activity for quite some time. To remedy this, I've made a number of significant improvements as part of the first version bump for Story-Graph.
+Story graph is one of my favorite side projects but it has been lacking in development activity for quite some time. To remedy this, I've made a number of significant improvements as part of the first major version bump for Story-Graph.
 
 Typescript
 ----------
@@ -16,14 +16,28 @@ Many of the subroutines and APIs in Story-Graph were poorly designed, and the fi
 Match profiling
 -------------
 I added a method `testMatches` to the `World` class that finds and records every possible match in a particular story. This is important to identify orphan actors or rules that will never produce output. Inspecting the output from `testMatches` gives you a picture of what is possible in your story so that you can make changes to improve the output.
+```javascript
+const profile = world.testMatches()
+console.log(profile)
+```
 
 Rule names and logging
 ----------------------
 I added a name property to rules and a simple logger so that rule matches can be logged to the console if desired.
+```javascript
+const world = new World({
+  logEvents: true
+})
+```
 
 Exclude Previous Match
 ----------------------
-A new options can be passed into the world object to prevent matching the same rule twice in a row.
+A new option can be passed into the world object to prevent matching the same rule twice in a row.
+```javascript
+const world = new World({
+  excludePrevious: true
+})
+```
 
 Basic examples
 -------------
