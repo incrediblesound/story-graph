@@ -21,7 +21,7 @@ function actor(line, result) {
   let current;
   let theLocation;
   const locations = [];
-  
+
   while (remainder.length) {
     current = remainder.shift();
     theLocation = [];
@@ -200,4 +200,4 @@ function parser(tokens) {
   return result;
 }
 
-export default parser;
+module.exports = parser;

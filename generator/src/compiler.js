@@ -172,4 +172,4 @@ const compiler = structure => {
   return result;
 };
 
-export default compiler
+module.exports = compiler

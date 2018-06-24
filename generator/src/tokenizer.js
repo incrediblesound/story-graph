@@ -91,4 +91,4 @@ function tokenizer(body) {
   return tokens;
 }
 
-export default tokenizer;
+module.exports = tokenizer;
