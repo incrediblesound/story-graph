@@ -1,3 +1,7 @@
+Story Graph 2.0.2
+================
+Add npm scripts for world generator
+
 Story Graph 2.0
 ================
 
