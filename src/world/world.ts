@@ -33,6 +33,7 @@ export default class World {
   size: number;
   timedEvents: any;
   timeIndex: number;
+  focalizer: Actor | null;
 
   constructor(options) {
     this.size = 0;
@@ -52,6 +53,7 @@ export default class World {
     this.timeIndex = 1;
     this.timedEvents = {};
     this.output = '';
+    this.focalizer = options.focalizer || null;
   }
 
   addRule(data) {
@@ -94,7 +96,7 @@ export default class World {
     return false;
   }
 
-  getLocationById(id) {
+  getLocationById(id): Location | false {
     for (let i = 0; i < this.locations.length; i++) {
       if (this.locations[i].id === id) {
         return this.locations[i];
@@ -103,7 +105,7 @@ export default class World {
     return false;
   }
 
-  getActorById(id) {
+  getActorById(id): Actor | false {
     for (let i = 0; i < this.size; i++) {
       if (this.actors[i].id === id) {
         return this.actors[i];
@@ -129,8 +131,11 @@ export default class World {
     let count = 0;
     let rules: false | Rule[] = false;
     let actorOne, actorTwo;
+    let locationRestriction = this.focalizer
+      ? focalizer.location
+      : null;
     while (count < 100 && !rules) {
-      [ actorOne, actorTwo ] = twoActors(this)
+      [ actorOne, actorTwo ] = twoActors(this, null, locationRestriction)
       const exclude = this.excludePrevious ? this.previousMatch : null
       rules = randomMatch(this, actorOne, actorTwo, exclude)
       count ++
@@ -193,6 +198,15 @@ export default class World {
       this.populateMatchesForActor(actor, results);
     })
     return results
+  }
+
+  randomActor(location?: Location): Actor {
+    let actors = this.actors;
+    if(location) {
+      actors = actors.filter(actor => actor.location === location.name);
+    }
+    const index = Math.floor(Math.random() * actors.length)
+    return actors[index];
   }
 
   populateMatchesForActor(actor, results) {

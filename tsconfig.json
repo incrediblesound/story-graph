@@ -1,5 +1,5 @@
 {
-  "compileOnSave": false,
+  "compileOnSave": true,
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "target": "es2016",

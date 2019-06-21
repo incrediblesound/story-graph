@@ -66,9 +66,9 @@ export function applyConsequent(world: World, typeExpression) {
         break;
       }
       default: { // [ id, SOME_EVENT, id ]
-        const source = utility.getActor(world, expr[0]);
-        const target = utility.getActor(world, expr[2]);
-        const rules = matchRulesFor(world, source, target, expr[1]);
+        const source = world.getActorById(expr[0]);
+        const target = world.getActorById(expr[2]);
+        const rules = matchRulesFor(world, source, target, expr[1])
         if (rules && rules.length) {
           /* eslint-disable no-use-before-define */
           const rule = selectAtRandom(rules);

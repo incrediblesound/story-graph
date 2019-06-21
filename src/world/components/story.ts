@@ -10,8 +10,8 @@ import getLocalRules from './lib/getLocalRules';
 const sameLocation = (one: Actor, two: Actor): boolean => one.location === two.location;
 const sameName = (one: Actor, two: Actor): boolean => one.name === two.name;
 
-export function twoActors(world: World, actor?: Actor): Actor[] {
-  const actorOne: Actor = actor || world.actors[Math.floor(Math.random() * world.actors.length)];
+export function twoActors(world: World, actor?: Actor, location?: Location): Actor[] {
+  const actorOne: Actor = actor || world.randomActor(location);
   let localActors: Actor[];
   if (actorOne.location) {
     localActors = world.actors.filter(actor => sameLocation(actor, actorOne) && !sameName(actor, actorOne))

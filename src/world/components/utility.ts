@@ -16,33 +16,9 @@ export function removeActor(world: World, id: number) {
   }
 }
 
-export function getLocalSet(world: World, location) {
-  return world.actors.filter(actor => actor.location === location.name);
-}
-
-export function getActor(world: World, reference: number | Type): false | Actor {
-  if (reference === undefined) throw new Error('Undefined value in template.');
-
-  if (typeof reference === 'number') {
-    return world.getActorById(reference);
-  }
-
-  // this is for adding query patterns to a story, probably unnecessary
-  // } else if (piece.where !== undefined) {
-  //   const property = piece.where[0];
-  //   const value = piece.where[1];
-  //   for (let i = 0; i < world.size; i++) {
-  //     if (world.actors[i][property] === value) {
-  //       return world.actors[i];
-  //     }
-  //   }
-  // }
-  return false;
-}
-
 export function fetchElement(world: World, element: any): string {
   if (typeof element === 'number') {
-    const actor = getActor(world, element)
+    const actor = world.getActorById(element)
     if (actor) {
       return actor.name
     }
