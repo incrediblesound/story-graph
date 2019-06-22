@@ -150,7 +150,9 @@ world.addRule({
     name: 'conversing silently with',
     members: [c.SOURCE, c.TARGET],
     lifeTime: 2,
-    initializeName: (actor) => `${actor.members[0].name} ${actor.name} ${actor.members[1].name}`
+    initializeName: (actor) => {
+      return `${actor.members[0].name} ${actor.name} ${actor.members[1].name}`
+    } 
   },
 });
 
@@ -207,6 +209,5 @@ world.addRule({
 });
 
 /* eslint-disable no-console */
-world.runStory(3);
-console.log('\n*** This story contains some deprecated features and may throw errors. Try examples/seashore.js for an up-to-date example ***\n')
+world.runStory(6);
 console.log(world.output);

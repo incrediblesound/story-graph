@@ -25,9 +25,8 @@ export default class Actor {
     }
 
     this.lifeTime = data.lifeTime || 999;
-    // this.callback = data.callback || null;
     if (data.members) {
-      this.fetchMembers(world, data.members, actorTwo, actorTwo);
+      this.fetchMembers(world, data.members, actorOne, actorTwo);
     }
     if (data.initializeName) {
       this.name = data.initializeName(this, world);
