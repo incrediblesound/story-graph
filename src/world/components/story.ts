@@ -10,7 +10,7 @@ import getLocalRules from './lib/getLocalRules';
 const sameLocation = (one: Actor, two: Actor): boolean => one.location === two.location;
 const sameName = (one: Actor, two: Actor): boolean => one.name === two.name;
 
-export function twoActors(world: World, actor?: Actor, location?: Location): Actor[] {
+export function twoActors(world: World, actor?: Actor, location?: string): Actor[] {
   const actorOne: Actor = actor || world.randomActor(location);
   let localActors: Actor[];
   if (actorOne.location) {

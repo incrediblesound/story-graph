@@ -4,8 +4,6 @@ import Actor from '../components/actor'
 
 import { randomMatch, checkMatch, twoActors } from './components/story'
 import { processEvent } from './components/events'
-import { advanceTime } from './components/time'
-import { getActor } from './components/utility'
 import getLocalRules from './components/lib/getLocalRules';
 import checkTransitionMatch from './components/lib/checkTransitionMatch';
 
@@ -21,7 +19,7 @@ const selectAtRandom = (arr: any[]) => {
 
 export default class World {
   actors: Actor[];
-  excludePrevious: boolean;
+  collisions: number;
   lastId: number;
   locations: Location[];
   logEvents: boolean;
@@ -34,9 +32,11 @@ export default class World {
   timedEvents: any;
   timeIndex: number;
   focalizer: Actor | null;
+  ruleHistory: any[];
 
   constructor(options) {
     this.size = 0;
+    this.collisions = 0;
     this.lastId = -1;
     this.actors = [];
 
@@ -45,15 +45,15 @@ export default class World {
 
     this.numRules = 0;
     this.rules = [];
+    this.ruleHistory = [];
 
     this.logEvents = options && options.logEvents
-    this.excludePrevious = options && options.excludePrevious
     this.previousMatch = null;
 
     this.timeIndex = 1;
     this.timedEvents = {};
     this.output = '';
-    this.focalizer = options.focalizer || null;
+    this.focalizer = options && options.focalizer || null;
   }
 
   addRule(data) {
@@ -114,6 +114,20 @@ export default class World {
     return false;
   }
 
+  removeActor(id: number) {
+    let index: number | null = null;
+    for (let i = 0; i < this.actors.length; i++) {
+      if (this.actors[i].id === id) {
+        index = i;
+        break;
+      }
+    }
+    if (index !== null) {
+      this.actors.splice(index, 1);
+      this.size--;
+    }
+  }
+
   renderEvent(events) {
     let output = '';
     events.forEach(storyEvent => {
@@ -127,40 +141,62 @@ export default class World {
   }
 
   randomEvent() {
-    let output: string = '';
     let count = 0;
     let rules: false | Rule[] = false;
     let actorOne, actorTwo;
     let locationRestriction = this.focalizer
-      ? focalizer.location
-      : null;
+      ? this.focalizer.location
+      : undefined;
     while (count < 100 && !rules) {
-      [ actorOne, actorTwo ] = twoActors(this, null, locationRestriction)
-      const exclude = this.excludePrevious ? this.previousMatch : null
-      rules = randomMatch(this, actorOne, actorTwo, exclude)
+      [ actorOne, actorTwo ] = twoActors(this, undefined, locationRestriction)
+      rules = randomMatch(this, actorOne, actorTwo)
       count ++
     }
-    if (!rules) {
+    if (!rules || this.collisions > 10) {
       throw new Error('No matches found! Suggest run testMatches() to evaluate possible matches')
     }  
-
-    const rule = selectAtRandom(rules);
-    this.previousMatch = rule.id;
+    
+    const rule: Rule = selectAtRandom(rules);
     
     if (this.logEvents && rule.name) {
       console.log(`Match on rule "${rule.name}"`)
     }
-
-    output += processEvent(this, rule, actorOne, actorTwo);
-
-    this.output = `${this.output}${output}`;
+    
+    let output = processEvent(this, rule, actorOne, actorTwo);
+    if (this.ruleHistory.indexOf(output) !== -1) {
+      this.collisions += 1
+      this.randomEvent()
+    } else {
+      this.ruleHistory.push(output)
+      this.output = `${this.output}${output}`;
+    }
   }
-
+  /*
+  * This is the main method used for producing output
+  */
   runStory(steps, theEvents = []) {
     this.registerTimedEvents(theEvents);
     while (this.timeIndex < steps) {
-      advanceTime(this);
+      this.advanceTime();
     }
+  }
+
+  advanceTime() {
+    if (this.timedEvents[this.timeIndex] !== undefined) {
+      this.renderEvent([ this.timedEvents[this.timeIndex] ]);
+    } else {
+      this.randomEvent();
+    }
+    this.actors.forEach(actor => {
+      const age = this.timeIndex - actor.entryTime;
+      if (age > actor.lifeTime) {
+        this.removeActor(actor.id);
+      }
+      // } else if (actor.callback !== null) {
+        // this.processTimeTrigger(this, actor.callback(this.timeIndex));
+      // }
+    });
+    this.timeIndex++;
   }
 
   registerTimedEvents(theEvents) {
@@ -170,9 +206,9 @@ export default class World {
   }
 
   findRule(piece: CauseTypeElement): [ Rule, Actor, Actor ] | false {
-    const source = getActor(this, piece[0]);
+    const source = this.getActorById(piece[0]);
     const action = piece[1];
-    const target = getActor(this, piece[2]);
+    const target = this.getActorById(piece[2]);
     if (source && target) {
       for (let i = 0; i < this.numRules; i++) {
         const rule = this.rules[i];
@@ -200,10 +236,10 @@ export default class World {
     return results
   }
 
-  randomActor(location?: Location): Actor {
+  randomActor(location?: string): Actor {
     let actors = this.actors;
     if(location) {
-      actors = actors.filter(actor => actor.location === location.name);
+      actors = actors.filter(actor => actor.location === location || actor.locations.indexOf(location) !== -1);
     }
     const index = Math.floor(Math.random() * actors.length)
     return actors[index];

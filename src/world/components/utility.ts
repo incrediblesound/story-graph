@@ -1,6 +1,4 @@
 import World from 'src/world/world'
-import Type from 'src/components/type'
-import Actor from 'src/components/actor'
 
 export function removeActor(world: World, id: number) {
   let index: number | null = null;

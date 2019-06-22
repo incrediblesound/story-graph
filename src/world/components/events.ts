@@ -60,14 +60,21 @@ export function applyConsequent(world: World, typeExpression) {
       case MOVE_OUT:
       case MOVE_IN: { // [ id, MOVE_IN, 'location' ]
         const actor = world.getActorById(expr[0]);
+        const newLocation = expr[2] as string;
         if (actor) {
-          actor.location = expr[2];
+          actor.location = newLocation;
         }
         break;
       }
       default: { // [ id, SOME_EVENT, id ]
         const source = world.getActorById(expr[0]);
         const target = world.getActorById(expr[2]);
+        if (!source) {
+          throw Error(`Actor id ${expr[0]} invalid`);
+        }
+        if (!target) {
+          throw Error(`Actor id ${expr[2]} invalid`);
+        }
         const rules = matchRulesFor(world, source, target, expr[1])
         if (rules && rules.length) {
           /* eslint-disable no-use-before-define */

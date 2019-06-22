@@ -5,7 +5,7 @@ export default class Actor {
   id: number
   type: Type
   name: string
-  location: string | null
+  location?: string
   locations: string[]
   entryTime: number
   lifeTime: number
@@ -22,7 +22,6 @@ export default class Actor {
       this.locations = data.locations;
     } else {
       this.locations = [];
-      this.location = null;
     }
 
     this.lifeTime = data.lifeTime || 999;

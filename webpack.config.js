@@ -1,13 +1,13 @@
 const path = require('path');
 
 const webpackConfig = {
-
+  target: 'node',
   entry: {
     story: './src/main.ts'
   },
 
   output: {
-    filename: './dist/story.js',
+    filename: 'story.js',
     library: 'story-graph',
     libraryTarget: 'umd',
     umdNamedDefine: true
@@ -22,7 +22,7 @@ const webpackConfig = {
   },
 
   module: {
-    loaders: [
+    rules: [
       { test: /\.ts?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
